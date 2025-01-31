@@ -19,6 +19,8 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest httpServletRequest = servletRequest.getServletRequest();
+            logger.info("리퀘스트: "+httpServletRequest);
+            //String authToken = httpServletRequest.getParameter("token");
             String authToken = httpServletRequest.getHeader("Authorization");
 
             logger.info("핸드쉐이크 시도: " + httpServletRequest.getRequestURI());

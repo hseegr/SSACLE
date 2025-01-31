@@ -1,10 +1,7 @@
 package ssafy.com.ssacle.signaling.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -14,7 +11,9 @@ public class SignalingController {
     // WebRTC Offer 전송
     @MessageMapping("/app/offer/{sprintId}") // "/app/offer/{sprintId}" 로 메시지 송신
     @SendTo("/sub/offer/{sprintId}")     // 클라이언트는 "/sub/offer/{sprintId}" 를 구독해야 함
-    public String handleOffer(@Payload String offer) {
+    public String handleOffer(@Header("Authorization") String token, @Payload String offer) {
+        System.out.println("Received chat message: " + offer);
+        System.out.println("Received token: " + token);
         return offer;
     }
 
