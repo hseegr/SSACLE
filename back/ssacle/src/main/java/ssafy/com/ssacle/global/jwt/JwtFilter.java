@@ -52,6 +52,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/connection") || path.startsWith("/ws"); // WebSocket 경로 예외 처리
+    }
 
     private void authenticateUser(String accessToken, HttpServletRequest request) {
         String userEmail = jwtTokenUtil.getUserEmailFromToken(accessToken);

@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,8 +19,6 @@ public class QUser extends EntityPathBase<User> {
     private static final long serialVersionUID = 1420300670L;
 
     public static final QUser user = new QUser("user");
-
-    public final StringPath badge = createString("badge");
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
@@ -35,6 +34,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final BooleanPath isDelete = createBoolean("isDelete");
 
+    public final NumberPath<Integer> level = createNumber("level", Integer.class);
+
     public final StringPath name = createString("name");
 
     public final StringPath nickname = createString("nickname");
@@ -46,6 +47,8 @@ public class QUser extends EntityPathBase<User> {
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final StringPath studentNumber = createString("studentNumber");
+
+    public final ListPath<ssafy.com.ssacle.user_team.domain.UserTeam, ssafy.com.ssacle.user_team.domain.QUserTeam> userTeam = this.<ssafy.com.ssacle.user_team.domain.UserTeam, ssafy.com.ssacle.user_team.domain.QUserTeam>createList("userTeam", ssafy.com.ssacle.user_team.domain.UserTeam.class, ssafy.com.ssacle.user_team.domain.QUserTeam.class, PathInits.DIRECT2);
 
     public QUser(String variable) {
         super(User.class, forVariable(variable));

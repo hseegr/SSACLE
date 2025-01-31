@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -9,8 +10,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ssafy.com.ssacle.user_team.domain.UserTeam;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,8 +45,9 @@ public class User {
     @Column(name = "nickname", nullable = false, unique = true, length = 20)
     private String nickname;
 
-    @Column(name = "badge", length = 512)
-    private String badge;
+    @Column(name = "level")
+    @ColumnDefault("1")
+    private int level;
 
     @Column(name = "experience")
     @ColumnDefault("0")
@@ -71,6 +76,12 @@ public class User {
     @ColumnDefault("false")
     private boolean isDelete;
 
+    // 사용자-팀 관계 설정 (1:N)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTeam> userTeam;
+
+
+
     // ** 관리자 생성자 **
     public static User createAdmin(String email, String password, String name) {
         return new User(
@@ -80,14 +91,15 @@ public class User {
                 name,
                 null, // 관리자에 studentNumber가 필요 없다면 null
                 name, // 관리자에게 닉네임은 이름으로 설정
-                "Admin Badge",
+                1,
                 0,
                 0,
                 false,
                 Role.ADMIN,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>()
         );
     }
 
@@ -100,14 +112,15 @@ public class User {
                 name,
                 studentNumber,
                 nickname, // 기본 닉네임을 이름으로 설정
-                "Student Badge",
+                1,
                 0,
                 0,
                 false,
                 Role.STUDENT,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>()
         );
     }
 
@@ -120,14 +133,15 @@ public class User {
                 name,
                 studentNumber,
                 nickname, // 기본 닉네임을 이름으로 설정
-                "Alumni Badge",
+                1,
                 0,
                 0,
                 true, // 졸업생이므로 true
                 Role.ALUMNI,
                 null,
                 null,
-                false
+                false,
+                new ArrayList<>()
         );
     }
     private static String encodePassword(String rawPassword) {
