@@ -21,37 +21,65 @@ export const MAIN_END_POINT = {
   FAQ: '/main/faq',
 }
 
-// 싸프린트 -> ssaprintService
-export const SSAPRINT_END_POINT = {
-  LIST: '/ssaprint/list',
-  DETAIL: '/ssaprint/detail',
-  CREATE: '/ssaprint/create',
-  UPDATE: '/ssaprint/update',
-  DELETE: '/ssaprint/delete',
+// 회상회의 (발표) -> presentationService
+export const PRESENTATION_END_POINT = {
+  // 질문 카드 관련
+  QUESTION_CARDS: (sprintId) => `/sprints/${sprintId}/question-cards`,
+  QUESTION_CARD: (sprintId, cardId) =>
+    `/sprints/${sprintId}/question-cards/${cardId}`,
+
+  // 회의장 관련
+  ROOM: (sprintId) => `/sprints/${sprintId}/room`,
+  CHATS: (sprintId) => `/sprints/${sprintId}/chats`,
+  PARTICIPANTS: (sprintId) => `/sprints/${sprintId}/participants`,
+  TEAMS: (sprintId) => `/sprints/${sprintId}/teams`,
+}
+
+// 싸프린트 -> sprintService
+export const SPRINT_END_POINT = {
+  SPRINTS: '/sprints',
+  SPRINT: (sprintId) => `/sprints/${sprintId}`,
+  JOIN: (sprintId) => `/sprints/${sprintId}/participants`,
+  TODOS: (sprintId) => `/sprints/${sprintId}/todos`,
+  TODO: (sprintId, todoId) => `/sprints/${sprintId}/todos/${todoId}`,
 }
 
 // 싸드컵 -> ssadcupService
 export const SSADCUP_END_POINT = {
-  TOURNAMENTS: '/ssadcup/tournaments',
-  MATCHES: '/ssadcup/matches',
-  TEAMS: '/ssadcup/teams',
-  PLAYERS: '/ssadcup/players',
+  SSADCUPS: '/ssadcups',
+  SSADCUP: (ssadcupId) => `/ssadcups/${ssadcupId}`,
+  ROUNDS: (ssadcupId) => `/ssadcups/${ssadcupId}/rounds`,
+  PARTICIPANTS: (ssadcupId) => `/ssadcups/${ssadcupId}/participants`,
+  TEAMS: (ssadcupId) => `/ssadcups/${ssadcupId}/teams`,
+}
+
+// 심판 관련 -> judgeService
+export const JUDGE_END_POINT = {
+  JUDGES: (ssadcupId) => `/ssadcups/${ssadcupId}/judges`,
+  JUDGE: (ssadcupId, judgeId) => `/ssadcups/${ssadcupId}/judges/${judgeId}`,
 }
 
 // 관리자 -> adminService
-export const ADMIN_END_POINT = {
-  USERS: '/admin/users',
-  REPORTS: '/admin/reports',
-  SETTINGS: '/admin/settings',
-  STATS: '/admin/statistics',
-}
+export const ADMIN_END_POINT = {}
 
 // 게시판 -> boardService
 export const BOARD_END_POINT = {
-  LIST: '/board/list',
-  POST: '/board/post',
-  COMMENT: '/board/comment',
-  SEARCH: '/board/search',
+  // 게시물 관련
+  BOARDS: '/boards',
+  BOARD: (boardId) => `/boards/${boardId}`,
+
+  // 댓글 관련
+  COMMENTS: (boardId) => `/boards/${boardId}/comments`,
+  COMMENT: (boardId, commentId) => `/boards/${boardId}/comments/${commentId}`,
+
+  // 대댓글(답글) 관련
+  REPLIES: (boardId, commentId) =>
+    `/boards/${boardId}/comments/${commentId}/replies`,
+  REPLY: (boardId, commentId, replyId) =>
+    `/boards/${boardId}/comments/${commentId}/replies/${replyId}`,
+
+  // 검색
+  SEARCH: '/boards/search',
 }
 
 // 노션 관련 -> notionService
@@ -60,5 +88,3 @@ export const NOTION_END_POINT = {
   SYNC: '/notion/sync',
   CONTENT: '/notion/content',
 }
-
-// 아래는 예시
