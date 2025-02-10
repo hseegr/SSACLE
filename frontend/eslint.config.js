@@ -12,7 +12,7 @@ export default [
 
   // 설정 블록
   {
-    files: ['**/*.{js,jsx}'], // 린트를 적용할 파일들
+    files: ['**/*.{js,jsx,ts,tsx}'], // 린트를 적용할 파일들
     languageOptions: {
       ecmaVersion: 2020, // ECMAScript 버전
       globals: globals.browser, // 브라우저 환경 글로벌 변수
