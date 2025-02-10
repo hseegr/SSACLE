@@ -1,6 +1,6 @@
 // import SprintOverview from "./SprintOverview";
 // import SprintCurriculum from "./SprintCurriculum";
-// import SprintProgress from "./SprintProgress";
+import SprintProgress from './SprintProgress'
 // import SprintRecommendation from "./SprintRecommendation";
 import SprintBenefits from './SprintBenefits'
 
@@ -16,7 +16,7 @@ const SprintDetail = ({ sprint, benefits }) => {
       {/* <SprintCurriculum curriculum={sprint.curriculum} /> */}
 
       {/* 진행 방식 */}
-      {/* <SprintProgress process={sprint.process} /> */}
+      <SprintProgress />
 
       {/* 추천 대상 */}
       {/* <SprintRecommendation recommendedFor={sprint.recommended_for} /> */}
