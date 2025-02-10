@@ -26,7 +26,7 @@ const SsaprintJourneyPage = () => {
   if (loading) return <p>로딩 중...</p>
   if (!sprintData) return <p>데이터를 불러올 수 없습니다.</p>
 
-  return <SsaprintJourneyLayout sprintName={sprintData.sprint.name} />
+  return <SsaprintJourneyLayout sprint={sprintData} />
 }
 
 export default SsaprintJourneyPage

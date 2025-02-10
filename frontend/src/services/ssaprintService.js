@@ -3,6 +3,7 @@ import { SSAPRINT_END_POINT } from './endPoints'
 
 import { mockSsaprintData } from '@/mocks/ssaprintMockData'
 import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
+import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
 
 /**
  * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
@@ -117,7 +118,7 @@ export const joinSsaprint = async (id) => {
 export const getActiveSsaprint = async (sprintId) => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(mockSsaprintDetailData)
+      resolve(mockActiveSsaprintDetailData)
     }, 500)
   })
 }
