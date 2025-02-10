@@ -1,4 +1,4 @@
-// import SprintOverview from "./SprintOverview";
+import SprintOverview from './SprintOverview'
 // import SprintCurriculum from "./SprintCurriculum";
 import SprintProgress from './SprintProgress'
 import SprintRecommendation from './SprintRecommendation'
@@ -10,7 +10,11 @@ const SprintDetail = ({ sprint, benefits }) => {
   return (
     <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[100rem] w-47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 개요 */}
-      {/* <SprintOverview overview={sprint.overview} /> */}
+      <SprintOverview
+        basicDescription={sprint.basicDescription}
+        detailDescription={sprint.detailDescription}
+      />
+      <hr className="border-t border-gray-200 my-4" />
 
       {/* 커리큘럼 */}
       {/* <SprintCurriculum curriculum={sprint.curriculum} /> */}
