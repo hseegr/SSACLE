@@ -10,18 +10,9 @@ const httpCommon = axios.create({
 
 // Access Token 저장 함수 (Bearer 제거)
 const saveAccessToken = (token) => {
-  console.log(token)
   const atoken = token.replace('Bearer ', '')
-  console.log('replaced:,', atoken)
   if (token) localStorage.setItem('accessToken', atoken)
-  console.log('가져와', localStorage.getItem('accessToken'))
 }
-
-// const saveAccessToken = (token) => {
-//   console.log(token)
-//   console.log(String(token).substring(7))
-//   if (token) localStorage.setItem('accessToken', String(token).substring(7))
-// }
 
 // Access Token 갱신 함수
 const refreshAccessToken = async () => {

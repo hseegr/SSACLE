@@ -19,6 +19,7 @@ const EmailPage = () => {
   // 로그인 페이지에서 전달된 `state.activeTab` 값이 있으면 반영
   useEffect(() => {
     if (location.state?.activeTab) {
+      console.log('📌 [useEffect] Active Tab:', location.state.activeTab)      
       setActiveTab(location.state.activeTab)
     }
   }, [location.state])
@@ -27,12 +28,14 @@ const EmailPage = () => {
   const findEmailMutation = useMutation({
     mutationFn: fetchFindEmail,
     onSuccess: (response) => {
+      console.log('✅ [findEmailMutation onSuccess] response:', response)
       if (response.status === 200) {
         setFoundEmail(response.data)
       }
     },
     onError: (error) => {
-      console.error('❌ 이메일 찾기 실패:', error)
+      console.error('❌ [findEmailMutation onError]:', error)
+      console.log('❗ [Error Response Data]', error?.response?.data)
       setFoundEmail('') // 혹시 이전 상태가 남았으면 초기화
       const status = error?.response?.status
       if (status === 404) {
@@ -49,12 +52,14 @@ const EmailPage = () => {
   const findPasswordMutation = useMutation({
     mutationFn: fetchFindPassword,
     onSuccess: (response) => {
+      console.log('✅ [findPasswordMutation onSuccess] response:', response)
       if (response.status === 200) {
         setPwResult(response.data)
       }
     },
     onError: (error) => {
       console.error('❌ 비밀번호 찾기 실패:', error)
+      console.log('❗ [Error Response Data]', error?.response?.data)
       setPwResult('')
       // 서버에서 400, 404, 500을 내려줄 수 있으므로, 적절히 메시지 처리
       if (error?.response?.status === 400) {
@@ -70,17 +75,21 @@ const EmailPage = () => {
   // "이메일 찾기" 버튼 클릭 시 실행할 함수
   const handleFindEmail = () => {
     if (!studentNumber.trim()) {
+      console.log('📌 [handleFindEmail] studentNumber 입력값:', studentNumber)
       alert('싸피 학번을 입력해주세요!')
       return
     }
-    findEmailMutation.mutate({ studentNumber })
+    console.log('📌 [handleFindEmail] API 요청 시작:', studentNumber)
+    findEmailMutation.mutate(studentNumber)
   }
 
   // 비밀번호 찾기 버튼
   const handleFindPassword = () => {
+    console.log('📌 [handleFindPassword] 학번:', pwStudentNumber, '| 이메일:', pwEmail)
     if (!pwStudentNumber.trim() || !pwEmail.trim()) {
       return alert('학번과 이메일을 모두 입력해주세요!')
     }
+    console.log('📌 [handleFindPassword] API 요청 시작:', { studentNumber: pwStudentNumber, email: pwEmail })
     findPasswordMutation.mutate({
       studentNumber: pwStudentNumber,
       email: pwEmail,

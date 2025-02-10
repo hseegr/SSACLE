@@ -16,8 +16,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/v1': {
-        // target: 'http://i12a402.p.ssafy.io:8080',
-        target: 'http://70.12.246.186:8080',
+        target: 'http://i12a402.p.ssafy.io:8080',
+        // target: 'http://70.12.246.186:8080',
         changeOrigin: true,
       },
     },

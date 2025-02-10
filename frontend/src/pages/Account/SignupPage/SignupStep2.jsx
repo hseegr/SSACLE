@@ -42,39 +42,56 @@ const SignupStep2 = () => {
 
   // 닉네임 중복 확인 Mutation
   const nicknameMutation = useMutation({
-    mutationFn: () => fetchCheckNickname(nickname),
-    onSuccess: (data) => {
-      if (!nickname.trim()) return // 닉네임이 비어있으면 중단
-      setNicknameChecked(true) // 응답이 오면 확인 여부 true 설정
-      if (data === true) {
-        // 서버에서 true 반환하면 중복됨
-        setIsNicknameValid(false)
-        setNicknameError('이미 사용 중인 닉네임입니다.') // 오류 메시지 표시
-      } else {
-        setIsNicknameValid(true)
-        setNicknameError('') // 오류 메시지 초기화
-      }
+    mutationFn: async () => {
+      // console.log('🟡 닉네임 중복 체크 요청:', nickname) // 요청 닉네임 로그
+      const response = await fetchCheckNickname(nickname)
+      // console.log('🟢 닉네임 중복 체크 응답 (원본):', response) // 응답 로그 추가
+      return response // 🚀 서버 응답 반환
     },
+    onSuccess: (response) => {
+      // console.log('🟢 닉네임 중복 체크 최종 응답:', response) // 응답 확인
+
+      if (!nickname.trim()) return // 닉네임이 비어있으면 중단
+
+      const isDuplicate = response.data // 서버 응답 값 (true: 중복, false: 사용 가능)
+      // console.log("🟠 중복 여부:", isDuplicate); // 디버깅용 로그
+
+      setIsNicknameValid(() => !isDuplicate) // 함수형 업데이트 적용
+      setNicknameChecked(() => true) // 함수형 업데이트 적용
+      setNicknameError(() =>
+        isDuplicate ? '이미 사용 중인 닉네임입니다.' : ''
+      ) // 함수형 업데이트 적용
+    },
+
     onError: (error) => {
-      console.error('닉네임 중복 확인 오류:', error)
+      console.error('❌ 닉네임 중복 확인 오류:', error)
       alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
     },
   })
 
   // 학번 중복 확인 Mutation
   const studentNumberMutation = useMutation({
-    mutationFn: () => fetchCheckNumber(studentNumber),
-    onSuccess: (data) => {
-      if (!studentNumber.trim()) return
-      if (data === true) {
-        // 서버에서 true 반환하면 중복됨
-        setIsStudentNumberValid(false)
-      } else {
-        setIsStudentNumberValid(true)
-      }
+    mutationFn: async () => {
+      // console.log('🟡 학번 중복 체크 요청:', studentNumber) // 요청 데이터 확인
+      const response = await fetchCheckNumber(studentNumber)
+      // console.log('🟢 학번 중복 체크 응답 (원본):', response) // 응답 데이터 확인
+      return response // 응답 반환
+    },
+    onSuccess: (response) => {
+      // console.log('🟠 학번 중복 체크 최종 응답:', response)
+
+      if (!studentNumber.trim()) return // 학번이 비어있으면 중단
+
+      const isDuplicate = response.data // 서버 응답 값 (true: 중복, false: 사용 가능)
+      // console.log('🟠 중복 여부:', isDuplicate) // 중복 여부 확인
+
+      setIsStudentNumberValid(() => !isDuplicate) // 상태 업데이트 (함수형 업데이트)
+      setStudentNumberError(() =>
+        isDuplicate ? '이미 사용 중인 학번입니다.' : ''
+      ) // 오류 메시지 업데이트
     },
     onError: (error) => {
-      console.error('학번 중복 확인 오류:', error)
+      console.error('❌ 학번 중복 확인 오류:', error)
       alert('학번 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
     },
   })
@@ -94,11 +111,28 @@ const SignupStep2 = () => {
       alert('회원가입이 완료되었습니다.')
       navigate('/account/signup/interest')
     },
+    // onError: (error) => {
+    //   // console.error('회원가입 실패:', error)
+    //   // alert('회원가입에 실패했습니다. 다시 시도해주세요.')
+    //   console.error('회원가입 실패:', error.response?.data || error.message) // 응답 메시지 확인
+    //   alert(
+    //     `회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`
+    //   )
+    // },
     onError: (error) => {
-      // console.error('회원가입 실패:', error)
-      // alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-      console.error('회원가입 실패:', error.response?.data || error.message) // ✅ 응답 메시지 확인
-      alert(`회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`)
+      const errorMessage = error.response?.data?.message || '다시 시도해주세요.'
+      console.error('❌ 회원가입 실패:', errorMessage)
+
+      // 특정 오류 메시지에 따라 사용자 친화적인 메시지 출력 후 페이지 이동
+      if (errorMessage.includes('Email already exists')) {
+        alert('이미 가입한 이메일 입니다!')
+        navigate('/account/login') // 로그인 페이지로 이동
+      } else if (errorMessage.includes('Email verification required')) {
+        alert('인증 시간이 만료되었습니다. 재 인증 해주세요!')
+        navigate('/account/signup') // 회원가입 첫 페이지로 이동
+      } else {
+        alert(`회원가입 실패: ${errorMessage}`)
+      }
     },
   })
 
@@ -146,14 +180,14 @@ const SignupStep2 = () => {
 
   // 회원가입 버튼 클릭
   const handleSignup = () => {
-    console.log('회원가입 요청 데이터:', {
-      studentNumber,
-      email,
-      nickname,
-      name,
-      password,
-      confirmpassword,
-    }) // 🔥 요청 데이터 확인
+    // console.log('회원가입 요청 데이터:', {
+    //   studentNumber,
+    //   email,
+    //   nickname,
+    //   name,
+    //   password,
+    //   confirmpassword,
+    // }) // 🔥 요청 데이터 확인
 
     // 필수 입력값 체크
     if (!studentNumber.trim()) {
@@ -231,11 +265,6 @@ const SignupStep2 = () => {
               </button>
 
               {/* 학번 인증 결과 메시지 */}
-              {studentNumberError && (
-                <p className="col-span-4 col-start-3 text-red-500 text-sm">
-                  {studentNumberError}
-                </p>
-              )}
               {isStudentNumberValid === true && (
                 <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
                   인증이 완료되었습니다.
@@ -301,16 +330,16 @@ const SignupStep2 = () => {
               </button>
 
               {/* 닉네임 인증 결과 메시지 */}
-              {nicknameChecked && ( // 응답이 오면 메시지 표시
+              {nicknameChecked && (
                 <>
+                  {isNicknameValid === false && (
+                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                      ❌ {nicknameError}
+                    </p>
+                  )}
                   {isNicknameValid === true && (
                     <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
                       사용 가능한 닉네임입니다.
-                    </p>
-                  )}
-                  {isNicknameValid === false && (
-                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
-                      {nicknameError}
                     </p>
                   )}
                 </>
