@@ -17,6 +17,20 @@ const Header = () => {
   //   window.location.reload() // 페이지 새로고침
   // }
 
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await fetchLogout() // 로그아웃 API 호출
+      // 로컬에서 토큰 제거
+      localStorage.removeItem('accessToken')
+      // 페이지 새로고침 대신 홈으로 리다이렉트
+      navigate('account/login')
+    } catch (error) {
+      console.error('로그아웃 실패:', error)
+      alert('로그아웃 중 오류가 발생했습니다.')
+    }
+  }
+
   return (
     <header className="min-w-max z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
       {/* 로고 */}
@@ -52,7 +66,7 @@ const Header = () => {
         {accessToken ? (
           <button
             className="w-5 h-5 flex justify-center items-center"
-            onClick={fetchLogout}
+            onClick={handleLogout}
           >
             <LogOut size={15} className="text-black" />
           </button>

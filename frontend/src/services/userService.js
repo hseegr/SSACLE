@@ -37,41 +37,12 @@ export const fetchLogin = (credentials) =>
 
 // 9. 로그아웃 (POST)
 // 기존 코드
-// export const fetchLogout = async () => {
-//   try {
-//     await axios.post(AUTH_END_POINT.LOGOUT)
-//     window.location.href = '/login' // 성공 후 페이지 이동
-//   } catch (error) {
-//     console.error('❌ 로그아웃 실패:', error)
-//   }
-// }
-
-// 9. 로그아웃 (POST)
 export const fetchLogout = async () => {
   try {
-    // 백엔드에 로그아웃 요청 (리프레시 토큰 삭제)
-    await axios.post(AUTH_END_POINT.LOGOUT, {}, { withCredentials: true })
-
-    // 클라이언트에서도 액세스 토큰 삭제
-    localStorage.removeItem('accessToken')
-
-    // 로그아웃 후 로그인 페이지로 이동
-    window.location.href = '/login'
+    await axios.post(AUTH_END_POINT.LOGOUT)
+    window.location.href = '/login' // 성공 후 페이지 이동
   } catch (error) {
     console.error('❌ 로그아웃 실패:', error)
-  }
-}
-
-// 10. Refresh Token 재발급 (POST)
-export const fetchRefreshToken = async () => {
-  try {
-    const { data } = await axios.post(AUTH_END_POINT.REFRESH_TOKEN)
-    localStorage.setItem('accessToken', data.accessToken) // 새로운 액세스 토큰 저장
-    localStorage.setItem('refreshToken', data.refreshToken) // 새로운 리프레시 토큰 저장
-    return data
-  } catch (error) {
-    console.error('❌ 토큰 갱신 실패:', error)
-    throw error
   }
 }
 

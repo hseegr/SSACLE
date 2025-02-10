@@ -11,7 +11,7 @@ import { BOARD_END_POINT } from './endPoints'
 export const fetchBoardList = async () => {
   try {
     console.log('API 호출 시작')
-    const response = await httpCommon.get('/board')
+    const response = await httpCommon.get(BOARD_END_POINT.LIST)
     console.log('API 응답 데이터:', response.data)
     return response.data
   } catch (error) {
