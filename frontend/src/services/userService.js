@@ -31,16 +31,32 @@ export const fetchSignup = async (userData) => {
   })
 }
 
-
 // 8. 로그인 (POST)
 export const fetchLogin = (credentials) =>
   axios.post(AUTH_END_POINT.LOGIN, credentials)
 
 // 9. 로그아웃 (POST)
+// 기존 코드
+// export const fetchLogout = async () => {
+//   try {
+//     await axios.post(AUTH_END_POINT.LOGOUT)
+//     window.location.href = '/login' // 성공 후 페이지 이동
+//   } catch (error) {
+//     console.error('❌ 로그아웃 실패:', error)
+//   }
+// }
+
+// 9. 로그아웃 (POST)
 export const fetchLogout = async () => {
   try {
-    await axios.post(AUTH_END_POINT.LOGOUT)
-    window.location.href = '/login' // 성공 후 페이지 이동
+    // 백엔드에 로그아웃 요청 (리프레시 토큰 삭제)
+    await axios.post(AUTH_END_POINT.LOGOUT, {}, { withCredentials: true })
+
+    // 클라이언트에서도 액세스 토큰 삭제
+    localStorage.removeItem('accessToken')
+
+    // 로그아웃 후 로그인 페이지로 이동
+    window.location.href = '/login'
   } catch (error) {
     console.error('❌ 로그아웃 실패:', error)
   }
