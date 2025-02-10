@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
 import ssafy.com.ssacle.user.domain.RefreshToken;
@@ -76,11 +78,20 @@ public class TokenService {
     }
 
     public void invalidateTokens(HttpServletResponse response) {
-        Cookie refreshCookie = new Cookie("refreshToken", null);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(0);
-        response.addCookie(refreshCookie);
+//        Cookie refreshCookie = new Cookie("refreshToken", null);
+//        refreshCookie.setHttpOnly(true);
+//        refreshCookie.setPath("/");
+//        refreshCookie.setMaxAge(0);
+//        response.addCookie(refreshCookie);
+        ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
+                .path("/") // 기존과 동일한 path 설정
+                .httpOnly(true)
+                .secure(false) // 개발 환경에서는 false, 배포 환경에서는 true
+                .sameSite("Lax")
+                .maxAge(0) // 즉시 삭제
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
     }
 
     /** ✅ Request에서 Refresh Token 쿠키 가져오기 */

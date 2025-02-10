@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -118,6 +120,15 @@ public class UserService {
             // Refresh Token 삭제 및 무효화
             refreshRepository.deleteByUser(user);
             refreshRepository.flush();
+            ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
+                    .path("/") // 기존과 동일한 path 설정
+                    .httpOnly(true)
+                    .secure(false) // 개발 환경에서는 false, 배포 환경에서는 true
+                    .sameSite("None") // CSRF 방지 및 cross-site 요청 허용
+                    .maxAge(0) // 쿠키 만료 즉시 삭제
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
             tokenService.invalidateTokens(response);
         }
     }
