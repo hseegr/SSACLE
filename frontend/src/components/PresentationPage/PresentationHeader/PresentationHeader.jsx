@@ -1,10 +1,10 @@
 import Progress from '@/components/Progress/Progress'
-import { usePresentation } from '@/store/usePresentation'
+import { usePresentationStore } from '@/store/usePresentationStore'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { Link } from 'react-router-dom'
 
 const PresentationHeader = () => {
-  const { presentationStatus, setPresentationStatus } = usePresentation()
+  const { presentationStatus, setPresentationStatus } = usePresentationStore()
 
   const { BEFORE_PRESENTATION, PRESENTING, QUESTION_CARD, END_PRESENTATION } =
     PRESENTATION_STATUS

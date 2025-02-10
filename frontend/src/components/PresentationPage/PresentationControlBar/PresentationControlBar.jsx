@@ -1,5 +1,5 @@
 import PresentationControlItem from '@/components/PresentationPage/PresentationControlItem/PresentationControlItem'
-import { usePresentation } from '@/store/usePresentation'
+import { usePresentationStore } from '@/store/usePresentationStore'
 import {
   SparklesIcon,
   MicIcon,
@@ -76,7 +76,7 @@ const PRESENTATION_CONTROLS = ({ isChatOpen, setIsChatOpen }) => ({
 })
 
 const PresentationControlBar = () => {
-  const { isChatOpen, setIsChatOpen } = usePresentation()
+  const { isChatOpen, setIsChatOpen } = usePresentationStore()
   const { effects, controls, exit } = PRESENTATION_CONTROLS({
     isChatOpen,
     setIsChatOpen,
