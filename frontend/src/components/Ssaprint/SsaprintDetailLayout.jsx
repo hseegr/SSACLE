@@ -3,7 +3,7 @@ import SprintBasicInfo from '@/components/SprintCommon/SprintBasicInfo'
 import SprintSummary from '@/components/SprintCommon/SprintSummary'
 import SprintParticipationModal from '@/components/SprintCommon/SprintParticipationModal'
 import Button from '@/components/common/Button'
-import SprintDetail from "@/components/SprintCommon/SprintDetail";
+import SprintDetail from '@/components/SprintCommon/SprintDetail'
 
 const SsaprintDetailLayout = ({ sprintData }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -42,7 +42,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
           />
         </div>
       </div>
-      
+
       <div className="flex justify-between items-start gap-4 h-auto">
         {/* 상세 정보 */}
         <div className="flex-1">
@@ -60,12 +60,8 @@ const SsaprintDetailLayout = ({ sprintData }) => {
       {/* 모달 표시 */}
       {isOpen && (
         <SprintParticipationModal
+          sprintId={sprintData.sprint.id}
           onClose={() => setIsOpen(false)}
-          onConfirm={() => {
-            setIsOpen(false)
-            // eslint-disable-next-line no-console
-            console.log('스프린트 참여 완료!') // 참여중 페이지로 이동할 예정
-          }}
         />
       )}
     </div>

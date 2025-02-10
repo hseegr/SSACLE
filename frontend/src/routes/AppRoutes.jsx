@@ -19,6 +19,7 @@ import BoardDetailPage from '@/pages/Board/BoardDetailPage'
 import BoardFormPage from '@/pages/Board/BoardFormPage'
 import FreeBoardPage from '@/pages/Board/FreeBoardPage'
 import SsaprintDetailPage from '@/pages/Ssaprint/SsaprintDetailPage'
+import SsaprintJourneyPage from '@/pages/Ssaprint/SsaprintJourneyPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
           { index: true, element: <SsaprintPage /> },
           { path: ':sprintId', element: <SsaprintDetailPage /> },
         ],
+      },
+      {
+        path: '/my-sprints/:sprintId',
+        element: <SsaprintJourneyPage />,
       },
 
       // 싸드컵 page

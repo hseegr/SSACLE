@@ -5,7 +5,7 @@
 // import SprintBenefits from "./SprintBenefits";
 
 const SprintDetail = ({ sprint }) => {
-  if (!sprint) return null;
+  if (!sprint) return null
 
   return (
     <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[100rem] w-[52rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
@@ -24,7 +24,7 @@ const SprintDetail = ({ sprint }) => {
       {/* 수료 후 혜택 */}
       {/* <SprintBenefits benefits={sprint.benefits} /> */}
     </div>
-  );
-};
+  )
+}
 
-export default SprintDetail;
+export default SprintDetail

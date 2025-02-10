@@ -92,14 +92,46 @@ export const fetchSsaprintDetail = async (id) => {
 //     console.error(`스프린트 ${id} 상세 정보를 가져오는 중 오류 발생`, error);
 //     return null;
 //   }
+// }
+
+// ✅ 싸프린트 참가 (목업 처리)
+export const joinSsaprint = async (id) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ message: '스프린트에 신청되었습니다.' })
+    }, 500)
+  })
+}
+// // ✅ 싸프린트 참가 (비동기 처리 추가)
+// export const joinSsaprint = async (id) => {
+//   try {
+//     const response = await httpCommon.post(SSAPRINT_END_POINT.JOIN(id));
+//     return response.data; // 성공 메시지 반환
+//   } catch (error) {
+//     console.error(`스프린트 신청 중 오류 발생:`, error);
+//     throw error;
+//   }
 // };
 
-// ✅ 싸프린트 참가
-export const joinSsaprint = (id) => httpCommon.post(SSAPRINT_END_POINT.JOIN(id))
+// 참여중인 스프린트 정보 가져오기
+export const getActiveSsaprint = async (sprintId) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockSsaprintDetailData)
+    }, 500)
+  })
+}
 
-// ✅ 싸프린트 참가 취소
-export const cancelSsaprint = (id) =>
-  httpCommon.patch(SSAPRINT_END_POINT.CANCEL(id))
+// // ✅ 참여중인 스프린트 정보 가져오기
+// export const getActiveSsaprint = async (sprintId) => {
+//   try {
+//     const response = await httpCommon.get(SSAPRINT_END_POINT.ACTIVE(sprintId));
+//     return response.data;
+//   } catch (error) {
+//     console.error('참여중인 스프린트 정보 불러오기 실패:', error);
+//     throw error;
+//   }
+// };
 
 // ✅ 싸프린트 생성
 export const createSsaprint = (data) =>
