@@ -22,9 +22,15 @@ export const fetchCheckInterest = (interests) =>
   axios.get(AUTH_END_POINT.CHECK_INTERESTS(interests))
 
 // 7. 회원가입 (POST)
+import axios2 from 'axios'
+
 export const fetchSignup = async (userData) => {
-  return axios.post(AUTH_END_POINT.SIGNUP, userData)
+  return axios2.post('/api/v1/join', userData, {
+    headers: { 'Content-Type': 'application/json' }, // Authorization 없이 요청
+    withCredentials: true,
+  })
 }
+
 
 // 8. 로그인 (POST)
 export const fetchLogin = (credentials) =>

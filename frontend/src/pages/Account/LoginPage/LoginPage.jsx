@@ -14,7 +14,7 @@ const LoginPage = () => {
     mutationFn: fetchLogin, 
     onSuccess: (response) => {
       if (response.status === 200) {
-        localStorage.setItem('accessToken', response.data?.accessToken)
+        // localStorage.setItem('accessToken', response.data?.accessToken)
         navigate('/main')
       }
     },

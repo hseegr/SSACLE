@@ -10,14 +10,24 @@ const httpCommon = axios.create({
 
 // Access Token 저장 함수 (Bearer 제거)
 const saveAccessToken = (token) => {
-  if (token) localStorage.setItem('accessToken', token.replace('Bearer ', ''))
+  console.log(token)
+  const atoken = token.replace('Bearer ', '')
+  console.log('replaced:,', atoken)
+  if (token) localStorage.setItem('accessToken', atoken)
+  console.log('가져와', localStorage.getItem('accessToken'))
 }
+
+// const saveAccessToken = (token) => {
+//   console.log(token)
+//   console.log(String(token).substring(7))
+//   if (token) localStorage.setItem('accessToken', String(token).substring(7))
+// }
 
 // Access Token 갱신 함수
 const refreshAccessToken = async () => {
   try {
     const { headers } = await axios.post(
-      `${BASE_URL}/api/v1/refreshtoken`,
+      `/api/v1/refreshtoken`,
       {},
       { withCredentials: true }
     )
@@ -41,7 +51,9 @@ httpCommon.interceptors.request.use((config) => {
 // 응답 인터셉터: 401 처리 + 토큰 갱신
 httpCommon.interceptors.response.use(
   (response) => {
-    saveAccessToken(response.headers['authorization']) // 새 토큰이 오면 저장
+    const authHeader = response.headers['authorization']
+    // 토큰이 있을 때만 저장
+    if (authHeader) saveAccessToken(authHeader)
     return response
   },
   async (error) => {

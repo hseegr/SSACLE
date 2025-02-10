@@ -15,6 +15,7 @@ const SignupStep2 = () => {
   // 학번 상태
   const [studentNumber, setStudentNumber] = useState('')
   const [isStudentNumberValid, setIsStudentNumberValid] = useState(null) // 학번 인증 상태 (null: 미확인)
+  const [studentNumberError, setStudentNumberError] = useState('') //  학번 입력 오류 메시지 추가
 
   // 이름 상태
   const [name, setName] = useState('')
@@ -22,10 +23,12 @@ const SignupStep2 = () => {
   // 닉네임 상태
   const [nickname, setNickname] = useState('')
   const [isNicknameValid, setIsNicknameValid] = useState(false) // 닉네임 인증 상태
+  const [nicknameError, setNicknameError] = useState('') // 닉네임 입력 오류 메시지
+  const [nicknameChecked, setNicknameChecked] = useState(false)
 
   // 비밀번호 상태
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [confirmpassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState(false) // 비밀번호 불일치 메시지
 
   // 약관 동의 상태
@@ -35,20 +38,25 @@ const SignupStep2 = () => {
 
   // Step1에서 받아온 이메일
   const email = location.state?.email || ''
+  // console.log('Step2에서 받은 이메일:', email) // 🔥 확인용 로그
 
   // 닉네임 중복 확인 Mutation
   const nicknameMutation = useMutation({
     mutationFn: () => fetchCheckNickname(nickname),
     onSuccess: (data) => {
-      if (data) {
-        alert('이미 사용 중인 닉네임입니다.')
+      if (!nickname.trim()) return // 닉네임이 비어있으면 중단
+      setNicknameChecked(true) // 응답이 오면 확인 여부 true 설정
+      if (data === true) {
+        // 서버에서 true 반환하면 중복됨
         setIsNicknameValid(false)
+        setNicknameError('이미 사용 중인 닉네임입니다.') // 오류 메시지 표시
       } else {
         setIsNicknameValid(true)
+        setNicknameError('') // 오류 메시지 초기화
       }
     },
     onError: (error) => {
-      console.error('닉네임 중복 확인 상태:', error)
+      console.error('닉네임 중복 확인 오류:', error)
       alert('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.')
     },
   })
@@ -57,10 +65,12 @@ const SignupStep2 = () => {
   const studentNumberMutation = useMutation({
     mutationFn: () => fetchCheckNumber(studentNumber),
     onSuccess: (data) => {
-      if (data?.isDuplicate) {
-        setIsStudentNumberValid(false) // 중복됨
+      if (!studentNumber.trim()) return
+      if (data === true) {
+        // 서버에서 true 반환하면 중복됨
+        setIsStudentNumberValid(false)
       } else {
-        setIsStudentNumberValid(true) // 사용 가능
+        setIsStudentNumberValid(true)
       }
     },
     onError: (error) => {
@@ -78,17 +88,55 @@ const SignupStep2 = () => {
         nickname,
         name,
         password,
-        confirmPassword,
+        confirmpassword,
       }),
     onSuccess: () => {
       alert('회원가입이 완료되었습니다.')
       navigate('/account/signup/interest')
     },
     onError: (error) => {
-      console.error('회원가입 실패:', error)
-      alert('회원가입에 실패했습니다. 다시 시도해주세요.')
+      // console.error('회원가입 실패:', error)
+      // alert('회원가입에 실패했습니다. 다시 시도해주세요.')
+      console.error('회원가입 실패:', error.response?.data || error.message) // ✅ 응답 메시지 확인
+      alert(`회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`)
     },
   })
+
+  // 학번 중복 확인 버튼 클릭 시 실행 함수 (빈 값 체크 추가)
+  const handleCheckStudentNumber = () => {
+    if (!studentNumber.trim()) {
+      setStudentNumberError('학번을 입력해주세요.')
+      return
+    }
+    studentNumberMutation.mutate()
+  }
+
+  // 학번 입력 시 오류 메시지 초기화
+  const handleStudentNumberChange = (e) => {
+    const newValue = e.target.value
+    setStudentNumber(newValue)
+    setStudentNumberError('') // 오류 메시지 초기화
+    setIsStudentNumberValid(null) // 학번 인증 상태 초기화 (null로 변경)
+  }
+
+  // 닉네임 입력 시 상태 초기화
+  const handleNicknameChange = (e) => {
+    const newValue = e.target.value
+    setNickname(newValue)
+    setNicknameError('') // 오류 메시지 초기화
+    setIsNicknameValid(null) // 인증 상태 초기화
+    setNicknameChecked(false) // 확인 여부 초기화
+  }
+
+  // 닉네임 중복 확인 버튼 클릭 시 실행
+  const handleCheckNickname = () => {
+    if (!nickname.trim()) {
+      // 빈 값이면 오류 메시지 표시
+      setNicknameError('닉네임을 입력해주세요.')
+      return
+    }
+    nicknameMutation.mutate()
+  }
 
   // 비밀번호 확인 함수
   const handleConfirmPasswordChange = (e) => {
@@ -96,44 +144,55 @@ const SignupStep2 = () => {
     setPasswordError(password && e.target.value && password !== e.target.value)
   }
 
+  // 회원가입 버튼 클릭
   const handleSignup = () => {
-    // 🔥 필수 입력값 체크
-    if (!studentNumber) {
+    console.log('회원가입 요청 데이터:', {
+      studentNumber,
+      email,
+      nickname,
+      name,
+      password,
+      confirmpassword,
+    }) // 🔥 요청 데이터 확인
+
+    // 필수 입력값 체크
+    if (!studentNumber.trim()) {
+      setStudentNumberError('학번을 입력해주세요.')
       alert('학번을 입력해주세요.')
       return
     }
-    if (!isStudentNumberValid) {
+    if (isStudentNumberValid !== true) {
       alert('학번 중복 확인을 해주세요.')
       return
     }
-    if (!name) {
+    if (!name.trim()) {
       alert('이름을 입력해주세요.')
       return
     }
-    if (!nickname) {
+    if (!nickname.trim()) {
       alert('닉네임을 입력해주세요.')
       return
     }
-    if (!isNicknameValid) {
+    if (isNicknameValid !== true) {
       alert('닉네임 중복 확인을 해주세요.')
       return
     }
-    if (!password || !confirmPassword) {
+    if (!password.trim() || !confirmpassword.trim()) {
       setPasswordError(true)
       confirmPasswordRef.current.focus()
-      return
+      return false
     }
-    if (password !== confirmPassword) {
+    if (password !== confirmpassword) {
       setPasswordError(true)
       confirmPasswordRef.current?.focus()
-      return
+      return false
     }
     if (!termsChecked || !privacyChecked) {
       setTermsError(true)
-      return
+      return false
     }
 
-    // 🔥 회원가입 API 실행
+    // 회원가입 API 실행
     signupMutation.mutate()
   }
 
@@ -157,18 +216,26 @@ const SignupStep2 = () => {
                 type="text"
                 placeholder="학번을 입력하세요."
                 value={studentNumber}
-                onChange={(e) => setStudentNumber(e.target.value)}
+                onChange={handleStudentNumberChange}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
               <button
-                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
-                onClick={() => studentNumberMutation.mutate()} //
-                disabled={studentNumberMutation.isLoading} //
+                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold mb-4 transition-all
+    ${!studentNumber.trim() || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
+                onClick={handleCheckStudentNumber}
+                disabled={
+                  !studentNumber.trim() || studentNumberMutation.isLoading
+                }
               >
                 {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
 
               {/* 학번 인증 결과 메시지 */}
+              {studentNumberError && (
+                <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                  {studentNumberError}
+                </p>
+              )}
               {isStudentNumberValid === true && (
                 <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
                   인증이 완료되었습니다.
@@ -188,7 +255,7 @@ const SignupStep2 = () => {
                 <input
                   type="email"
                   value={email}
-                  disabled // 🔥 이메일은 변경 불가능하게 설정
+                  disabled // 이메일은 변경 불가능하게 설정
                   className="h-12 w-full bg-ssacle-gray-sm rounded-full px-6 text-lg text-ssacle-black cursor-not-allowed"
                 />
                 <p className="text-ssacle-blue text-sm mt-1 mb-4">
@@ -221,22 +288,38 @@ const SignupStep2 = () => {
                 type="text"
                 placeholder="사용할 닉네임을 입력해 주세요."
                 value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
+                onChange={handleNicknameChange}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
-
               <button
-                className="col-span-1 col-start-6 h-12 bg-ssacle-blue rounded-full text-white text-base font-bold mb-4"
-                onClick={() => nicknameMutation.mutate()} // ✅ 닉네임 중복 확인 실행
-                disabled={nicknameMutation.isLoading} // 로딩 중이면 버튼 비활성화
+                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold mb-4 transition-all
+                  ${!nickname.trim() || nicknameMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
+                onClick={handleCheckNickname} // 중복 확인 실행
+                disabled={!nickname.trim() || nicknameMutation.isLoading}
               >
                 {nicknameMutation.isLoading ? '확인 중...' : '중복확인'}
               </button>
+
+              {/* 닉네임 인증 결과 메시지 */}
+              {nicknameChecked && ( // 응답이 오면 메시지 표시
+                <>
+                  {isNicknameValid === true && (
+                    <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
+                      사용 가능한 닉네임입니다.
+                    </p>
+                  )}
+                  {isNicknameValid === false && (
+                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                      {nicknameError}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
 
+            {/* 비밀번호 입력 */}
             <div className="grid grid-cols-6 gap-4">
-              {/* 비밀번호 입력 */}
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 비밀번호 *
               </label>
@@ -254,7 +337,7 @@ const SignupStep2 = () => {
               <input
                 type="password"
                 placeholder="비밀번호를 한번 더 입력해 주세요"
-                value={confirmPassword}
+                value={confirmpassword}
                 onChange={handleConfirmPasswordChange} // 실시간 검증 함수 호출
                 ref={confirmPasswordRef}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
