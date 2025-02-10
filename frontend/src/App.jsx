@@ -1,10 +1,15 @@
 import AppRoutes from '@/routes/AppRoutes.jsx'
 import './App.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 function App() {
   return (
     <>
-      <AppRoutes />
+      <QueryClientProvider client={queryClient}>
+        <AppRoutes />
+      </QueryClientProvider>
     </>
   )
 }

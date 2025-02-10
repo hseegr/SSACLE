@@ -18,6 +18,7 @@ import AdminBaseLayout from '@/components/layout/AdminBaseLayout'
 import BoardDetailPage from '@/pages/Board/BoardDetailPage'
 import BoardFormPage from '@/pages/Board/BoardFormPage'
 import FreeBoardPage from '@/pages/Board/FreeBoardPage'
+import SsaprintDetailPage from '@/pages/Ssaprint/SsaprintDetailPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
         path: '/ssaprint',
         children: [
           { index: true, element: <SsaprintPage /> },
-          { path: ':sprintId', element: <h1>sprintId</h1> },
+          { path: ':sprintId', element: <SsaprintDetailPage /> },
         ],
       },
 

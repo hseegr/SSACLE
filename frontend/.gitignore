@@ -23,3 +23,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 백엔드 파일
+.idea
+.gradle
+**/build/
+gradle-app.setting
+*.jar
+.classpath
+.project
+*.hprof
+gradle-wrapper.properties
+
+.env.*
+.env
+
+

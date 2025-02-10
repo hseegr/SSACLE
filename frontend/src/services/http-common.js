@@ -1,31 +1,57 @@
-// 여기에 axios 인스턴스 생성
-
 import axios from 'axios'
 
 // Axios 인스턴스 생성
 const httpCommon = axios.create({
-  baseURL: 'http://localhost:5174/',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: '/api/v1',
+  headers: { 'Content-Type': 'application/json' },
   timeout: 5000,
   withCredentials: true,
 })
 
-// 응답 인터셉터: 공통적인 에러 처리
-httpCommon.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      const { status } = error.response
+// Access Token 저장 함수 (Bearer 제거)
+const saveAccessToken = (token) => {
+  if (token) localStorage.setItem('accessToken', token.replace('Bearer ', ''))
+}
 
-      if (status === 401) {
-        console.error('401 Unauthorized: 인증 실패')
-        window.location.href = '/login' // 로그인 페이지로 이동
-      } else if (status >= 500) {
-        console.error('서버 오류 발생!')
-        window.location.href = '/error' // 에러 페이지로 이동
-      }
+// Access Token 갱신 함수
+const refreshAccessToken = async () => {
+  try {
+    const { headers } = await axios.post(
+      `${BASE_URL}/api/v1/refreshtoken`,
+      {},
+      { withCredentials: true }
+    )
+    const newAccessToken = headers['authorization']
+    saveAccessToken(newAccessToken)
+    return newAccessToken
+  } catch (error) {
+    console.error('❌ 토큰 갱신 실패:', error)
+    window.location.href = '/login'
+    throw error
+  }
+}
+
+// 요청 인터셉터: Access Token 추가
+httpCommon.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem('accessToken')
+  if (accessToken) config.headers['Authorization'] = `Bearer ${accessToken}`
+  return config
+})
+
+// 응답 인터셉터: 401 처리 + 토큰 갱신
+httpCommon.interceptors.response.use(
+  (response) => {
+    saveAccessToken(response.headers['authorization']) // 새 토큰이 오면 저장
+    return response
+  },
+  async (error) => {
+    if (error.response?.status === 401) {
+      console.error('🔄 401 Unauthorized: 액세스 토큰 갱신 시도')
+
+      const newAccessToken = await refreshAccessToken()
+      error.config.headers['Authorization'] =
+        `Bearer ${newAccessToken.replace('Bearer ', '')}`
+      return httpCommon(error.config)
     }
     return Promise.reject(error)
   }

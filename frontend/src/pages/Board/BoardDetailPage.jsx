@@ -66,7 +66,7 @@ const BoardDetailPage = () => {
               : null,
         })
 
-        // 댓글 데이터 설정 (임시 데이터)
+        // 댓글 데이터 설정 (임시 데이터 - 대댓글 포함)
         setComments([
           {
             id: 1,
@@ -74,6 +74,17 @@ const BoardDetailPage = () => {
             author: '작성자1',
             content: '좋은 글이네요!',
             createdAt: '2025-01-23T10:00:00',
+            replies: [
+              {
+                id: 3,
+                userId: 'user789',
+                author: '작성자3',
+                parentId: 1,
+                parentAuthor: '작성자1',
+                content: '저도 동의합니다!',
+                createdAt: '2025-01-23T10:30:00',
+              },
+            ],
           },
           {
             id: 2,
@@ -81,6 +92,7 @@ const BoardDetailPage = () => {
             author: '작성자2',
             content: '참고가 많이 됐습니다.',
             createdAt: '2025-01-23T11:00:00',
+            replies: [],
           },
         ])
       } catch (error) {
@@ -143,11 +155,12 @@ const BoardDetailPage = () => {
     try {
       // 실제로는 API 호출
       const newComment = {
-        id: comments.length + 1,
+        id: Math.max(...comments.map((c) => c.id)) + 1,
         userId: currentUserId,
         author: '현재 사용자',
         content,
         createdAt: new Date().toISOString(),
+        replies: [],
       }
       setComments([...comments, newComment])
     } catch (error) {
@@ -160,12 +173,23 @@ const BoardDetailPage = () => {
   const handleCommentEdit = async (commentId, newContent) => {
     try {
       // 실제로는 API 호출
-      setComments(
-        comments.map((comment) =>
-          comment.id === commentId
-            ? { ...comment, content: newContent }
-            : comment
-        )
+      setComments((prevComments) =>
+        prevComments.map((comment) => {
+          if (comment.id === commentId) {
+            return { ...comment, content: newContent }
+          }
+          if (comment.replies) {
+            return {
+              ...comment,
+              replies: comment.replies.map((reply) =>
+                reply.id === commentId
+                  ? { ...reply, content: newContent }
+                  : reply
+              ),
+            }
+          }
+          return comment
+        })
       )
     } catch (error) {
       console.error('댓글 수정 실패:', error)
@@ -177,10 +201,53 @@ const BoardDetailPage = () => {
   const handleCommentDelete = async (commentId) => {
     try {
       // 실제로는 API 호출
-      setComments(comments.filter((comment) => comment.id !== commentId))
+      setComments((prevComments) =>
+        prevComments.filter((comment) => {
+          if (comment.id === commentId) return false
+          if (comment.replies) {
+            comment.replies = comment.replies.filter(
+              (reply) => reply.id !== commentId
+            )
+          }
+          return true
+        })
+      )
     } catch (error) {
       console.error('댓글 삭제 실패:', error)
       alert('댓글 삭제에 실패했습니다.')
+    }
+  }
+
+  // 대댓글 작성 핸들러
+  const handleReplySubmit = async (parentId, content) => {
+    try {
+      const parentComment = comments.find((c) => c.id === parentId)
+      if (!parentComment) throw new Error('원 댓글을 찾을 수 없습니다.')
+
+      const newReply = {
+        id:
+          Math.max(
+            ...comments.map((c) => c.id),
+            ...comments.flatMap((c) => c.replies?.map((r) => r.id) || [])
+          ) + 1,
+        userId: currentUserId,
+        author: '현재 사용자',
+        parentId,
+        parentAuthor: parentComment.author,
+        content,
+        createdAt: new Date().toISOString(),
+      }
+
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === parentId
+            ? { ...comment, replies: [...(comment.replies || []), newReply] }
+            : comment
+        )
+      )
+    } catch (error) {
+      console.error('답글 작성 실패:', error)
+      alert('답글 작성에 실패했습니다.')
     }
   }
 
@@ -277,6 +344,7 @@ const BoardDetailPage = () => {
           currentUserId={currentUserId}
           onDelete={handleCommentDelete}
           onEdit={handleCommentEdit}
+          onReply={handleReplySubmit}
         />
         <div className="mt-4">
           <CommentForm onSubmit={handleCommentSubmit} />
