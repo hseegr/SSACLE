@@ -34,8 +34,8 @@ public interface BoardSwaggerController {
             @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = Board.class))),
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content)
     })
-    @GetMapping("/{id}")
-    ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable Long boardId);
+    @GetMapping("/{boardId}")
+    ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable("boardId") Long boardId);
 
     /** 📌 3. 게시글 생성 */
     @Operation(summary = "게시글 생성", description = "JWT 인증이 필요한 API로, 새로운 게시글을 생성합니다.")

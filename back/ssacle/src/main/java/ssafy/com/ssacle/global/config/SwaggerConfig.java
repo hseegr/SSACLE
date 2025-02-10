@@ -31,7 +31,7 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("AccessTokenAuth");
 
         return new OpenAPI()
-                .servers(List.of(new Server().url("https://i12a402.p.ssafy.io").description("Production Server"), new Server().url("http://i12a402.p.ssafy.io:8080").description("Production Server")))
+                .servers(List.of(new Server().url("https://i12a402.p.ssafy.io").description("Production Server"), new Server().url("http://i12a402.p.ssafy.io:8080").description("Production Server"), new Server().url("http://localhost:8080/").description("Production Server")))
                 .components(new Components().addSecuritySchemes("AccessTokenAuth", securityScheme))
                 .addSecurityItem(securityRequirement)
                 .info(info);
