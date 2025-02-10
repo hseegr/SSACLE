@@ -48,14 +48,14 @@ const SprintBasicInfo = ({ sprint }) => {
     : []
 
   return (
-    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[7rem] w-[52rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
+    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[7rem] w-[47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 제목 및 설명 */}
       <div className="flex flex-col gap-0.5">
         <h3 className="text-base font-bold">
           {sprint.name || '스프린트 이름 없음'}
         </h3>
         <p className="text-xs text-gray-600">
-          {sprint.description || '설명 없음'}
+          {sprint.basicDescription || '설명 없음'}
         </p>
       </div>
 

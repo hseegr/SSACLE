@@ -35,10 +35,13 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         {/* 요약 정보 */}
         <div className="w-[18rem] flex-shrink-0 h-auto flex">
           <SprintSummary
-            recommendedFor={sprintData.recommended_for}
-            benefits={sprintData.benefits}
-            participation={sprintData.sprint.participation}
-            recruit={sprintData.sprint.recruit}
+            recommendedFor={sprintData.sprint.recommendedFor}
+            benefits={[
+              '📄 이전 참가자들의 노트 열람 가능 (총 10개 노트)',
+              '🏅 우수 발표자 선정 시 100 피클 지급',
+            ]}
+            participation={sprintData.sprint.currentMembers}
+            recruit={sprintData.sprint.maxMembers}
           />
         </div>
       </div>
@@ -50,7 +53,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         </div>
 
         {/* 참여 버튼 */}
-        <div className="w-[18rem] flex-shrink-0">
+        <div className="w-[17rem] flex-shrink-0">
           <Button className="w-full" onClick={() => setIsOpen(true)}>
             스프린트 참여하기
           </Button>

@@ -8,7 +8,7 @@ const SprintDetail = ({ sprint }) => {
   if (!sprint) return null
 
   return (
-    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[100rem] w-[52rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
+    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[100rem] w-47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 개요 */}
       {/* <SprintOverview overview={sprint.overview} /> */}
 
