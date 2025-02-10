@@ -12,6 +12,7 @@ const BOARD_TITLES = {
   legend: '🏆 명예의 전당',
   qna: 'Q 질의응답',
   ssaguman: '싸구만',
+  bulletin: '자유',
 }
 
 const BoardDetailPage = () => {
