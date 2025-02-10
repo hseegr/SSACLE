@@ -2,9 +2,9 @@
 // import SprintCurriculum from "./SprintCurriculum";
 // import SprintProgress from "./SprintProgress";
 // import SprintRecommendation from "./SprintRecommendation";
-// import SprintBenefits from "./SprintBenefits";
+import SprintBenefits from './SprintBenefits'
 
-const SprintDetail = ({ sprint }) => {
+const SprintDetail = ({ sprint, benefits }) => {
   if (!sprint) return null
 
   return (
@@ -22,7 +22,7 @@ const SprintDetail = ({ sprint }) => {
       {/* <SprintRecommendation recommendedFor={sprint.recommended_for} /> */}
 
       {/* 수료 후 혜택 */}
-      {/* <SprintBenefits benefits={sprint.benefits} /> */}
+      <SprintBenefits benefits={benefits} />
     </div>
   )
 }

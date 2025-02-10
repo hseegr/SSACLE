@@ -16,6 +16,11 @@ const SsaprintDetailLayout = ({ sprintData }) => {
     )
   }
 
+  const benefits = [
+    '📄 이전 참가자들의 노트 열람 가능 (총 10개 노트)',
+    '🏅 우수 발표자 선정 시 100 피클 지급',
+  ]
+
   return (
     <div className="mt-16 flex flex-col gap-4">
       {/* 싸프린트 Info 제목 + 두꺼운 선 */}
@@ -36,10 +41,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         <div className="w-[18rem] flex-shrink-0 h-auto flex">
           <SprintSummary
             recommendedFor={sprintData.sprint.recommendedFor}
-            benefits={[
-              '📄 이전 참가자들의 노트 열람 가능 (총 10개 노트)',
-              '🏅 우수 발표자 선정 시 100 피클 지급',
-            ]}
+            benefits={benefits}
             participation={sprintData.sprint.currentMembers}
             recruit={sprintData.sprint.maxMembers}
           />
@@ -49,7 +51,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
       <div className="flex justify-between items-start gap-4 h-auto">
         {/* 상세 정보 */}
         <div className="flex-1">
-          <SprintDetail sprint={sprintData.sprint} />
+          <SprintDetail sprint={sprintData.sprint} benefits={benefits} />
         </div>
 
         {/* 참여 버튼 */}
