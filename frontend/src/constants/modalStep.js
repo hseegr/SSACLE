@@ -1,7 +1,12 @@
+import { usePresentationModalStore } from '@/store/usePresentaionModalStore'
+
 export const MODAL_STEP = {
+  // 발표페이지 접속 환영 모달
+  WELCOME: 'welcome',
   // 모든 참여자 접속 완료
   READY: 'ready',
   // 발표자 벤
+
   PRESENTER_BEN: 'presenter_ben',
   // 발표자 뽑기
   PRESENTER_SELECTING: 'presenter_selecting',
@@ -30,7 +35,24 @@ export const MODAL_STEP = {
 }
 
 export const MODAL_STEP_CONFIG = {
+  // ? 발표페이지 접속 환영 모달
+  [MODAL_STEP.WELCOME]: {
+    title: {
+      before: '환영합니다!',
+    },
+    description: {
+      before: '비디오 및 음성 통화를 활성화 해주세요.',
+    },
+    buttons: [
+      {
+        text: '확인',
+        onClick: usePresentationModalStore.getState().closeModal,
+        style: '',
+      },
+    ],
+  },
   // ? 모든 참여자 접속 완료
+
   [MODAL_STEP.READY]: {
     title: {
       before: '모든 참여자가 접속 완료하였습니다.',

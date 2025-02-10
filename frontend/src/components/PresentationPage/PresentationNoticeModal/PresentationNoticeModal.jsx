@@ -8,12 +8,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { usePresentationModalStore } from '@/store/usePresentaionModalStore'
 
-const PresentationNoticeModal = ({ isOpen, setIsOpen, modalStep }) => {
+const PresentationNoticeModal = () => {
+  const { isModalOpen, modalStep } = usePresentationModalStore()
   const { title, description, buttons } = MODAL_STEP_CONFIG[modalStep]
 
   return (
-    <Dialog open={isOpen} modal className="px-10">
+    <Dialog open={isModalOpen} modal className="px-10">
       <DialogContent
         className="gap-8"
         onInteractOutside={(e) => e.preventDefault()}
@@ -31,7 +33,7 @@ const PresentationNoticeModal = ({ isOpen, setIsOpen, modalStep }) => {
             <Button
               key={text + index}
               className={`w-1/3 hover:bg-ssacle-blue/80 bg-ssacle-blue text-white rounded-full font-KR ${style}`}
-              onClick={() => onClick(setIsOpen)}
+              onClick={onClick}
             >
               {text}
             </Button>
