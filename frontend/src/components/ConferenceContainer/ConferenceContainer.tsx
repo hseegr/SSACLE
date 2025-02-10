@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import VideoLayout from '@/components/layout/VideoLayout'
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
 import { useConferenceEvents } from '@/hooks/useConferenceEvents'
+import { useOpenViduStore } from '@/store/useOpenViduStore'
 
 const ConferenceContainer = ({
   sessionId,
@@ -21,6 +22,11 @@ const ConferenceContainer = ({
   const [publisher, setPublisher] = useState<Publisher | null>(null)
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const {
+    setPublisher: setOpenViduPublisher,
+    isMicOn: openViduIsMicOn,
+    isCameraOn: openViduIsCameraOn,
+  } = useOpenViduStore()
 
   const publisherRef = useRef<HTMLVideoElement | null>(null)
   const subscribersRefs = useRef<HTMLVideoElement[]>([])
@@ -64,18 +70,32 @@ const ConferenceContainer = ({
   }
 
   const publisherInitialize = async (OV: OpenVidu, newSession: Session) => {
-    const newPublisher = OV.initPublisher(undefined, {
-      videoSource: undefined,
-      audioSource: undefined,
-      publishAudio: true,
-      publishVideo: true,
-      resolution: '640x640',
-      frameRate: 30,
-      insertMode: 'APPEND',
-      mirror: false,
-    })
+    try {
+      const newPublisher = await OV.initPublisher(undefined, {
+        videoSource: undefined,
+        audioSource: undefined,
+        publishAudio: openViduIsMicOn,
+        publishVideo: openViduIsCameraOn,
+        resolution: '640x640',
+        frameRate: 30,
+        insertMode: 'APPEND',
+        mirror: false,
+      })
 
-    return newPublisher
+      setOpenViduPublisher(newPublisher)
+      await newSession.publish(newPublisher)
+
+      setPublisher(newPublisher)
+      setSession(newSession)
+
+      if (publisherRef.current) {
+        publisherRef.current.srcObject = newPublisher.stream.getMediaStream()
+      }
+      return newPublisher
+    } catch (error) {
+      console.error('Publisher 초기화 실패:', error)
+      throw error
+    }
   }
 
   useEffect(() => {
@@ -92,10 +112,6 @@ const ConferenceContainer = ({
         console.log('🔹 newSession', newSession)
         await newSession.connect(token)
         const newPublisher = await publisherInitialize(openvidu, newSession)
-        await newSession.publish(newPublisher)
-
-        setPublisher(newPublisher)
-        setSession(newSession)
 
         if (publisherRef.current) {
           publisherRef.current.srcObject = newPublisher.stream.getMediaStream()
@@ -112,14 +128,6 @@ const ConferenceContainer = ({
   useEffect(() => {
     updateSubscriberVideos()
   }, [subscribers])
-
-  const itemsPerPage = 6
-  const displayedStreams = useMemo(() => {
-    return subscribersRefs.current.slice(
-      currentPage * itemsPerPage,
-      (currentPage + 1) * itemsPerPage
-    )
-  }, [currentPage, itemsPerPage])
 
   return (
     <div className="w-full h-[calc(100vh-11rem)]">
