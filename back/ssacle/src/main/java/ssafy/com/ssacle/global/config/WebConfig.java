@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:4443",
                         "http://localhost:5000",
                         "http://i12a402.p.ssafy.io:8080",
-                        "https://i12a402.p.ssafy.io:8080"
+                        "https://i12a402.p.ssafy.io"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
