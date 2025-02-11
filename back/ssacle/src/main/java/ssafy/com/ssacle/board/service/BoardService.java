@@ -46,6 +46,7 @@ public class BoardService {
                     .time(board.getCreatedAt())
                     .tags(splitTags(board.getTag()))
                     .build();
+            list.add(boardResponseDTO);
         }
         return list;
     }

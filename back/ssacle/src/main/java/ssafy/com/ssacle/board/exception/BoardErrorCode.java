@@ -46,8 +46,10 @@ public enum BoardErrorCode implements ErrorCode {
     BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BOARD_012", "게시글 수정 중 오류가 발생했습니다."),
 
     /** 📌 13. 게시글 삭제 중 서버 오류 */
-    BOARD_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BOARD_013", "게시글 삭제 중 오류가 발생했습니다.");
+    BOARD_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "BOARD_013", "게시글 삭제 중 오류가 발생했습니다."),
 
+    /** 📌 14. 게시글 타입을 찾을 수 없는 경우 */
+    BOARDTYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD_014", "해당 게시글 타입을 찾을 수 없습니다.");
     private final HttpStatus status;
     private final String code;
     private final String message;
