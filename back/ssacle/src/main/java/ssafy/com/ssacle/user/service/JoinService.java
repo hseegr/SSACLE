@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.exception.CategoryErrorCode;
+import ssafy.com.ssacle.category.exception.CategoryException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.user.domain.Role;
 import ssafy.com.ssacle.user.domain.User;
@@ -59,15 +61,13 @@ public class JoinService {
                 .orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
 
 
-        List<Long> categoryIds = selectInterestDTO.getInterestCategoryIds();
-        if (categoryIds != null && !categoryIds.isEmpty()) {
-            for (Long categoryId : categoryIds) {
-                Optional<Category> categoryOpt = categoryRepository.findById(categoryId);
-                categoryOpt.ifPresent(category -> {
-                    UserCategory userCategory = new UserCategory(user, category);
-                    userCategoryRepository.save(userCategory);
-                    user.addCategory(userCategory);
-                });
+        List<String> categoryNames = selectInterestDTO.getInterestCategoryNames();
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            for (String name : categoryNames) {
+                Category category = categoryRepository.findByCategoryName(name).orElseThrow(()->new CategoryException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+                UserCategory userCategory = new UserCategory(user, category);
+                userCategoryRepository.save(userCategory);
+                user.addCategory(userCategory);
             }
         }
     }

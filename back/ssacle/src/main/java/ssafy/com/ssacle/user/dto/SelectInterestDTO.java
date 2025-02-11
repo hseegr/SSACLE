@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 public class SelectInterestDTO {
     @NotNull
-    private List<Long> interestCategoryIds; // 사용자가 선택한 관심 카테고리 ID 목록
+    private List<String> interestCategoryNames; // 사용자가 선택한 관심 카테고리 ID 목록
 }
