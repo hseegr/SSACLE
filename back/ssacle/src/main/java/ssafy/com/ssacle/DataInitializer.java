@@ -81,22 +81,18 @@ public class DataInitializer {
             // 상위 카테고리 생성
             Category backEnd = Category.builder()
                     .categoryName("Back-end")
-                    .isLeaf(false)
                     .build();
 
             Category frontEnd = Category.builder()
                     .categoryName("Front-end")
-                    .isLeaf(false)
                     .build();
 
             Category infra = Category.builder()
                     .categoryName("Infra")
-                    .isLeaf(false)
                     .build();
 
             Category database = Category.builder()
                     .categoryName("DataBase")
-                    .isLeaf(false)
                     .build();
 
             categoryRepository.save(backEnd);
@@ -106,41 +102,41 @@ public class DataInitializer {
 
             // Back-end 하위 카테고리
             List<Category> backEndChildren = List.of(
-                    Category.builder().categoryName("Spring").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Spring.jpeg").build(),
-                    Category.builder().categoryName("Django").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/django.png").build(),
-                    Category.builder().categoryName("Node.js").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/node.png").build(),
-                    Category.builder().categoryName("NestJS").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/nest.png").build(),
-                    Category.builder().categoryName("Ruby on Rails").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/ruby.png").build(),
-                    Category.builder().categoryName("ASP.NET").parent(backEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/asp.png").build()
+                    Category.builder().categoryName("Spring").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Spring.jpeg").build(),
+                    Category.builder().categoryName("Django").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/django.png").build(),
+                    Category.builder().categoryName("Node.js").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/node.png").build(),
+                    Category.builder().categoryName("NestJS").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/nest.png").build(),
+                    Category.builder().categoryName("Ruby on Rails").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/ruby.png").build(),
+                    Category.builder().categoryName("ASP.NET").parent(backEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/asp.png").build()
             );
 
             // Front-end 하위 카테고리
             List<Category> frontEndChildren = List.of(
-                    Category.builder().categoryName("React").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/react.png").build(),
-                    Category.builder().categoryName("Vue.js").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/vue.png").build(),
-                    Category.builder().categoryName("Angular").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/angular.png").build(),
-                    Category.builder().categoryName("Svelte").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/svelte.png").build(),
-                    Category.builder().categoryName("Next.js").parent(frontEnd).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/next.png").build()
+                    Category.builder().categoryName("React").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/react.png").build(),
+                    Category.builder().categoryName("Vue.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/vue.png").build(),
+                    Category.builder().categoryName("Angular").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/angular.png").build(),
+                    Category.builder().categoryName("Svelte").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/svelte.png").build(),
+                    Category.builder().categoryName("Next.js").parent(frontEnd).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/next.png").build()
 
             );
 
             // Infra 하위 카테고리
             List<Category> infraChildren = List.of(
-                    Category.builder().categoryName("Docker").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/docker.png").build(),
-                    Category.builder().categoryName("Kubernetes").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/kuber.png").build(),
-                    Category.builder().categoryName("AWS").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/aws.png").build(),
-                    Category.builder().categoryName("Azure").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/azure.jpeg").build(),
-                    Category.builder().categoryName("Google Cloud").parent(infra).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/google+cloud.png").build()
+                    Category.builder().categoryName("Docker").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/docker.png").build(),
+                    Category.builder().categoryName("Kubernetes").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/kuber.png").build(),
+                    Category.builder().categoryName("AWS").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/aws.png").build(),
+                    Category.builder().categoryName("Azure").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/azure.jpeg").build(),
+                    Category.builder().categoryName("Google Cloud").parent(infra).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/google+cloud.png").build()
             );
 
             // DataBase 하위 카테고리
             List<Category> databaseChildren = List.of(
-                    Category.builder().categoryName("MySQL").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mysql.png").build(),
-                    Category.builder().categoryName("PostgreSQL").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/postgresql.png").build(),
-                    Category.builder().categoryName("MongoDB").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mongodb.png").build(),
-                    Category.builder().categoryName("Redis").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/redis.png").build(),
-                    Category.builder().categoryName("Oracle").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/oracle.png").build(),
-                    Category.builder().categoryName("MariaDB").parent(database).isLeaf(true).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mariadb.png").build()
+                    Category.builder().categoryName("MySQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mysql.png").build(),
+                    Category.builder().categoryName("PostgreSQL").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/postgresql.png").build(),
+                    Category.builder().categoryName("MongoDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mongodb.png").build(),
+                    Category.builder().categoryName("Redis").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/redis.png").build(),
+                    Category.builder().categoryName("Oracle").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/oracle.png").build(),
+                    Category.builder().categoryName("MariaDB").parent(database).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/mariadb.png").build()
             );
 
             // 모든 카테고리 저장
