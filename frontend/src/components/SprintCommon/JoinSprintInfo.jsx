@@ -3,8 +3,6 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 const JoinSprintInfo = ({ sprint, isOpen, setIsOpen }) => {
   if (!sprint) return null
 
-  const tags = sprint.sprint.tags?.split(',') || []
-
   return (
     <div className="p-5 bg-white shadow-md rounded-xl transition-all w-[47rem] min-h-[8rem]">
       {/* 접었을 때 UI */}
@@ -21,16 +19,18 @@ const JoinSprintInfo = ({ sprint, isOpen, setIsOpen }) => {
             {sprint.sprint.basicDescription}
           </p>
 
-          {/* 태그 */}
+          {/* 태그 (majortopic_name & subtopic_name) */}
           <div className="flex gap-2 mt-2">
-            {tags.map((tag, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg"
-              >
-                {tag.trim()}
+            {sprint.sprint.majortopic_name && (
+              <span className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg">
+                {sprint.sprint.majortopic_name}
               </span>
-            ))}
+            )}
+            {sprint.sprint.subtopic_name && (
+              <span className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg">
+                {sprint.sprint.subtopic_name}
+              </span>
+            )}
           </div>
         </div>
 
