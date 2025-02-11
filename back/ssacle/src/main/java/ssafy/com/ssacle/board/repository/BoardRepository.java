@@ -33,4 +33,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT COUNT(b) FROM Board b WHERE b.boardType.name = :boardTypeName")
     int countBoardsByBoardTypeName(@Param("boardTypeName") String boardTypeName);
 
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.boardType.id = :boardTypeId")
+    List<Board> findByBoardTypeId(@Param("boardTypeId") Long boardTypeId);
+
 }

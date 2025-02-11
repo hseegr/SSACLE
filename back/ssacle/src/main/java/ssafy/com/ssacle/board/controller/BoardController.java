@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.board.dto.BoardRequestDTO;
@@ -29,6 +30,12 @@ public class BoardController implements BoardSwaggerController{
     public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
         return ResponseEntity.ok().body(boardService.getAllBoards());
     }
+
+    @Override
+    public ResponseEntity<List<BoardResponseDTO>> getBoardsbyBoardTypeName(String name) {
+        return ResponseEntity.ok().body(boardService.getBoardsbyBoardTypeName(name));
+    }
+
 
     @Override
     public ResponseEntity<BoardResponseDTO> getBoardById(Long boardId) {

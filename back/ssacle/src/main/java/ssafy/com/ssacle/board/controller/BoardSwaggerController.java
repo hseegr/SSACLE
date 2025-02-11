@@ -28,6 +28,13 @@ public interface BoardSwaggerController {
     @GetMapping
     ResponseEntity<List<BoardResponseDTO>> getAllBoards();
 
+    @Operation(summary = "게시판 타입별 게시글 목록 조회", description = "게시판타입 ID를 기반으로 게시글 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = Board.class))),
+            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content)
+    })
+    @GetMapping("/boardtype")
+    ResponseEntity<List<BoardResponseDTO>> getBoardsbyBoardTypeName(@RequestParam("name") String name);
     /** 📌 2. 게시글 상세 조회 */
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID를 기반으로 특정 게시글을 조회합니다.")
     @ApiResponses(value = {
