@@ -108,29 +108,40 @@ const SignupStep2 = () => {
     //     confirmpassword,
     //   }),
     mutationFn: async (userData) => {
-      console.log("📤 회원가입 요청 데이터:", userData)
-      
+      console.log('📤 회원가입 요청 데이터:', userData)
+
       const response = await fetchSignup(userData)
-    
-      console.log("📥 회원가입 응답:", response)
-      return response; // ✅ 정상적으로 응답을 반환함
-    }
+
+      console.log('📥 회원가입 응답:', response)
+      return response // ✅ 정상적으로 응답을 반환함
+    },
     onSuccess: (response) => {
       console.log('✅ 회원가입 성공:', response)
 
-    const userId = response?.data?.userId
-    const nickname = response?.data?.nickname
-    if (userId) {
+      const userId = response?.data?.userId
+      const nickname = response?.data?.nickname
+
+      if (!userId) {
+        // ✅ userId가 없는 경우 예외 처리 추가
+        console.error('❌ userId가 응답에 없음:', response)
+        alert('❌ 회원가입 응답이 올바르지 않습니다. 다시 시도해주세요.')
+        return
+      }
+
       localStorage.setItem('userId', userId)
-      localStorage.setItem('userNickname', nickname)
-      // alert('✅ 회원가입이 완료되었습니다.');
-      navigate('/account/signup/interest'); // ✅ 정상적으로 Interest 페이지로 이동
-    } else {
-      alert('❌ 회원가입 응답이 올바르지 않습니다.')
-    }
-  },
+      if (nickname) {
+        localStorage.setItem('userNickname', nickname)
+      }
+
+      navigate('/account/signup/interest')
+    },
     onError: (error) => {
-      const errorMessage = error.response?.data?.message || '다시 시도해주세요.'
+      const errorMessage =
+        error.response?.data?.message ||
+        (error.message === 'Network Error'
+          ? '서버와 연결할 수 없습니다. 인터넷 연결을 확인해주세요.'
+          : '다시 시도해주세요.')
+
       console.error('❌ 회원가입 실패:', errorMessage)
 
       // 특정 오류 메시지에 따라 사용자 친화적인 메시지 출력 후 페이지 이동
@@ -190,6 +201,16 @@ const SignupStep2 = () => {
 
   // 회원가입 버튼 클릭
   const handleSignup = () => {
+    const userData = {
+      studentNumber,
+      email,
+      nickname,
+      name,
+      password,
+      confirmpassword,
+    }
+
+    console.log('📤 회원가입 요청 데이터 확인:', userData) // 🛑 콘솔 로그 추가
     // 필수 입력값 체크
     if (!studentNumber.trim()) {
       setStudentNumberError('학번을 입력해주세요.')
