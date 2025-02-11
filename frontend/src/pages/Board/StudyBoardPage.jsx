@@ -22,7 +22,7 @@ const StudyBoardPage = () => {
   // 기존 로딩 및 post 관련 state는 제거
   // const [posts, setPosts] = useState([]) // 게시글 목록
   // const [loading, setLoading] = useState(true) // 로딩 상태
-  // const [totalPages, setTotalPages] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1)
