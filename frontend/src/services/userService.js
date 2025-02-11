@@ -42,7 +42,7 @@ export const fetchLogin = (credentials) =>
 export const fetchLogout = async () => {
   try {
     await axios.post(AUTH_END_POINT.LOGOUT)
-    window.location.href = '/login' // 성공 후 페이지 이동
+
   } catch (error) {
     console.error('❌ 로그아웃 실패:', error)
   }
