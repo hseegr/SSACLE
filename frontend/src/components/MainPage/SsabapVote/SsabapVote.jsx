@@ -10,20 +10,8 @@ const SsabapVote = () => {
   const [hasVoted, setHasVoted] = useState(false)
 
   // 점심 메뉴 정보 조회
-  // const {
-  //   data: lunchData,
-  //   isLoading: isLunchLoading,
-  //   isError: isLunchError,
-  //   error: lunchError,
-  // } = useQuery({
-  //   queryKey: ['lunch'],
-  //   queryFn: fetchLunchInfo,
-  //   retry: false,
-  // })
-
-  // 점심 메뉴 정보 조회 -> 디버깅 용
   const {
-    data: lunchData = { date: '', menu: [] }, // 기본값 설정
+    data: lunchData,
     isLoading: isLunchLoading,
     isError: isLunchError,
     error: lunchError,
@@ -32,6 +20,18 @@ const SsabapVote = () => {
     queryFn: fetchLunchInfo,
     retry: false,
   })
+
+  // 점심 메뉴 정보 조회 -> 디버깅 용
+  // const {
+  //   data: lunchData = { date: '', menu: [] }, // 기본값 설정
+  //   isLoading: isLunchLoading,
+  //   isError: isLunchError,
+  //   error: lunchError,
+  // } = useQuery({
+  //   queryKey: ['lunch'],
+  //   queryFn: fetchLunchInfo,
+  //   retry: false,
+  // })
 
   // 투표 결과 조회
   const {
@@ -48,35 +48,35 @@ const SsabapVote = () => {
 
   // 투표 mutation
   // 기존 코드
-  // const { mutate: voteMutate } = useMutation({
-  //   mutationFn: (lunchId) => fetchVoteLunch({ lunch_id: lunchId }),
-  //   onSuccess: () => {
-  //     setHasVoted(true)
-  //     refetchVoteResult()
-  //   },
-  //   onError: (error) => {
-  //     console.error('투표 실패:', error)
-  //     alert('투표에 실패했습니다. 다시 시도해주세요.')
-  //   },
-  // })
-
-  // 투표 mutation
-  // 디버깅 코드
   const { mutate: voteMutate } = useMutation({
-    mutationFn: (lunchId) => {
-      console.log('Voting with data:', { lunch_id: lunchId })
-      return fetchVoteLunch({ lunch_id: lunchId })
-    },
-    onSuccess: (data) => {
-      console.log('Vote success:', data)
+    mutationFn: (lunchId) => fetchVoteLunch({ lunch_id: lunchId }),
+    onSuccess: () => {
       setHasVoted(true)
       refetchVoteResult()
     },
     onError: (error) => {
-      console.error('Vote error details:', error)
+      console.error('투표 실패:', error)
       alert('투표에 실패했습니다. 다시 시도해주세요.')
     },
   })
+
+  // 투표 mutation
+  // 디버깅 코드
+  // const { mutate: voteMutate } = useMutation({
+  //   mutationFn: (lunchId) => {
+  //     console.log('Voting with data:', { lunch_id: lunchId })
+  //     return fetchVoteLunch({ lunch_id: lunchId })
+  //   },
+  //   onSuccess: (data) => {
+  //     console.log('Vote success:', data)
+  //     setHasVoted(true)
+  //     refetchVoteResult()
+  //   },
+  //   onError: (error) => {
+  //     console.error('Vote error details:', error)
+  //     alert('투표에 실패했습니다. 다시 시도해주세요.')
+  //   },
+  // })
 
   // 디버깅용 코드
   // 메뉴 데이터 확인

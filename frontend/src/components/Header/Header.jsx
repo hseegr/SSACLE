@@ -24,7 +24,7 @@ const Header = () => {
       // 로컬에서 토큰 제거
       localStorage.removeItem('accessToken')
       // 페이지 새로고침 대신 홈으로 리다이렉트
-      navigate('account/login', { replace: true })
+      navigate('/account/login', { replace: true })
     } catch (error) {
       console.error('로그아웃 실패:', error)
       alert('로그아웃 중 오류가 발생했습니다.')
@@ -73,7 +73,7 @@ const Header = () => {
         ) : (
           <button
             className="w-5 h-5 flex justify-center items-center"
-            onClick={() => navigate('account/login')}
+            onClick={() => navigate('/account/login')}
           >
             <Lock size={15} className="text-black" />
           </button>
