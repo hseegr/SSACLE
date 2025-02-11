@@ -22,7 +22,7 @@ const refreshAccessToken = async () => {
       {},
       { withCredentials: true }
     )
-    const newAccessToken = headers['authorization']
+    const newAccessToken = headers['Authorization']
     saveAccessToken(newAccessToken)
     return newAccessToken
   } catch (error) {
@@ -42,7 +42,7 @@ httpCommon.interceptors.request.use((config) => {
 // 응답 인터셉터: 401 처리 + 토큰 갱신
 httpCommon.interceptors.response.use(
   (response) => {
-    const authHeader = response.headers['authorization']
+    const authHeader = response.headers['Authorization']
     // 토큰이 있을 때만 저장
     if (authHeader) saveAccessToken(authHeader)
     return response

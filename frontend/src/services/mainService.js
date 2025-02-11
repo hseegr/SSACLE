@@ -24,8 +24,28 @@ export const fetchSsadcupList = async () => {
 
 // 싸밥(식단) 정보 조회 (GET 요청)
 // 기존 코드
+// export const fetchLunchInfo = async () => {
+//   return httpCommon.get(MAIN_END_POINT.LUNCH_INFO)
+// }
+
 export const fetchLunchInfo = async () => {
-  return httpCommon.get(MAIN_END_POINT.LUNCH_INFO)
+  try {
+    console.log('Fetching lunch info...')
+    console.log('Token:', localStorage.getItem('accessToken')) // 토큰 확인
+
+    const response = await httpCommon.get(MAIN_END_POINT.LUNCH_INFO)
+    console.log('Response:', response)
+
+    return response.data
+  } catch (error) {
+    console.error('Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      headers: error.response?.headers,
+    })
+    throw error
+  }
 }
 
 // 싸밥(식단) 정보 조회 (GET 요청)
