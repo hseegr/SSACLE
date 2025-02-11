@@ -76,10 +76,10 @@ public class TokenService {
     }
 
     public void invalidateTokens(HttpServletResponse response) {
-        Cookie refreshCookie = new Cookie("refreshToken", null);
+        Cookie refreshCookie = new Cookie("refreshToken", "");
         refreshCookie.setHttpOnly(true);
         refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(0);
+        refreshCookie.setMaxAge(-1);
         response.addCookie(refreshCookie);
     }
 

@@ -122,7 +122,7 @@ public class UserService {
 
     /** ✅ Request에서 Access Token 추출 */
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("access-token");
+        String bearerToken = request.getHeader("authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
