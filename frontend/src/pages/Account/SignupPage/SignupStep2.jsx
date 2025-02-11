@@ -180,15 +180,6 @@ const SignupStep2 = () => {
 
   // 회원가입 버튼 클릭
   const handleSignup = () => {
-    // console.log('회원가입 요청 데이터:', {
-    //   studentNumber,
-    //   email,
-    //   nickname,
-    //   name,
-    //   password,
-    //   confirmpassword,
-    // }) // 🔥 요청 데이터 확인
-
     // 필수 입력값 체크
     if (!studentNumber.trim()) {
       setStudentNumberError('학번을 입력해주세요.')
@@ -233,7 +224,7 @@ const SignupStep2 = () => {
   return (
     <>
       <div className="w-full h-auto flex justify-center items-center mt-24">
-        <div className="grid grid-cols-12 gap-4 w-full">
+        <div className="grid grid-cols-12 gap-4 shrink-0">
           <div className="col-span-6 col-start-4">
             <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
               회원가입
@@ -246,35 +237,37 @@ const SignupStep2 = () => {
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
                 학번 *
               </label>
-              <input
-                type="text"
-                placeholder="학번을 입력하세요."
-                value={studentNumber}
-                onChange={handleStudentNumberChange}
-                className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
-              />
-              <button
-                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold mb-4 transition-all
+              <>
+                <input
+                  type="text"
+                  placeholder="학번을 입력하세요."
+                  value={studentNumber}
+                  onChange={handleStudentNumberChange}
+                  className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
+                />
+                <button
+                  className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold transition-all
     ${!studentNumber.trim() || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
-                onClick={handleCheckStudentNumber}
-                disabled={
-                  !studentNumber.trim() || studentNumberMutation.isLoading
-                }
-              >
-                {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
-              </button>
+                  onClick={handleCheckStudentNumber}
+                  disabled={
+                    !studentNumber.trim() || studentNumberMutation.isLoading
+                  }
+                >
+                  {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
+                </button>
 
-              {/* 학번 인증 결과 메시지 */}
-              {isStudentNumberValid === true && (
-                <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
-                  인증이 완료되었습니다.
-                </p>
-              )}
-              {isStudentNumberValid === false && (
-                <p className="col-span-4 col-start-3 text-red-500 text-sm">
-                  이미 아이디가 존재합니다.
-                </p>
-              )}
+                {/* 학번 인증 결과 메시지 */}
+                {isStudentNumberValid === true && (
+                  <p className="col-span-4 col-start-3 text-ssacle-blue text-sm pl-5">
+                    인증이 완료되었습니다.
+                  </p>
+                )}
+                {isStudentNumberValid === false && (
+                  <p className="col-span-4 col-start-3 text-red-500 text-sm  pl-5">
+                    ❌ 이미 아이디가 존재합니다.
+                  </p>
+                )}
+              </>
 
               {/* 이메일 */}
               <label className="col-span-2 text-ssacle-black text-xl font-medium py-2">
@@ -287,7 +280,7 @@ const SignupStep2 = () => {
                   disabled // 이메일은 변경 불가능하게 설정
                   className="h-12 w-full bg-ssacle-gray-sm rounded-full px-6 text-lg text-ssacle-black cursor-not-allowed"
                 />
-                <p className="text-ssacle-blue text-sm mt-1 mb-4">
+                <p className="text-ssacle-blue text-sm mt-1 mt-4 pl-5 ">
                   인증이 완료되었습니다.
                 </p>
               </div>
@@ -318,10 +311,10 @@ const SignupStep2 = () => {
                 placeholder="사용할 닉네임을 입력해 주세요."
                 value={nickname}
                 onChange={handleNicknameChange}
-                className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
+                className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
               />
               <button
-                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold mb-4 transition-all
+                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold transition-all
                   ${!nickname.trim() || nicknameMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
                 onClick={handleCheckNickname} // 중복 확인 실행
                 disabled={!nickname.trim() || nicknameMutation.isLoading}
@@ -333,12 +326,12 @@ const SignupStep2 = () => {
               {nicknameChecked && (
                 <>
                   {isNicknameValid === false && (
-                    <p className="col-span-4 col-start-3 text-red-500 text-sm">
+                    <p className="col-span-4 col-start-3 text-red-500 text-sm pl-5">
                       ❌ {nicknameError}
                     </p>
                   )}
                   {isNicknameValid === true && (
-                    <p className="col-span-4 col-start-3 text-ssacle-blue text-sm">
+                    <p className="col-span-4 col-start-3 text-ssacle-blue text-sm pl-5">
                       사용 가능한 닉네임입니다.
                     </p>
                   )}
@@ -369,13 +362,13 @@ const SignupStep2 = () => {
                 value={confirmpassword}
                 onChange={handleConfirmPasswordChange} // 실시간 검증 함수 호출
                 ref={confirmPasswordRef}
-                className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
+                className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
               />
 
               {/* 비밀번호 불일치 메세지 */}
               {passwordError && (
-                <p className="col-span-4 col-start-3 text-red-500 text-sm">
-                  비밀번호가 일치하지 않습니다.
+                <p className="col-span-4 col-start-3 text-red-500 text-sm pl-5">
+                  ❌ 비밀번호가 일치하지 않습니다.
                 </p>
               )}
             </div>
@@ -407,7 +400,7 @@ const SignupStep2 = () => {
             {/* 필수 약관 미동의 시 경고 메세지 */}
             {termsError && (
               <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
-                필수 약관은 동의가 필요합니다.
+                ✅ 필수 약관은 동의가 필요합니다.
               </p>
             )}
 
