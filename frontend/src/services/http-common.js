@@ -8,10 +8,12 @@ const httpCommon = axios.create({
   withCredentials: true,
 })
 
-// Access Token 저장 함수 (Bearer 제거)
+// Access Token 저장 함수
 const saveAccessToken = (token) => {
-  const atoken = token.replace('Bearer ', '')
-  if (token) localStorage.setItem('accessToken', atoken)
+  if (token && token.startsWith('Bearer ')) {
+    const atoken = token.replace('Bearer ', '')
+    localStorage.setItem('accessToken', atoken)
+  }
 }
 
 // Access Token 갱신 함수
@@ -22,9 +24,15 @@ const refreshAccessToken = async () => {
       {},
       { withCredentials: true }
     )
-    const newAccessToken = headers['Authorization']
-    saveAccessToken(newAccessToken)
-    return newAccessToken
+    const newAccessToken = headers['authorization'] // ✅ 소문자로 변경
+
+    if (newAccessToken) {
+      saveAccessToken(newAccessToken)
+      return newAccessToken
+    } else {
+      console.error('❌ 새 액세스 토큰이 응답에 없습니다.')
+      throw new Error('새 액세스 토큰 없음')
+    }
   } catch (error) {
     console.error('❌ 토큰 갱신 실패:', error)
     window.location.href = '/login'
@@ -42,19 +50,26 @@ httpCommon.interceptors.request.use((config) => {
 // 응답 인터셉터: 401 처리 + 토큰 갱신
 httpCommon.interceptors.response.use(
   (response) => {
-    const authHeader = response.headers['Authorization']
-    // 토큰이 있을 때만 저장
+    const authHeader = response.headers['authorization'] // 공백 제거
     if (authHeader) saveAccessToken(authHeader)
+    else console.log('❌ 응답 헤더에 Authorization 없음')
     return response
   },
   async (error) => {
     if (error.response?.status === 401) {
       console.error('🔄 401 Unauthorized: 액세스 토큰 갱신 시도')
 
-      const newAccessToken = await refreshAccessToken()
-      error.config.headers['Authorization'] =
-        `Bearer ${newAccessToken.replace('Bearer ', '')}`
-      return httpCommon(error.config)
+      try {
+        const newAccessToken = await refreshAccessToken()
+        if (newAccessToken) {
+          error.config.headers['Authorization'] =
+            `Bearer ${newAccessToken.replace('Bearer ', '')}`
+          return httpCommon(error.config) // ✅ 요청 재시도
+        }
+      } catch (refreshError) {
+        console.error('❌ 토큰 갱신 후에도 오류 발생:', refreshError)
+        return Promise.reject(refreshError)
+      }
     }
     return Promise.reject(error)
   }
