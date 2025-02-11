@@ -70,7 +70,7 @@ export const MAIN_END_POINT = {
 
   // AI 기사 관련
   // GET 요청 - 금일 AI 기사 전체 아티클 조회
-  AI_NEWS: (newId) => `/news/${newId}`,
+  AI_NEWS: '/aiNews',
 }
 
 // 싸프린트 -> ssaprintService

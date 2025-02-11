@@ -49,10 +49,13 @@ const SsabapVote = () => {
   // 투표 mutation
   // 기존 코드
   const { mutate: voteMutate } = useMutation({
-    mutationFn: (lunchId) => fetchVoteLunch({ lunch_id: lunchId }),
-    onSuccess: () => {
-      setHasVoted(true)
-      refetchVoteResult()
+    mutationFn: (lunchId) => fetchVoteLunch({ lunchId }),
+    onSuccess: (response) => {
+      console.log('Vote success:', response)
+      if (response?.message) {
+        setHasVoted(true)
+        refetchVoteResult()
+      }
     },
     onError: (error) => {
       console.error('투표 실패:', error)
@@ -96,12 +99,10 @@ const SsabapVote = () => {
 
   // 투표 결과 계산 (백분율)
   const getVotePercentage = (lunchId) => {
-    if (!voteResult || !Array.isArray(voteResult)) return 0
+    if (!hasVoted || !voteResult) return 0
 
-    const result = voteResult.find(
-      (item) => Number(item.lunchId) === Number(lunchId)
-    )
-    return result ? Math.round(result.votes * 100) : 0
+    const targetResult = voteResult.find((item) => item.voteId === lunchId)
+    return targetResult ? Math.round(targetResult.votes * 100) : 0
   }
 
   // 로딩 상태 처리
@@ -119,16 +120,12 @@ const SsabapVote = () => {
   }
 
   // 오늘의 메뉴가 없는 경우
-  if (
-    !lunchData ||
-    !Array.isArray(lunchData.menu) ||
-    lunchData.menu.length === 0
-  ) {
+  if (!lunchData || !Array.isArray(lunchData) || lunchData.length === 0) {
     return <div>오늘의 메뉴 정보가 없습니다.</div>
   }
 
-  const menu1 = lunchData.menu[0]
-  const menu2 = lunchData.menu[1]
+  const menu1 = lunchData[0]
+  const menu2 = lunchData[1]
 
   return (
     <div>
@@ -148,17 +145,17 @@ const SsabapVote = () => {
             className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           <button
-            onClick={() => handleVote(menu1.id)}
+            onClick={() => handleVote(1)}
             className={`flex-1 w-full p-3 rounded-lg text-center font-medium ${
               hasVoted
-                ? getVotePercentage(menu1.id) > getVotePercentage(menu2.id)
+                ? getVotePercentage(1) > getVotePercentage(2)
                   ? 'bg-blue-500 text-white'
                   : 'bg-ssacle-gray'
                 : 'bg-blue-500 text-white hover:bg-blue-600'
             }`}
             disabled={hasVoted}
           >
-            {hasVoted ? `${getVotePercentage(menu1.id)}%` : '?'}
+            {hasVoted ? `${getVotePercentage(1)}%` : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             {menu1.menuName}
@@ -178,7 +175,7 @@ const SsabapVote = () => {
             className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           <button
-            onClick={() => handleVote(menu2.id)}
+            onClick={() => handleVote(2)}
             className={`w-full p-3 rounded-lg text-center font-medium ${
               hasVoted
                 ? getVotePercentage(menu2.id) > getVotePercentage(menu1.id)
@@ -188,7 +185,7 @@ const SsabapVote = () => {
             }`}
             disabled={hasVoted}
           >
-            {hasVoted ? `${getVotePercentage(menu2.id)}%` : '?'}
+            {hasVoted ? `${getVotePercentage(2)}%` : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             {menu2.menuName}
