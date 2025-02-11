@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { fetchSaveInterest } from '@/services/userService'
 
 const InterestPage = () => {
   const navigate = useNavigate()
   const [selected, setSelected] = useState(new Set())
-  const userNickname = '싸피인' // 실제 데이터와 연결 필요
+  const userNickname = localStorage.getItem('userNickname')
+  const userId = localStorage.getItem('userId')
 
   const toggleSelection = (interest) => {
     setSelected((prev) => {
@@ -18,28 +21,50 @@ const InterestPage = () => {
     })
   }
 
-  const mainCategories = [
-    '백엔드',
-    '프론트엔드',
-    '데이터',
-    '모바일',
-    '네트워크',
-    '보안',
-  ]
+  // 관심사 저장 Mutation
+  const saveInterestsMutation = useMutation({
+    mutationFn: async () => {
+      if (!userId)
+        throw new Error('사용자 정보가 없습니다. 다시 로그인해주세요.')
+
+      return fetchSaveInterest(userId, Array.from(selected))
+    },
+    onSuccess: () => {
+      alert('관심사가 성공적으로 저장되었습니다!')
+      navigate('/account/signup/success')
+    },
+    onError: (error) => {
+      console.error('❌ 관심사 저장 실패:', error)
+      alert('관심사 저장 중 오류가 발생했습니다. 다시 시도해주세요.')
+    },
+  })
+
+  // ✅ 주요 카테고리
+  const mainCategories = ['Back-end', 'Front-end', 'Infra', 'DataBase']
+
+  // ✅ 서브 카테고리
   const subCategories = [
-    'Swift',
-    'Kotlin',
-    'MySQL',
-    'C++',
-    'Python',
-    'Java',
+    'Spring',
     'Django',
-    'Spring Boot',
-    'HTML',
-    'CSS',
-    'JavaScript',
+    'Node.js',
+    'NestJS',
+    'ASP.NET',
     'React',
     'Vue.js',
+    'Angular',
+    'Svelte',
+    'Next.js',
+    'Docker',
+    'Kubernetes',
+    'AWS',
+    'Azure',
+    'Google Cloud',
+    'MySQL',
+    'PostgreSQL',
+    'MongoDB',
+    'Redis',
+    'Oracle',
+    'MariaDB',
   ]
 
   return (
@@ -51,52 +76,60 @@ const InterestPage = () => {
         <span className="font-bold">{userNickname}</span>님의 관심 주제를
         알려주세요!
       </h2>
-      <p className="text-center text-ssacle-black text-2xl font-noto-sans-kr font-light mb-2">
-        <p>해당 키워드를 바탕으로, </p>
+      <div className="text-center text-ssacle-black text-2xl font-noto-sans-kr font-light mb-2">
+        <p>해당 키워드를 바탕으로,</p>
         <p>훨씬 수월하게 콘텐츠를 고를 수 있어요!</p>
-      </p>
+      </div>
       <p className="text-ssacle-gray text-xl font-noto-sans-kr font-light mb-20">
         마이페이지에서 언제든 수정할 수 있어요!
       </p>
 
       {/* 주요 카테고리 */}
-      <div className="grid grid-cols-12 gap-4 w-full">
-        <div className="col-start-5 col-span-4 flex flex-wrap justify-center gap-4 mb-10">
-          {mainCategories.map((interest) => (
-            <button
-              key={interest}
-              onClick={() => toggleSelection(interest)}
-              className={`px-6 py-2 rounded-full text-xl font-bold font-montserrat transition-colors duration-200 ${selected.has(interest) ? 'bg-ssacle-blue text-white' : 'bg-ssacle-sky text-ssacle-blue'}`}
-            >
-              {interest}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap justify-center gap-4 w-full mb-10">
+        {mainCategories.map((interest) => (
+          <button
+            key={interest}
+            onClick={() => toggleSelection(interest)}
+            className={`px-6 py-2 rounded-full text-xl font-bold font-montserrat transition-colors duration-200 ${
+              selected.has(interest)
+                ? 'bg-ssacle-blue text-white'
+                : 'bg-ssacle-sky text-ssacle-blue'
+            }`}
+          >
+            {interest}
+          </button>
+        ))}
       </div>
 
       {/* 구분선 */}
       <div className="w-6 border-b-4 border-ssacle-gray-sm mb-10"></div>
 
       {/* 서브 카테고리 */}
-      <div className="grid grid-cols-12 gap-4 w-full mb-10">
-        <div className="col-start-4 col-span-6 flex flex-wrap justify-center gap-4">
-          {subCategories.map((interest) => (
-            <button
-              key={interest}
-              onClick={() => toggleSelection(interest)}
-              className={`px-6 py-2 rounded-full text-xl font-bold font-montserrat transition-colors duration-200 ${selected.has(interest) ? 'bg-ssacle-blue text-white' : 'bg-ssacle-sky text-ssacle-blue'}`}
-            >
-              {interest}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-wrap justify-center gap-4 w-full mb-10">
+        {subCategories.map((interest) => (
+          <button
+            key={interest}
+            onClick={() => toggleSelection(interest)}
+            className={`px-6 py-2 rounded-full text-xl font-bold font-montserrat transition-colors duration-200 ${
+              selected.has(interest)
+                ? 'bg-ssacle-blue text-white'
+                : 'bg-ssacle-sky text-ssacle-blue'
+            }`}
+          >
+            {interest}
+          </button>
+        ))}
       </div>
 
+      {/* 저장 버튼 */}
       <button
-        className="mt-10 mb-24 px-10 py-3 bg-ssacle-black text-white text-xl font-bold font-noto-sans-kr rounded-full"
-        onClick={() => navigate('/account/signup/success')} // 다음 단계로 이동
+        className={`mt-10 mb-24 px-10 py-3 text-white text-xl font-bold font-noto-sans-kr rounded-full transition-all ${
+          userId ? 'bg-ssacle-black' : 'bg-ssacle-gray cursor-not-allowed'
+        }`}
+        onClick={() => userId && saveInterestsMutation.mutate()}
+        disabled={!userId}
       >
-        저장하기
+        {saveInterestsMutation.isLoading ? '저장 중...' : '저장하기'}
       </button>
     </div>
   )

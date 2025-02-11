@@ -108,30 +108,25 @@ const SignupStep2 = () => {
         confirmpassword,
       }),
     onSuccess: () => {
-      alert('회원가입이 완료되었습니다.')
+      const userId = response.data.userId
+      localStorage.setItem('userId', userId)
+      localStorage.setItem('userNickname', nickname)
+      // alert('✅ 회원가입이 완료되었습니다.')
       navigate('/account/signup/interest')
     },
-    // onError: (error) => {
-    //   // console.error('회원가입 실패:', error)
-    //   // alert('회원가입에 실패했습니다. 다시 시도해주세요.')
-    //   console.error('회원가입 실패:', error.response?.data || error.message) // 응답 메시지 확인
-    //   alert(
-    //     `회원가입 실패: ${error.response?.data?.message || '다시 시도해주세요.'}`
-    //   )
-    // },
     onError: (error) => {
       const errorMessage = error.response?.data?.message || '다시 시도해주세요.'
       console.error('❌ 회원가입 실패:', errorMessage)
 
       // 특정 오류 메시지에 따라 사용자 친화적인 메시지 출력 후 페이지 이동
       if (errorMessage.includes('Email already exists')) {
-        alert('이미 가입한 이메일 입니다!')
+        alert('❌ 이미 가입한 이메일 입니다!')
         navigate('/account/login') // 로그인 페이지로 이동
       } else if (errorMessage.includes('Email verification required')) {
-        alert('인증 시간이 만료되었습니다. 재 인증 해주세요!')
+        alert('❌ 인증 시간이 만료되었습니다. 다시 인증 해주세요!')
         navigate('/account/signup') // 회원가입 첫 페이지로 이동
       } else {
-        alert(`회원가입 실패: ${errorMessage}`)
+        alert(`❌ 회원가입 실패: ${errorMessage}`)
       }
     },
   })
@@ -246,7 +241,7 @@ const SignupStep2 = () => {
                   className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
                 />
                 <button
-                  className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold transition-all
+                  className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold text-sm transition-all
     ${!studentNumber.trim() || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
                   onClick={handleCheckStudentNumber}
                   disabled={
@@ -314,7 +309,7 @@ const SignupStep2 = () => {
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
               />
               <button
-                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold transition-all
+                className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold transition-all text-sm
                   ${!nickname.trim() || nicknameMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
                 onClick={handleCheckNickname} // 중복 확인 실행
                 disabled={!nickname.trim() || nicknameMutation.isLoading}
@@ -399,8 +394,8 @@ const SignupStep2 = () => {
             </label>
             {/* 필수 약관 미동의 시 경고 메세지 */}
             {termsError && (
-              <p className="text-[#f03939] text-sm px-2 mt-2 mb-10">
-                ✅ 필수 약관은 동의가 필요합니다.
+              <p className="text-[#f03939] text-sm px-2 mt-2 mb-10 pl-9">
+                필수 약관은 동의가 필요합니다.
               </p>
             )}
 

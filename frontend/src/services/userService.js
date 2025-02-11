@@ -1,4 +1,5 @@
 import axios from './http-common' // Axios 인스턴스 사용
+import axios2 from 'axios'
 import { AUTH_END_POINT } from './endPoints'
 
 // 2. 이메일 중복 체크 (GET)
@@ -17,12 +18,13 @@ export const fetchCheckPassword = (password, confirmPassword) =>
 export const fetchCheckNickname = (nickname) =>
   axios.post(AUTH_END_POINT.CHECK_NICKNAME, { nickname })
 
-// 6. 관심사 체크 (GET)
-export const fetchCheckInterest = (interests) =>
-  axios.get(AUTH_END_POINT.CHECK_INTERESTS(interests))
+// 관심사 저장 API (POST)
+export const fetchSaveInterest = (userId, interests) =>
+  axios2.post(`/api/v1/join/${userId}/interest-categories`, {
+    interestCategoryNames: interests,
+  })
 
 // 7. 회원가입 (POST)
-import axios2 from 'axios'
 
 export const fetchSignup = async (userData) => {
   return axios2.post('/api/v1/join', userData, {
@@ -48,7 +50,8 @@ export const fetchLogout = async () => {
 
 // 이메일 찾기
 export const fetchFindEmail = async (studentNumber) => {
-  return axios2.post('/api/v1/login/find-email', 
+  return axios2.post(
+    '/api/v1/login/find-email',
     { studentNumber }, // 객체로 감싸서 전달
     {
       headers: { 'Content-Type': 'application/json' },
