@@ -42,11 +42,6 @@ const SprintBasicInfo = ({ sprint }) => {
   // 모집 상태 가져오기
   const recruitStatus = getRecruitStatus(sprint.participation, sprint.recruit)
 
-  // 태그 배열 변환
-  const tags = sprint.tags
-    ? sprint.tags.split(',').map((tag) => tag.trim())
-    : []
-
   return (
     <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[7rem] w-[47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 제목 및 설명 */}
@@ -86,16 +81,18 @@ const SprintBasicInfo = ({ sprint }) => {
         </div>
       </div>
 
-      {/* 태그 표시 */}
-      <div className="flex flex-wrap gap-1.5">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="bg-blue-100 text-blue-800 rounded-full text-xs font-medium px-2 py-0.5"
-          >
-            {tag}
+      {/* 태그 표시 (major/subtopic 적용) */}
+      <div className="flex flex-wrap gap-1.5 mt-2">
+        {sprint.majortopic_name && (
+          <span className="px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg">
+            {sprint.majortopic_name}
           </span>
-        ))}
+        )}
+        {sprint.subtopic_name && (
+          <span className="px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg">
+            {sprint.subtopic_name}
+          </span>
+        )}
       </div>
 
       {/* 썸네일 이미지 */}

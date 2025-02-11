@@ -5,7 +5,8 @@ export const mockSsaprintDetailData = {
     basicDescription: 'Spring Security 초급 과정.',
     detailDescription:
       '이 과정에서는 인증, 인가, CSRF 보호, OAuth2 등의 핵심 Spring Security 개념들을 다룹니다. 핸즈온 실습을 통해 실제 웹 애플리케이션 보안을 처리하는 것을 배울 수 있습니다.',
-    tags: 'Spring Security,Backend',
+    majortopic_name: 'Front-end',
+    subtopic_name: 'React',
     recommendedFor:
       'Spring Security에 처음 접하는 사람들, 비즈니스 로직에서 보안을 처리하는 방법을 배우고 싶은 분들, 실제 프로젝트에 Spring Security를 적용하려는 개발자들.',
     startAt: '2025-02-10T01:25:55.488',
