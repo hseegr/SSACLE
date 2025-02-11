@@ -16,7 +16,7 @@ export const mockActiveSsaprintDetailData = {
     maxMembers: 6,
     currentMembers: 1,
     createdAt: '2025-02-10T13:15:52.453685',
-    thumbnail: 'https://example.com/thumbnail.jpg',
+    thumbnail: '/src/assets/react.svg',
   },
   todos: [
     {
