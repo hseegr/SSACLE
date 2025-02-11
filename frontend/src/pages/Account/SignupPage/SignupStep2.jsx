@@ -201,16 +201,6 @@ const SignupStep2 = () => {
 
   // 회원가입 버튼 클릭
   const handleSignup = () => {
-    const userData = {
-      studentNumber,
-      email,
-      nickname,
-      name,
-      password,
-      confirmpassword,
-    }
-
-    console.log('📤 회원가입 요청 데이터 확인:', userData) // 🛑 콘솔 로그 추가
     // 필수 입력값 체크
     if (!studentNumber.trim()) {
       setStudentNumberError('학번을 입력해주세요.')
@@ -247,9 +237,19 @@ const SignupStep2 = () => {
       setTermsError(true)
       return false
     }
+    const userData = {
+      studentNumber,
+      email,
+      nickname,
+      name,
+      password,
+      confirmpassword,
+    }
+
+    console.log('📤 회원가입 요청 데이터 확인:', userData)
 
     // 회원가입 API 실행
-    signupMutation.mutate()
+    signupMutation.mutate(userData)
   }
 
   return (

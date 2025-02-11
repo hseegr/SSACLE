@@ -27,6 +27,7 @@ export const fetchSaveInterest = (userId, interests) =>
 // 7. 회원가입 (POST)
 
 export const fetchSignup = async (userData) => {
+  console.log('📤 서버로 전송할 데이터:', JSON.stringify(userData, null, 2))
   return axios2.post('/api/v1/join', userData, {
     headers: { 'Content-Type': 'application/json' }, // Authorization 없이 요청
     withCredentials: true,
@@ -42,7 +43,6 @@ export const fetchLogin = (credentials) =>
 export const fetchLogout = async () => {
   try {
     await axios.post(AUTH_END_POINT.LOGOUT)
-
   } catch (error) {
     console.error('❌ 로그아웃 실패:', error)
   }
