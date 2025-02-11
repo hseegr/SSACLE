@@ -31,12 +31,12 @@ const SsaprintJourneyLayout = ({ sprint }) => {
         </div>
 
         {/* 오른쪽 영역 - SprintProgressStatus */}
-        <div className="w-full lg:w-[33%] flex flex-col">
-          <div className="mb-4">
+        <div className="w-full lg:w-[27%] flex flex-col">
+          <div className="mb-10">
             {/* 여기에 '내 노트 공개' 토글 컴포넌트 추가 예정 */}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-10">
             <SprintProgressStatus sprint={sprint} />
           </div>
 

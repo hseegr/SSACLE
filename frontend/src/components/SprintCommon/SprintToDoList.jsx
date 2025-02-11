@@ -5,7 +5,7 @@ const SprintToDoList = ({ todos }) => {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
 
-  // 오늘 날짜 포맷 (YYYY-MM-DD) 
+  // 오늘 날짜 포맷 (YYYY-MM-DD)
   const [today] = useMemo(() => new Date().toISOString().split('T'), [])
 
   // todos 데이터에서 오늘 날짜의 To-Do 찾기
