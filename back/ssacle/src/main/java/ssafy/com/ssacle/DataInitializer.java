@@ -429,8 +429,8 @@ public class DataInitializer {
             User user1 = userRepository.findById(1L).orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
             User user2 = userRepository.findById(2L).orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
             // BoardType 가져오기
-            BoardType eduType = boardTypeRepository.findByName("edu").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
-            BoardType freeType = boardTypeRepository.findByName("free").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
+            //BoardType eduType = boardTypeRepository.findByName("edu").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
+            //BoardType freeType = boardTypeRepository.findByName("free").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
             BoardType legendType = boardTypeRepository.findByName("legend").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
             BoardType qnaType = boardTypeRepository.findByName("qna").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
             BoardType bulletinType = boardTypeRepository.findByName("bulletin").orElseThrow(()->new BoardException(BoardErrorCode.BOARDTYPE_NOT_FOUND));
@@ -440,7 +440,7 @@ public class DataInitializer {
             // Board 더미 데이터 생성 - user1
             boardList.add(Board.builder()
                     .user(user1)
-                    .boardType(eduType)
+                    .boardType(legendType)
                     .title("Spring Boot 기본 강의 공유")
                     .content("Spring Boot에 대한 기본 개념과 실습 강의를 공유합니다.")
                     .tag("Spring,학습")
@@ -491,7 +491,7 @@ public class DataInitializer {
             // Board 더미 데이터 생성 - user2 (변경된 내용 적용)
             boardList.add(Board.builder()
                     .user(user2)
-                    .boardType(eduType)
+                    .boardType(legendType)
                     .title("SQL 최적화 기법 공유")
                     .content("데이터베이스 성능을 향상시키는 SQL 최적화 기법을 공유합니다.")
                     .tag("SQL,DB,최적화")
@@ -542,7 +542,7 @@ public class DataInitializer {
             // 추가 Board 더미 데이터 생성 - user1
             boardList.add(Board.builder()
                     .user(user1)
-                    .boardType(eduType)
+                    .boardType(legendType)
                     .title("Spring Security 기초")
                     .content("Spring Security를 활용한 인증 및 권한 부여 방법을 소개합니다.")
                     .tag("Spring,Security,인증")

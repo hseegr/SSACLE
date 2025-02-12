@@ -12,18 +12,27 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.global.jwt.JwtFilter;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
+import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
+import ssafy.com.ssacle.sprint.repository.SprintRepository;
+import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.FindEmailDTO;
 import ssafy.com.ssacle.user.dto.FindPasswordDTO;
 import ssafy.com.ssacle.user.dto.LoginRequestDTO;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
-
+import ssafy.com.ssacle.sprint.domain.Sprint;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +41,8 @@ public class UserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final RefreshRepository refreshRepository;
+    private final TeamRepository teamRepository;
+    private final SprintRepository sprintRepository;
     private final TokenService tokenService;
 
     @Value("${spring.jwt.accessExpireMs}")
@@ -153,7 +164,41 @@ public class UserService {
     public String findPasswordByEmailAndStudentNumber(FindPasswordDTO findPasswordDTO) {
         User user = userRepository.findByEmailAndStudentNumber(findPasswordDTO.getEmail(), findPasswordDTO.getStudentNumber())
                 .orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
-        return user.getPassword();  // ⚠️ 보안상 비밀번호를 직접 반환하지 않는 것이 좋음
+        String tempPassword = generateTempPassword();
+        user.updatePassword(tempPassword);
+        userRepository.save(user);
+        return tempPassword;  // ⚠️ 보안상 비밀번호를 직접 반환하지 않는 것이 좋음
+    }
+
+    @Transactional
+    public UserResponseDTO getCurrentUser(User user) {
+        return UserResponseDTO.of(user);// ⚠️ 보안상 비밀번호를 직접 반환하지 않는 것이 좋음
+    }
+
+    @Transactional
+    public List<SprintSummaryResponse> getParicipateSprint(User user) {
+        List<Team> teams = teamRepository.findTeamsByUserId(user.getId());
+        if (teams.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Long> teamIds = teams.stream().map(Team::getId).toList();
+        List<Sprint> sprints = sprintRepository.findSprintsByTeamIds(teamIds);
+
+        return sprints.stream()
+                .map(SprintSummaryResponse::of)
+                .toList();
+    }
+
+    private String generateTempPassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        StringBuilder tempPassword = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++) {
+            tempPassword.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return tempPassword.toString();
     }
 
 }

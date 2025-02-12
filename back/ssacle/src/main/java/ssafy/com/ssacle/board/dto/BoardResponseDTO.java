@@ -1,17 +1,18 @@
 package ssafy.com.ssacle.board.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class BoardResponseDTO {
+
     @NotBlank
     private String title;
 
@@ -26,4 +27,10 @@ public class BoardResponseDTO {
 
     @NotBlank
     private List<String> tags;
+
+    @NotBlank
+    private String majorCategory;
+
+    @NotBlank
+    private String subCategory;
 }

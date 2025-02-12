@@ -1,38 +1,30 @@
-//package ssafy.com.ssacle.user.dto;
-//
-//import lombok.Builder;
-//import lombok.Getter;
-//import ssafy.com.ssacle.user.domain.User;
-//
-//@Getter
-//@Builder
-//public class UserResponseDTO {
-//    private Long id;
-//    private String username;
-//    private String name;
-//    private String email;
-//    private String role;
-//
-//    /**
-//     * User 엔터티를 DTO로 변환
-//     */
-//    public static UserResponseDTO of(User user) {
-//        return UserResponseDTO.builder()
-//                .id(user.getId())
-//                .username(user.getUsername())
-//                .name(user.getName())
-//                .email(user.getEmail())
-//                .role(user.getRole().name()) // Role을 문자열로 변환
-//                .build();
-//    }
-//
-//    /**
-//     * DTO를 User 엔터티로 변환
-//     */
-//    public User toEntity() {
-//        return User.localUserBuilder()
-//                .username(username)
-//                .name(name)
-//                .build();
-//    }
-//}
+package ssafy.com.ssacle.user.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
+import lombok.Getter;
+import ssafy.com.ssacle.user.domain.User;
+
+@Getter
+@Builder
+public class UserResponseDTO {
+    @NotBlank
+    private String nickname;
+    @NotBlank
+    private int level;
+    @NotBlank
+    private int pickles;
+    @NotBlank
+    private String profile;
+
+    public static UserResponseDTO of(User user) {
+        return UserResponseDTO.builder()
+                .nickname(user.getNickname())
+                .level(user.getLevel())
+                .pickles(user.getPickles())
+                .profile(user.getProfile())
+                .build();
+    }
+
+
+}

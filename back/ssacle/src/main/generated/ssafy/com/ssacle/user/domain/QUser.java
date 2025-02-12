@@ -48,6 +48,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Integer> pickles = createNumber("pickles", Integer.class);
 
+    public final StringPath profile = createString("profile");
+
     public final EnumPath<Role> role = createEnum("role", Role.class);
 
     public final StringPath studentNumber = createString("studentNumber");

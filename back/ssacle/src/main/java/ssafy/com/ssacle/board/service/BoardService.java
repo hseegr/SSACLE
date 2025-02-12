@@ -45,6 +45,8 @@ public class BoardService {
                     .writerInfo(board.getUser().getNickname())
                     .time(board.getCreatedAt())
                     .tags(splitTags(board.getTag()))
+                    .majorCategory(board.getBoardType().getParent() != null ? board.getBoardType().getParent().getName() : null)
+                    .subCategory(board.getBoardType().getName())
                     .build();
             list.add(boardResponseDTO);
         }
@@ -65,6 +67,8 @@ public class BoardService {
                     .writerInfo(board.getUser().getNickname())
                     .time(board.getCreatedAt())
                     .tags(splitTags(board.getTag()))
+                    .majorCategory(board.getBoardType().getParent() != null ? board.getBoardType().getParent().getName() : null)
+                    .subCategory(board.getBoardType().getName())
                     .build();
             list.add(boardResponseDTO);
         }
@@ -72,9 +76,10 @@ public class BoardService {
         return list;
     }
 
-    /** 📌 2. 게시글 상세 조회 */
+
+    @Transactional    /** 📌 2. 게시글 상세 조회 */
     public BoardResponseDTO getBoardById(Long id) {
-        Board board = boardRepository.findByIdWithUser(id).orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
+        Board board = boardRepository.findByIdWithBoardTypeAndParent(id).orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
         BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder()
                 .title(board.getTitle())
@@ -82,6 +87,8 @@ public class BoardService {
                 .writerInfo(board.getUser().getNickname())
                 .time(board.getCreatedAt())
                 .tags(splitTags(board.getTag()))
+                .majorCategory(board.getBoardType().getParent() != null ? board.getBoardType().getParent().getName() : null)
+                .subCategory(board.getBoardType().getName())
                 .build();
         return boardResponseDTO;
 

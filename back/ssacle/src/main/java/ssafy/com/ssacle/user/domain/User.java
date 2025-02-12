@@ -78,6 +78,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    // 🆕 **프로필 이미지 필드 추가**
+    @Column(name = "profile", length = 1024)
+    private String profile; // 기본값 `null`
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -121,6 +125,7 @@ public class User {
                 Role.ADMIN,
                 null,
                 null,
+                null,
                 false,
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -144,6 +149,7 @@ public class User {
                 0,
                 false,
                 Role.STUDENT,
+                null,
                 null,
                 null,
                 false,
@@ -171,6 +177,7 @@ public class User {
                 Role.ALUMNI,
                 null,
                 null,
+                null,
                 false,
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -190,5 +197,13 @@ public class User {
     public void addCategory(UserCategory userCategory){
         this.userCategories.add(userCategory);
         userCategory.setUser(this);
+    }
+    public void updatePassword(String newPassword) {
+        this.password = new BCryptPasswordEncoder().encode(newPassword);
+    }
+
+
+    public void updateProfile(String profileUrl) {
+        this.profile = profileUrl;
     }
 }
