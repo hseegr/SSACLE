@@ -1,14 +1,15 @@
 import { cn } from '@/lib/utils'
 
-const StreamVideoCard = ({ ref, streamData = {} }) => {
-  // const { stream, name } = data
+interface StreamVideoCardProps {
+  ref: React.RefObject<HTMLVideoElement>
+}
 
-  console.log('🔹 ref', ref?.current)
+const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
   return (
     <div
       className={cn(
         'relative w-full  shadow-md border-[1px] border-gray-600',
-        'aspect-video z-10 '
+        'z-10 '
       )}
     >
       {/* 참여자 영상 */}

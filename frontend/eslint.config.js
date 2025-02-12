@@ -5,6 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import prettier from 'eslint-plugin-prettier'
 import importPlugin from 'eslint-plugin-import'
+import typescriptEslint from '@typescript-eslint/eslint-plugin'
 
 export default [
   // 무시할 파일 설정
@@ -23,12 +24,14 @@ export default [
       },
     },
     settings: { react: { version: 'detect' } }, // React 버전 자동 감지
+    parser: '@typescript-eslint/parser',
     plugins: {
       react, // react 플러그인
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       prettier, // prettier 플러그인
       import: importPlugin, // import 플러그인 추가
+      '@typescript-eslint': typescriptEslint, // @typescript-eslint 플러그인 추가
     },
     rules: {
       // Prettier 설정
@@ -40,6 +43,9 @@ export default [
           endLine: 'auto',
         },
       ],
+
+      // 타입 체크 관련 규칙
+      '@typescript-eslint/no-unused-vars': 'warn',
 
       // ESLint 기본 규칙 설정
       ...js.configs.recommended.rules,

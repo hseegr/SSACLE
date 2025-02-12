@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 
-export const usePresentationStore = create((set) => ({
+interface PresentationStore {
+  isChatOpen: boolean
+  questionCard: any[]
+  setQuestionCard: (questionCard: any[]) => void
+  setIsChatOpen: (isChatOpen: boolean) => void
+}
+
+export const usePresentationStore = create<PresentationStore>((set) => ({
   isChatOpen: false,
   questionCard: [],
 

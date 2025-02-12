@@ -8,15 +8,23 @@ import {
   LogOutIcon,
   MicOffIcon,
   CameraOffIcon,
+  ScreenShareOffIcon,
 } from 'lucide-react'
 import { usePresentationStore } from '@/store/usePresentationStore'
-import { useOpenViduStore } from '@/store/useOpenViduStore'
+import { useStreamStore } from '@/store/useStreamStore'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 
 export const usePresentationControls = () => {
   const { isChatOpen, setIsChatOpen } = usePresentationStore()
-
-  const { toggleMicrophone, toggleCamera, isMicOn, isCameraOn } =
-    useOpenViduStore()
+  const { publisher } = useOpenviduStateStore()
+  const {
+    isMicOn,
+    isCameraOn,
+    isScreenSharing,
+    setIsMicOn,
+    setIsCameraOn,
+    setIsScreenSharing,
+  } = useStreamStore()
 
   const leftControl = {
     id: 'effects',
@@ -35,7 +43,8 @@ export const usePresentationControls = () => {
       title: '마이크',
       style: isMicOn ? '' : 'text-red-500',
       activeFunction: () => {
-        toggleMicrophone()
+        publisher?.publishAudio(!isMicOn)
+        setIsMicOn(!isMicOn)
       },
     },
     {
@@ -44,16 +53,18 @@ export const usePresentationControls = () => {
       style: isCameraOn ? '' : 'text-red-500',
       title: '카메라',
       activeFunction: () => {
-        toggleCamera()
+        publisher?.publishVideo(!isCameraOn)
+        setIsCameraOn(!isCameraOn)
       },
     },
     {
       id: 'screen',
-      icon: ScreenShareIcon,
+      icon: isScreenSharing ? ScreenShareOffIcon : ScreenShareIcon,
       title: '화면공유',
-      style: 'text-green-500',
+      style: isScreenSharing ? '' : 'text-green-500',
       activeFunction: () => {
-        console.log('화면공유')
+        // publisher?.publishScreenShare(!isScreenSharing)
+        setIsScreenSharing(!isScreenSharing)
       },
     },
     {
