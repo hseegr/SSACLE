@@ -119,7 +119,7 @@ const SignupStep2 = () => {
       console.log('✅ 회원가입 성공:', response)
 
       const userId = response?.data?.userId
-      const nickname = response?.data?.nickname
+      // const nickname = nickname
 
       if (!userId) {
         // ✅ userId가 없는 경우 예외 처리 추가
@@ -129,11 +129,12 @@ const SignupStep2 = () => {
       }
 
       localStorage.setItem('userId', userId)
+      localStorage.setItem('userNickname', nickname)
       if (nickname) {
         localStorage.setItem('userNickname', nickname)
       }
 
-      navigate('/account/signup/interest')
+      navigate('/account/signup/interest', { state: { nickname } })
     },
     onError: (error) => {
       const errorMessage =
@@ -245,7 +246,7 @@ const SignupStep2 = () => {
       password,
       confirmpassword,
     }
-
+    localStorage.setItem('userNickname', nickname)
     console.log('📤 회원가입 요청 데이터 확인:', userData)
 
     // 회원가입 API 실행

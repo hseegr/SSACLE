@@ -61,8 +61,19 @@ export const fetchFindEmail = async (studentNumber) => {
 }
 
 // 비밀번호 찾기
-export const fetchFindPassword = async (studentNumber, email) =>
-  axios.post(AUTH_END_POINT.FIND_PASSWORD, { studentNumber, email })
+// export const fetchFindPassword = async (studentNumber, email) =>
+//   axios.post(AUTH_END_POINT.FIND_PASSWORD, { studentNumber, email })
+
+export const fetchFindPassword = async ({ studentNumber, email }) => {
+  return axios2.post(
+    '/api/v1/login/find-password',
+    { studentNumber, email },
+    {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+    }
+  )
+}
 
 // 인증 번호 검증 (POST)
 export const fetchCheckCode = async (email, verificationCode) =>

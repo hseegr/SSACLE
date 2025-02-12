@@ -1,17 +1,19 @@
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { fetchLogin } from '@/services/userService'
 import { useMutation } from '@tanstack/react-query'
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  const emailInputRef = useRef(null)
+  const passwordInputRef = useRef(null)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   const loginMutation = useMutation({
-    mutationFn: fetchLogin, 
+    mutationFn: fetchLogin,
     onSuccess: (response) => {
       if (response.status === 200) {
         // localStorage.setItem('accessToken', response.data?.accessToken)
@@ -22,6 +24,22 @@ const LoginPage = () => {
       console.error('❌ 로그인 실패:', error)
     },
   })
+
+  // 이메일에서 엔터키 클릭 시 실행
+  const handleFocusPw = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault() // 기본 동작 방지
+      passwordInputRef.current?.focus()
+    }
+  }
+
+  // 비밀번호에서 엔터키 클릭 시 실행
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      handleLogin()
+    }
+  }
 
   // 로그인 버튼 클릭 시 실행
   const handleLogin = () => {
@@ -40,21 +58,25 @@ const LoginPage = () => {
 
         <div className="relative">
           <input
+            ref={emailInputRef}
             type="email"
             placeholder="이메일 주소를 입력해 주세요"
             className="w-full h-[3rem] bg-ssacle-gray-sm rounded-full px-[1.5rem] text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleFocusPw}
           />
         </div>
 
         <div className="relative">
           <input
+            ref={passwordInputRef}
             type="password"
             placeholder="비밀번호를 입력해 주세요"
             className="w-full h-[3rem] bg-ssacle-gray-sm rounded-full px-[1.5rem] text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
