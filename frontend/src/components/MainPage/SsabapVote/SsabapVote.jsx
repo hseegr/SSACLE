@@ -49,7 +49,7 @@ const SsabapVote = () => {
   // 투표 mutation
   // 기존 코드
   const { mutate: voteMutate } = useMutation({
-    mutationFn: (lunchId) => fetchVoteLunch({ lunchId }),
+    mutationFn: (lunchId) => fetchVoteLunch(lunchId),
     onSuccess: (response) => {
       console.log('Vote success:', response)
       if (response?.message) {

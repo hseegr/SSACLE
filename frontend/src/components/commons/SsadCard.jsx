@@ -1,6 +1,6 @@
 const stackLogos = {
-  React: '/src/mocks/react-logo.png',
-  Python: '/src/mocks/python-logo.png',
+  React: '/src/mocks/React.png',
+  Python: '/src/mocks/Python.png',
 }
 
 const SsadCard = ({ sprintData }) => {
@@ -15,8 +15,7 @@ const SsadCard = ({ sprintData }) => {
     endDate,
   } = sprintData
 
-  const logoPath =
-    stackLogos[requiredSkills[0]] || '/src/mocks/default-logo.png'
+  const logoPath = stackLogos[requiredSkills[0]] || '/src/mocks/default.png'
 
   return (
     <div className="bg-gradient-to-bl from-cyan-400 via-cyan-500 to-cyan-600 h-54 w-full rounded-xl p-5  relative">
@@ -35,7 +34,7 @@ const SsadCard = ({ sprintData }) => {
           신청하기
         </p>
       </div>
-      <div className="absolute bottom-5 right-5">
+      <div className="absolute bottom-3 right-3">
         <img src={logoPath} alt={`${category} logo`} className="w-20 h-20" />
       </div>
     </div>

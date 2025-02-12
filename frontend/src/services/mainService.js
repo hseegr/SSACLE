@@ -59,7 +59,7 @@ export const fetchLunchInfo = async () => {
 export const fetchVoteLunch = async (lunchId) => {
   try {
     console.log('Voting for lunch...', { lunch_id: lunchId })
-    const response = await httpCommon.patch(
+    const response = await httpCommon.post(
       MAIN_END_POINT.LUNCH_VOTE,
       { lunch_id: lunchId },
       {
