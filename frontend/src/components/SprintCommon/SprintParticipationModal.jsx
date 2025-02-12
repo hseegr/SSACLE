@@ -15,7 +15,7 @@ const SprintParticipationModal = ({ onClose, sprintId }) => {
 
       if (window.confirm('내 스프린트 노트로 이동하시겠습니까?')) {
         navigate(`/my-sprints/${sprintId}`)
-        window.location.reload() // 🔹 강제 새로고침하여 참여중 데이터 반영
+        window.location.reload()
       }
       onClose()
     } catch (error) {

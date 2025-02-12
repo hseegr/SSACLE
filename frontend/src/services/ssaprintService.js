@@ -1,9 +1,11 @@
+// @ts-nocheck
 import httpCommon from './http-common'
 import { SSAPRINT_END_POINT } from './endPoints'
 
 import { mockSsaprintData } from '@/mocks/ssaprintMockData'
 import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
 import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
+import { mockSsaprintQuestions } from '@/mocks/ssaprintQuestionMockData'
 
 /**
  * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
@@ -150,13 +152,52 @@ export const deleteSsaprint = (id) =>
 export const fetchSsaprintParticipants = (id) =>
   httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_PARTICIPANTS(id))
 
-// ✅ 발표 질문 카드 목록 조회
-export const fetchSsaprintCards = (id) =>
-  httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_CARDS(id))
+/**
+ * ✅ 특정 스프린트의 질문 목록을 조회하는 함수
+ */
+export const fetchSsaprintQuestions = async (sprintId) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockSsaprintQuestions)
+    }, 500)
+  })
+}
+
+// // ✅ 실제 API 요청 방식 (추후 적용 가능)
+// export const getSprintQuestions = async (sprintId) => {
+//   try {
+//     const response = await httpCommon.get(SSAPRINT_END_POINT.QUESTIONS(sprintId));
+//     return response.data;
+//   } catch (error) {
+//     console.error('질문 목록을 불러오는 중 오류 발생:', error);
+//     return [];
+//   }
+// };
 
 // ✅ 특정 질문 카드 상세 조회
 export const fetchSsaprintCardDetail = (id, cardId) =>
   httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_CARD_DETAIL(id, cardId))
+
+/**
+ * ✅ 질문을 추가하는 함수
+ */
+export const addSsaprintQuestion = async (sprintId, description) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const newQuestion = {
+        id: mockSsaprintQuestions.length + 1, // ✅ 새로운 id (자동 증가)
+        description: description,
+        createdAt: new Date().toISOString(), // ✅ 현재 시간
+        opened: true,
+      }
+
+      // ✅ 질문을 임시 저장 (실제 API 호출이라면 서버로 요청)
+      mockSsaprintQuestions.push(newQuestion)
+
+      resolve(newQuestion)
+    }, 500)
+  })
+}
 
 // ✅ 발표 종료
 export const exitSsaprintPresentation = (id) =>
