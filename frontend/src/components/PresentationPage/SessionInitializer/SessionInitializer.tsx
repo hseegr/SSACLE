@@ -1,24 +1,17 @@
 import ConferenceContainer from '@/components/ConferenceContainer/ConferenceContainer'
+import { fetchSessionId, fetchToken } from '@/services/openviduService'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
 
 const SessionInitializer = () => {
+  const [searchParams] = useSearchParams()
+  const ssaprintId = searchParams.get('ssaprintId')
   // 세션 ID 요청
   const { data: token, isSuccess } = useQuery({
     queryKey: ['sessionId'],
     queryFn: async () => {
-      const { data: sessionId } = await axios.post(
-        `http://localhost:5000/api/sessions`,
-        {
-          customSessionId: 'customSession123125533',
-        }
-      )
-      // const sessionId = 'test-sesstionId'
-
-      const { data: token } = await axios.post(
-        `http://localhost:5000/api/sessions/${sessionId}/connections`
-      )
-
+      const sessionId = await fetchSessionId(ssaprintId ?? 'test-session-id')
+      const token = await fetchToken(sessionId)
       return token // 실제 데이터만 반환
     },
     staleTime: Infinity, // 토큰은 한번 받으면 변경되지 않으므로

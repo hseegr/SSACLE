@@ -4,7 +4,9 @@ import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { Link } from 'react-router-dom'
 
 const PresentationHeader = () => {
-  const { presentationStatus, setPresentationStatus } = usePresentationStore()
+  const presentationStatus = usePresentationStore(
+    (state) => state.presentationStatus
+  )
 
   const { BEFORE_PRESENTATION, PRESENTING, QUESTION_CARD, END_PRESENTATION } =
     PRESENTATION_STATUS
@@ -20,36 +22,9 @@ const PresentationHeader = () => {
     <header className="">
       <div className="flex items-center justify-between px-24 py-4">
         {/* logo */}
-        <Link to="/">
+        <Link to="/main">
           <h1 className="text-2xl font-bold text-sky-400">SSACLE</h1>
         </Link>
-        {/* 테스트를 위한 버튼 */}
-        <div className="flex gap-2">
-          <button
-            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
-            onClick={() => setPresentationStatus(BEFORE_PRESENTATION)}
-          >
-            준비
-          </button>
-          <button
-            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
-            onClick={() => setPresentationStatus(PRESENTING)}
-          >
-            발표
-          </button>
-          <button
-            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
-            onClick={() => setPresentationStatus(QUESTION_CARD)}
-          >
-            질문
-          </button>
-          <button
-            className="px-4 rounded-md bg-ssacle-gray-md text-ssacle-gray-sm hover:bg-gray-600"
-            onClick={() => setPresentationStatus(END_PRESENTATION)}
-          >
-            완료
-          </button>
-        </div>
         {/* progress UI */}
         <Progress //
           steps={steps}

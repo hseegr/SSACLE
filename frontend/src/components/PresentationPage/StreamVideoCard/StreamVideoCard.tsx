@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { Monitor } from 'lucide-react'
 
 interface StreamVideoCardProps {
   ref: React.RefObject<HTMLVideoElement>
@@ -20,8 +21,9 @@ const StreamVideoCard = ({ ref }: StreamVideoCardProps) => {
         ref={ref ? ref : null}
       ></video>
       {/* 참여자 이름 */}
-      <div className="absolute bottom-0 flex items-center justify-center w-1/4 bg-white rounded-sm opacity-30">
-        <span className="text-sm text-ssacle-black">{'test'}</span>
+      <div className="absolute flex items-center justify-center gap-2 px-4 py-1 rounded-sm left-2 bottom-2 bg-ssacle-black/70">
+        <Monitor className="text-white size-4" />
+        <span className="text-base text-white">{'test'}</span>
       </div>
     </div>
   )

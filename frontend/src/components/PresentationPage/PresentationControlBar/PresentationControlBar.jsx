@@ -6,7 +6,7 @@ const PresentationControlBar = () => {
     usePresentationControls()
 
   return (
-    <nav className="flex items-center justify-between h-16 px-24 py-1 bg-black">
+    <nav className="flex items-center justify-between px-24 py-1 shadow-md">
       <PresentationControlItem control={leftControl} />
       <ul className="flex justify-between gap-10 px-6">
         {centerControls.map((control) => (

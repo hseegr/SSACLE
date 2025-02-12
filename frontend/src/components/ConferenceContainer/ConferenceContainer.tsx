@@ -1,50 +1,46 @@
-import { OpenVidu, Publisher, Session, Subscriber } from 'openvidu-browser'
-import { useCallback, useEffect, useRef } from 'react'
 import VideoLayout from '@/components/layout/VideoLayout'
 import StreamVideoCard from '@/components/PresentationPage/StreamVideoCard/StreamVideoCard'
-import { useConferenceEvents } from '@/hooks/useConferenceEvents'
-import { useStreamStore } from '@/store/useStreamStore'
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { useConnect } from '@/hooks/useConnect'
+import { useEffect, useMemo } from 'react'
 
 interface ConferenceContainerProps {
   token: string
 }
-
 const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
-  const { publisher, subscribers } = useOpenviduStateStore()
-  const { isScreenSharing } = useStreamStore()
+  const { cameraPublisher, subscribers } = useOpenviduStateStore()
 
   const { initializeSession, joinSession, leaveSession } = useConnect()
 
-  const { connections } = useConferenceEvents()
-
+  // 처음 컴포넌트가 마운트 될 때 세션 초기화 및 참여
   useEffect(() => {
-    const join = async () => {
+    const initialize = async () => {
       if (token) {
-        await initializeSession() ///
+        await initializeSession() //
           .then((session) => {
             joinSession(session, token)
           })
       }
     }
-    join()
+    initialize()
     return () => leaveSession()
-  }, [token])
+  }, [])
+
+  const sessionConnection = useMemo<Number>(() => {
+    return subscribers.length + (cameraPublisher ? 1 : 0)
+  }, [subscribers, cameraPublisher])
 
   return (
     <div className="w-full h-full">
       <VideoLayout
-        connectCount={subscribers.length + (publisher ? 1 : 0)} // 컨퍼런스 참여자 수
-        // connectCount={12} // 컨퍼런스 참여자 수
-        isScreenSharing={isScreenSharing}
+        connectCount={sessionConnection} // 컨퍼런스 참여자 수
       >
         {/* 발행자 영상 */}
-        {publisher && (
+        {cameraPublisher && (
           <>
             <StreamVideoCard
               ref={(el: HTMLVideoElement) =>
-                el && publisher.addVideoElement(el)
+                el && cameraPublisher.addVideoElement(el)
               }
             />
           </>

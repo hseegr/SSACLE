@@ -1,20 +1,22 @@
 import { cn } from '@/lib/utils'
 import StreamVideoPageButton from '@/components/PresentationPage/StreamVideoPageButton/StreamVideoPageButton'
-import { ReactNode, useMemo, useState, Children } from 'react'
+import { ReactNode, useState, Children, useEffect } from 'react'
 import ScreenShareView from '@/components/PresentationPage/ScreenShareView/ScreenShareView'
+import { useStreamStore } from '@/store/useStreamStore'
+import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 
 interface VideoLayoutProps {
   children: ReactNode
-  isScreenSharing: boolean
-  connectCount: number
+  connectCount: Number
 }
 
-const VideoLayout = ({
-  children,
-  isScreenSharing,
-  connectCount,
-}: VideoLayoutProps) => {
+const VideoLayout = ({ children, connectCount }: VideoLayoutProps) => {
   const [currentPage, setCurrentPage] = useState(0)
+  const isScreenSharing = useStreamStore((state) => state.isScreenSharing)
+  const screenPublisher = useOpenviduStateStore(
+    (state) => state.screenPublisher
+  )
+  const setIsScreenSharing = useStreamStore((state) => state.setIsScreenSharing)
 
   const itemPerPage = isScreenSharing ? 3 : 6
 
@@ -28,10 +30,6 @@ const VideoLayout = ({
     startIndex + itemPerPage
   )
 
-  console.log('chilrendArray', chilrendArray)
-  console.log('slicedChildren', slicedChildren)
-  console.log('connectCount', connectCount)
-
   const totalPages = Math.ceil(chilrendArray.length / itemPerPage)
 
   const handlePageChange = (page: number) => {
@@ -40,9 +38,15 @@ const VideoLayout = ({
     }
   }
 
+  useEffect(() => {
+    screenPublisher //
+      ? setIsScreenSharing(true)
+      : setIsScreenSharing(false)
+  }, [screenPublisher])
+
   return (
-    <section className="flex w-full h-full">
-      {isScreenSharing && <ScreenShareView />}
+    <section className="flex w-full h-full gap-1">
+      {isScreenSharing && screenPublisher && <ScreenShareView />}
       <div
         className={cn(
           'flex flex-col justify-center w-full h-full gap-4 ',
@@ -51,7 +55,7 @@ const VideoLayout = ({
       >
         <div
           className={cn(
-            'grid mx-auto min-h-96 h-full ap-4',
+            'grid mx-auto min-h-96 h-full ap-4 transition-all duration-300',
             'w-full',
             'grid-cols-1',
             !isScreenSharing && connectCount > 4
