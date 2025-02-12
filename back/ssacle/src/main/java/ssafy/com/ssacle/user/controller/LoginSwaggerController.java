@@ -29,7 +29,7 @@ public interface LoginSwaggerController {
                     schema = @Schema(implementation = LoginRequestDTO.class),
                     examples = @ExampleObject(
                             name = "로그인 예제",
-                            value = "{ \"email\": \"admin@example.com\", \"password\": \"admin123\" }"
+                            value = "{ \"email\": \"admin@example.com\", \"password\": \"admin1234\" }"
                     )
             )
     )

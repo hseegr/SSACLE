@@ -76,11 +76,24 @@ public class DataInitializer {
     @Transactional
     public void initializeUsers(UserRepository userRepository) {
         if (userRepository.count() == 0) { // 기존 데이터가 없을 경우에만 추가
-            User admin = User.createAdmin("admin@example.com", "admin123", "AdminUser");
+            User admin = User.createAdmin("admin1@example.com", "admin1234", "AdminUser1");
             User admin2 = User.createAdmin("admin2@example.com", "admin1234", "AdminUser2");
+            User admin3 = User.createAdmin("admin3@example.com", "admin1234", "AdminUser3");
+            User admin4 = User.createAdmin("admin4@example.com", "admin1234", "AdminUser4");
+            User admin5 = User.createAdmin("admin5@example.com", "admin1234", "AdminUser5");
+            User admin6 = User.createAdmin("admin6@example.com", "admin1234", "AdminUser6");
+            User admin7 = User.createAdmin("admin7@example.com", "admin1234", "AdminUser7");
+            User admin8 = User.createAdmin("admin8@example.com", "admin1234", "AdminUser8");
+
             User user = User.createStudent("user@example.com", "user123", "John Doe", "1234567", "johndoe");
             userRepository.save(admin);
             userRepository.save(admin2);
+            userRepository.save(admin3);
+            userRepository.save(admin4);
+            userRepository.save(admin5);
+            userRepository.save(admin6);
+            userRepository.save(admin7);
+            userRepository.save(admin8);
             userRepository.save(user);
             System.out.println("default data added");
         } else {

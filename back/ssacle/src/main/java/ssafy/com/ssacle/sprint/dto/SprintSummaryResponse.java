@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Getter
@@ -19,11 +20,15 @@ public class SprintSummaryResponse {
     @NotBlank
     private int duration;
 
+    @NotBlank
+    private LocalDateTime endAt;
+
     public static SprintSummaryResponse of(Sprint sprint){
         return SprintSummaryResponse.builder()
                 .name(sprint.getName())
                 .type("싸프린트")
                 .duration((int) ChronoUnit.DAYS.between(sprint.getStartAt(), sprint.getEndAt()))
+                .endAt(sprint.getEndAt())
                 .build();
     }
 }
