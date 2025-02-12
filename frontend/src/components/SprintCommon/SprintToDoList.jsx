@@ -42,7 +42,7 @@ const SprintToDoList = ({ todos }) => {
   }
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg w-full min-h-[24rem] flex flex-col justify-between">
+    <div className="p-4 bg-white shadow-md rounded-lg w-full min-h-[42rem] flex flex-col justify-between">
       {/* 상단 - 제목 & 날짜 */}
       <div>
         <h2 className="text-lg font-bold mb-4">To-Do List ✅</h2>

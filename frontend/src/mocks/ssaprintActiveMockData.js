@@ -83,6 +83,10 @@ export const mockActiveSsaprintDetailData = {
   diary: [
     {
       date: '2025-02-14',
+      name: '일기제목입니다',
+    },
+    {
+      date: '2025-02-16',
       name: '일기제목',
     },
   ],
