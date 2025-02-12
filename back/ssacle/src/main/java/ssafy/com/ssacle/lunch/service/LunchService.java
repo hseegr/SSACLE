@@ -23,6 +23,7 @@ public class LunchService {
 
     public List<LunchResponseDTO> getLunch(User user){
 //        List<Lunch> lunches = lunchRepository.findByDay(today);
+        System.out.println(user.getEmail()+" "+user.getName());
         List<Lunch> lunches = lunchRepository.findTodayLunch();
         boolean hasVoted = voteRepository.existsByUserIdAndVoteDay(user.getId());
         System.out.println(hasVoted);

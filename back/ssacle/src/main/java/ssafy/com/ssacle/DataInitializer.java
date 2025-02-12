@@ -20,12 +20,20 @@ import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.repository.CommentRepository;
 import ssafy.com.ssacle.lunch.domain.Lunch;
 import ssafy.com.ssacle.lunch.repository.LunchRepository;
+import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.sprint.domain.SprintBuilder;
+import ssafy.com.ssacle.sprint.repository.SprintRepository;
+import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
+import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
+import ssafy.com.ssacle.userteam.domain.UserTeam;
+import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,7 +53,10 @@ public class DataInitializer {
             BoardRepository boardRepository,
             CommentRepository commentRepository,
             AINewsRepository aiNewsRepository,
-            LunchRepository lunchRepository) {
+            LunchRepository lunchRepository,
+            SprintRepository sprintRepository,
+            TeamRepository teamRepository,
+            UserTeamRepository userTeamRepository) {
 
         return args -> {
             initializeUsers(userRepository);
@@ -57,6 +68,8 @@ public class DataInitializer {
             initializeReplies(commentRepository, userRepository);
             initializeAINews(aiNewsRepository);
             initializeLunch(lunchRepository);
+            initializeSprints(sprintRepository);
+            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
         };
     }
 
@@ -683,5 +696,82 @@ public class DataInitializer {
             System.out.println("No parent comments found. Initialize comments first.");
         }
     }
+
+    @Transactional
+    public void initializeSprints(SprintRepository sprintRepository) {
+        if (sprintRepository.count() == 0) {
+            Sprint sprint1 = SprintBuilder.builder()
+                    .name("React Sprint")
+                    .basicDescription("React 기본 개념 학습")
+                    .detailDescription("React의 useState, useEffect 및 Component 설계 학습")
+                    .recommendedFor("초급 프론트엔드 개발자")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(10)
+                    .build();
+
+            Sprint sprint2 = SprintBuilder.builder()
+                    .name("Spring Boot Sprint")
+                    .basicDescription("Spring Boot API 개발")
+                    .detailDescription("Spring Boot를 활용한 REST API 설계 및 JPA 활용 학습")
+                    .recommendedFor("초급 백엔드 개발자")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(8)
+                    .build();
+
+            Sprint sprint3 = SprintBuilder.builder()
+                    .name("DevOps Sprint")
+                    .basicDescription("CI/CD 및 Kubernetes 학습")
+                    .detailDescription("Jenkins, Docker, Kubernetes를 활용한 배포 자동화 학습")
+                    .recommendedFor("클라우드 및 인프라 엔지니어 지망생")
+                    .startAt(LocalDateTime.now().minusDays(7))
+                    .endAt(LocalDateTime.now().minusDays(6))
+                    .announceAt(LocalDateTime.now())
+                    .maxMembers(6)
+                    .build();
+
+            sprintRepository.saveAll(List.of(sprint1, sprint2, sprint3));
+            System.out.println("✅ 스프린트 더미 데이터가 추가되었습니다.");
+        } else {
+            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+        }
+    }
+
+    @Transactional
+    public void initializeTeams(SprintRepository sprintRepository, TeamRepository teamRepository, UserRepository userRepository, UserTeamRepository userTeamRepository) {
+        if (teamRepository.count() == 0) {
+            List<Sprint> sprints = sprintRepository.findAllWithTeams();
+            List<User> users = userRepository.findAllWithUserTeams();
+            List<Team> teams = new ArrayList<>();
+            List<UserTeam> userTeams = new ArrayList<>();
+
+            for (User user : users) {
+                // 랜덤한 스프린트 배정 (스프린트가 존재할 경우)
+                if (!sprints.isEmpty()) {
+                    Sprint assignedSprint = sprints.get(new Random().nextInt(sprints.size()));
+
+                    // SprintTeamBuilder를 활용하여 팀 생성
+                    Team team = SprintTeamBuilder.builder()
+                            .addUser(user)
+                            .participateSprint(assignedSprint)
+                            .build();
+
+                    teams.add(team);
+                    userTeams.add(new UserTeam(user, team));
+                }
+            }
+
+            teamRepository.saveAll(teams);
+            userTeamRepository.saveAll(userTeams);
+
+            System.out.println("✅ SprintTeamBuilder를 이용한 1인 팀 및 스프린트 배정 완료");
+        } else {
+            System.out.println("✅ 팀 데이터가 이미 존재합니다.");
+        }
+    }
+
 
 }

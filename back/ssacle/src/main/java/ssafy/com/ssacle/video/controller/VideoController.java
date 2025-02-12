@@ -1,64 +1,41 @@
-//package ssafy.com.ssacle.video.controller;
-//
-//import io.openvidu.java.client.*;
-//import jakarta.annotation.PostConstruct;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.Map;
-//
-//@CrossOrigin(origins = "*")
-//@RestController
-//@Slf4j
-//public class VideoController {
-//
-//    @Value("${openvidu_url}")
-//    private String OPENVIDU_URL;
-//
-//    @Value("${openvidu_secret}")
-//    private String OPENVIDU_SECRET;
-//
-//    private OpenVidu openvidu;
-//
-//    @PostConstruct
-//    public void init() {
-//        this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
-//    }
-//
-//    @PostMapping("/api/sessions")
-//    public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
-//            throws OpenViduJavaClientException, OpenViduHttpException {
-//        log.info("Initial Session");
-//        for(String key:params.keySet()) {
-//            log.info("{} : {}", key, params.get(key));
-//        }
-//        SessionProperties properties = SessionProperties.fromJson(params).build();
-//        Session session = openvidu.createSession(properties);
-//        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/api/sessions/{sessionId}/connections")
-//    public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
-//                                                   @RequestBody(required = false) Map<String, Object> params)
-//            throws OpenViduJavaClientException, OpenViduHttpException {
-//        log.info("Session ID : {}", sessionId);
-//        if(!params.isEmpty()){
-//            for(String key:params.keySet()) {
-//                log.info("{} : {}", key, params.get(key));
-//            }
-//        }else{
-//            log.info("Params is Empty");
-//        }
-//        Session session = openvidu.getActiveSession(sessionId);
-//        if (session == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-//        Connection connection = session.createConnection(properties);
-//        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
-//    }
-//
-//}
+package ssafy.com.ssacle.video.controller;
+
+import io.openvidu.java.client.*;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ssafy.com.ssacle.sprint.repository.SprintRepository;
+import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.user.service.UserService;
+import ssafy.com.ssacle.video.service.VideoService;
+
+import java.util.Map;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/api/video")
+@RequiredArgsConstructor
+public class VideoController {
+
+    private final VideoService videoService;
+
+    @PostMapping("/sessions")
+    public ResponseEntity<String> createSession(@RequestParam Long sprintId, @RequestParam Long teamId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        String sessionId = videoService.createSession(sprintId, teamId);
+        return ResponseEntity.ok().body(sessionId);
+    }
+
+    /** 토큰 생성 */
+    @PostMapping("/sessions/{sprintId}/{teamId}/token")
+    public ResponseEntity<String> createToken(@PathVariable Long sprintId, @PathVariable Long teamId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        String token = videoService.createToken(sprintId, teamId);
+        return ResponseEntity.ok().body(token);
+    }
+
+}
