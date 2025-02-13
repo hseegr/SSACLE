@@ -10,9 +10,7 @@ import { BOARD_END_POINT } from './endPoints'
 // 게시글 목록 조회 (GET)
 export const fetchBoardList = async () => {
   try {
-    console.log('API 호출 시작')
     const response = await httpCommon.get(BOARD_END_POINT.LIST)
-    console.log('API 응답 데이터:', response.data)
     return response.data
   } catch (error) {
     console.error('API 호출 에러:', error)

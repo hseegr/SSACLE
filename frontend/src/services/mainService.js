@@ -33,20 +33,10 @@ export const fetchSsadcupList = async () => {
 // 싸밥(식단) 정보 조회 (GET 요청)
 export const fetchLunchInfo = async () => {
   try {
-    console.log('Fetching lunch info...')
-    console.log('Token:', localStorage.getItem('accessToken')) // 토큰 확인
-
     const response = await httpCommon.get(MAIN_END_POINT.LUNCH_INFO)
-    console.log('Response:', response)
-
     return response.data
   } catch (error) {
-    console.error('Error details:', {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-      headers: error.response?.headers,
-    })
+    console.error('식단 정보 조회 실패:', error)
     throw error
   }
 }
@@ -57,22 +47,15 @@ export const fetchLunchInfo = async () => {
 //   return httpCommon.patch(MAIN_END_POINT.LUNCH_VOTE, { lunch_id: lunchId })
 // }
 
-// 싸밥 투표 (PATCH 요청, 토큰 필요) -> 토큰 제외하고 요청
+// 싸밥 투표 (POST 요청, 토큰 필요) -> 토큰 제외하고 요청
 export const fetchVoteLunch = async (lunchId) => {
   try {
-    console.log('Voting for lunch...', { lunch_id: lunchId })
-    const response = await httpCommon.post(
-      MAIN_END_POINT.LUNCH_VOTE,
-      { lunch_id: lunchId },
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
-    console.log('Vote API Response:', response)
+    const response = await httpCommon.post(MAIN_END_POINT.LUNCH_VOTE, {
+      lunchId,
+    })
     return response.data
   } catch (error) {
-    console.error('Vote API Error:', error)
-    console.error('Error response:', error.response)
+    console.error('투표 실패:', error)
     throw error
   }
 }
@@ -82,19 +65,6 @@ export const fetchVoteLunch = async (lunchId) => {
 // export const fetchLunchVoteResult = async () => {
 //   return httpCommon.get(MAIN_END_POINT.LUNCH_VOTE_RESULT)
 // }
-
-// 싸밥 투표 결과 조회 (GET 요청, 토큰 필요) -> 토큰 제외하고 요청
-export const fetchLunchVoteResult = async () => {
-  try {
-    const response = await httpCommon.get('/api/v1/vote/check-result', {
-      headers: { 'Content-Type': 'application/json' },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Vote Result API Error:', error)
-    throw error
-  }
-}
 
 // AI 기사 목록 조회 (GET 요청, newId 필요, 토큰 필요) -> 토큰 제외하고 요청
 // 기존 코드

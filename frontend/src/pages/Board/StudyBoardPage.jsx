@@ -130,12 +130,12 @@ const StudyBoardPage = () => {
   // 디버깅용
   const filteredPosts =
     data?.filter((post) => {
-      console.log('현재 게시글 type:', post.type)
-      console.log('현재 activeTab:', activeTab)
+      // console.log('현재 게시글 type:', post.type)
+      // console.log('현재 activeTab:', activeTab)
       return post.type === activeTab
     }) || []
 
-  console.log('필터링된 게시글:', filteredPosts)
+  // console.log('필터링된 게시글:', filteredPosts)
 
   // 게시글 클릭 핸들러
   const handlePostClick = (postId) => {

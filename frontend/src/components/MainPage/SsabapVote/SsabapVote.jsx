@@ -1,61 +1,32 @@
 import { useEffect, useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import {
-  fetchLunchInfo,
-  fetchVoteLunch,
-  fetchLunchVoteResult,
-} from '@/services/mainService'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchLunchInfo, fetchVoteLunch } from '@/services/mainService'
 
 const SsabapVote = () => {
   const [hasVoted, setHasVoted] = useState(false)
 
   // 점심 메뉴 정보 조회
-  const {
-    data: lunchData,
-    isLoading: isLunchLoading,
-    isError: isLunchError,
-    error: lunchError,
-  } = useQuery({
+  const { data: lunchData, refetch: refetchLunchInfo } = useQuery({
     queryKey: ['lunch'],
     queryFn: fetchLunchInfo,
     retry: false,
-  })
-
-  // 점심 메뉴 정보 조회 -> 디버깅 용
-  // const {
-  //   data: lunchData = { date: '', menu: [] }, // 기본값 설정
-  //   isLoading: isLunchLoading,
-  //   isError: isLunchError,
-  //   error: lunchError,
-  // } = useQuery({
-  //   queryKey: ['lunch'],
-  //   queryFn: fetchLunchInfo,
-  //   retry: false,
-  // })
-
-  // 투표 결과 조회
-  const {
-    data: voteResult,
-    isError: isVoteResultError,
-    error: voteResultError,
-    refetch: refetchVoteResult,
-  } = useQuery({
-    queryKey: ['lunchVoteResult'],
-    queryFn: fetchLunchVoteResult,
-    enabled: hasVoted,
-    retry: false,
+    onSuccess: (data) => {
+      // 응답 데이터에 votePercentage가 있으면 이미 투표한 것
+      if (data && data[0]?.votePercentage !== undefined) {
+        setHasVoted(true)
+      }
+    },
   })
 
   // 투표 mutation
-  // 기존 코드
   const { mutate: voteMutate } = useMutation({
+    // 투표 API 호출
     mutationFn: (lunchId) => fetchVoteLunch(lunchId),
-    onSuccess: (response) => {
-      console.log('Vote success:', response)
-      if (response?.message) {
-        setHasVoted(true)
-        refetchVoteResult()
-      }
+    onSuccess: async () => {
+      // 투표 상태 업데이트트
+      setHasVoted(true)
+      // 투표 후 위의 점심 정보 제공하는 데이터 다시 불러오기 -> 투표율 응답 받기 위함
+      await refetchLunchInfo()
     },
     onError: (error) => {
       console.error('투표 실패:', error)
@@ -63,67 +34,12 @@ const SsabapVote = () => {
     },
   })
 
-  // 투표 mutation
-  // 디버깅 코드
-  // const { mutate: voteMutate } = useMutation({
-  //   mutationFn: (lunchId) => {
-  //     console.log('Voting with data:', { lunch_id: lunchId })
-  //     return fetchVoteLunch({ lunch_id: lunchId })
-  //   },
-  //   onSuccess: (data) => {
-  //     console.log('Vote success:', data)
-  //     setHasVoted(true)
-  //     refetchVoteResult()
-  //   },
-  //   onError: (error) => {
-  //     console.error('Vote error details:', error)
-  //     alert('투표에 실패했습니다. 다시 시도해주세요.')
-  //   },
-  // })
-
-  // 디버깅용 코드
-  // 메뉴 데이터 확인
-  useEffect(() => {
-    if (lunchData) {
-      console.log('Current lunch data:', lunchData)
-    }
-  }, [lunchData])
-
-  // 투표 처리 함수
-  const handleVote = (lunchId) => {
-    if (hasVoted) return
-    // 디버깅 코드
-    console.log('Handling vote for lunch ID:', lunchId)
-    voteMutate(lunchId)
-  }
-
-  // 투표 결과 계산 (백분율)
-  const getVotePercentage = (lunchId) => {
-    if (!hasVoted || !voteResult) return 0
-
-    const targetResult = voteResult.find((item) => item.voteId === lunchId)
-    return targetResult ? Math.round(targetResult.votes * 100) : 0
-  }
-
-  // 로딩 상태 처리
-  if (isLunchLoading) {
-    return <div>Loading...</div>
-  }
-
-  // 에러 상태 처리
-  if (isLunchError) {
-    return <div>Error: {lunchError.message}</div>
-  }
-
-  if (isVoteResultError && hasVoted) {
-    return <div>Error loading vote results: {voteResultError.message}</div>
-  }
-
-  // 오늘의 메뉴가 없는 경우
+  // 만약 응답 데이터가 없거나 유효하지 않은 경우 예외 처리
   if (!lunchData || !Array.isArray(lunchData) || lunchData.length === 0) {
     return <div>오늘의 메뉴 정보가 없습니다.</div>
   }
 
+  // 메뉴 정보 추출
   const menu1 = lunchData[0]
   const menu2 = lunchData[1]
 
@@ -145,17 +61,23 @@ const SsabapVote = () => {
             className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           <button
-            onClick={() => handleVote(1)}
+            // 아직 투표하지 않았다면 요청
+            onClick={() => !hasVoted && voteMutate(1)}
             className={`flex-1 w-full p-3 rounded-lg text-center font-medium ${
-              hasVoted
-                ? getVotePercentage(1) > getVotePercentage(2)
+              // 투표율(votePercentage)이 존재하는지 확인 -> 투표율이 있다면 비교 후 더 높은 메뉴를 강조
+              menu1.votePercentage !== undefined
+                ? menu1.votePercentage > menu2.votePercentage
                   ? 'bg-blue-500 text-white'
                   : 'bg-ssacle-gray'
                 : 'bg-blue-500 text-white hover:bg-blue-600'
             }`}
-            disabled={hasVoted}
+            // 투표율이 있으면 버튼 비활성화
+            disabled={menu1.votePercentage !== undefined}
           >
-            {hasVoted ? `${getVotePercentage(1)}%` : '?'}
+            {/* 만약 투표율이 있다면 투표율*100 표기, 없다면 ? 표기 */}
+            {menu1.votePercentage !== undefined
+              ? `${menu1.votePercentage * 100}%`
+              : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             {menu1.menuName}
@@ -175,17 +97,19 @@ const SsabapVote = () => {
             className="w-50 h-40 object-cover rounded-lg mb-3"
           />
           <button
-            onClick={() => handleVote(2)}
+            onClick={() => !hasVoted && voteMutate(2)}
             className={`w-full p-3 rounded-lg text-center font-medium ${
-              hasVoted
-                ? getVotePercentage(menu2.id) > getVotePercentage(menu1.id)
+              menu2.votePercentage !== undefined // votePercentage 존재 여부로 판단
+                ? menu2.votePercentage > menu1.votePercentage
                   ? 'bg-blue-500 text-white'
                   : 'bg-ssacle-gray'
                 : 'bg-blue-500 text-white hover:bg-blue-600'
             }`}
-            disabled={hasVoted}
+            disabled={menu2.votePercentage !== undefined}
           >
-            {hasVoted ? `${getVotePercentage(2)}%` : '?'}
+            {menu2.votePercentage !== undefined
+              ? `${menu2.votePercentage * 100}%`
+              : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
             {menu2.menuName}
