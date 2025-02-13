@@ -5,12 +5,11 @@ const StartPage = () => {
   const navigate = useNavigate()
 
   const handleStart = () => {
-    alert('준비중입니다.')
-    // navigate('/account/login')
+    navigate('/account/login')
   }
   return (
     <div className="w-full h-screen ">
-          <div className="flex flex-col items-center justify-center w-full h-full gap-4 p-4 md:gap-8 md:flex-row md:px-20">
+      <div className="flex flex-col items-center justify-center w-full h-full gap-4 p-4 md:gap-8 md:flex-row md:px-20">
         {/* 왼쪽 영역 */}
         <section className="flex-1 h-full max-h-[30vh] md:max-h-full">
           <div className="flex flex-col justify-center h-full">

@@ -35,7 +35,7 @@ const Header = () => {
     <header className="min-w-max z-10 fixed top-0 left-0 w-full h-12 px-48 py-4 bg-white shadow-sm flex justify-between items-center">
       {/* 로고 */}
       <Link
-        to="/"
+        to="/main"
         className="text-ssacle-blue text-3xl font-bold font-montserrat"
       >
         SSACLE

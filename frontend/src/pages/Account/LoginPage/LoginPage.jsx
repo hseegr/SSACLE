@@ -12,6 +12,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  // 기존 코드
   const loginMutation = useMutation({
     mutationFn: fetchLogin,
     onSuccess: (response) => {
