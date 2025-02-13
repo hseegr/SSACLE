@@ -14,7 +14,7 @@ const SsaprintCreate = () => {
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
-  
+
   // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
     if (showDetails) {
@@ -39,9 +39,7 @@ const SsaprintCreate = () => {
         </p>
         <div className="border-t-4 border-ssacle-gray-sm my-4"></div>
 
-        <div className="flex flex-wrap justify-between">
           <CategorySelect />
-        </div>
 
         {/* + 버튼 추가 */}
         <div className="flex justify-center mt-4">
@@ -60,7 +58,28 @@ const SsaprintCreate = () => {
             label="종료일"
             value={endDate}
             setValue={setEndDate}
-            min={startDate}
+            min={
+              startDate
+                ? new Date(
+                    new Date(startDate).setDate(
+                      new Date(startDate).getDate() + 1
+                    )
+                  )
+                    .toISOString()
+                    .split('T')[0]
+                : ''
+            } // 시작일 +1일 설정
+            max={
+              startDate
+                ? new Date(
+                    new Date(startDate).setDate(
+                      new Date(startDate).getDate() + 6
+                    )
+                  )
+                    .toISOString()
+                    .split('T')[0]
+                : ''
+            } // 시작일 +6일 설정
             disabled={!startDate}
           />
         </div>

@@ -5,11 +5,18 @@ const SsaprintContext = createContext()
 
 // 🔥 Provider 컴포넌트
 export const SsaprintProvider = ({ children }) => {
-  const [selectedMain, setSelectedMain] = useState('')
-  const [selectedMid, setSelectedMid] = useState('')
-  const [selectedSub, setSelectedSub] = useState('')
+  const [selectedMain, setSelectedMain] = useState({ id: null, name: '' });
+  const [selectedMid, setSelectedMid] = useState({ id: null, name: '' });
+  const [selectedSub, setSelectedSub] = useState({ id: null, name: '' });
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+
+  // 🔥 LocalDateTime 변환 함수
+  const formatToLocalDateTime = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
+  };
 
   // 🔥 목데이터 추가 (기본 설명, 상세 설명, 권장 사항, todos)
   const [description, setDescription] = useState({
@@ -28,12 +35,12 @@ export const SsaprintProvider = ({ children }) => {
         setSelectedMid,
         selectedSub,
         setSelectedSub,
-        startDate,
+        startDate: formatToLocalDateTime(startDate),
         setStartDate,
-        endDate,
+        endDate: formatToLocalDateTime(endDate),
         setEndDate,
-        description, // 🔥 추가
-        setDescription, // 🔥 추가
+        description,
+        setDescription,
       }}
     >
       {children}
