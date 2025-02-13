@@ -1,33 +1,13 @@
 import { fetchAiNews } from '@/services/mainService'
 import { useQuery } from '@tanstack/react-query'
 
-const News = () => {
-  // ai 뉴스
-  const {
-    data: aiNewsData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['aiNews'],
-    queryFn: fetchAiNews,
-    retry: false,
-  })
-
-  console.log(aiNewsData)
-
-  // 로딩 상태 처리
-  if (isLoading) return <div>Loading...</div>
-
-  // 에러 상태 처리
-  if (isError) return <div>Error: {error.message}</div>
-
+const News = ({ news }) => {
   // 데이터가 없는 경우
-  if (!aiNewsData || !Array.isArray(aiNewsData) || aiNewsData.length === 0) {
+  if (!news || !Array.isArray(news) || news.length === 0) {
     return <div>뉴스 데이터가 없습니다.</div>
   }
 
-  const selectedNews = aiNewsData.slice(0, 4)
+  const selectedNews = news.slice(0, 4)
 
   return (
     <div>
@@ -48,7 +28,7 @@ const News = () => {
                 {item.title}
               </p>
               <p className="text-l font-medium text-ssacle-gray my-4">
-                {new Date(...item.createdAt).toLocaleDateString()}
+                {item.createdAt}
               </p>
             </div>
           </a>

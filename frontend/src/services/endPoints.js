@@ -42,11 +42,11 @@ export const USER_END_POINT = {
 // 메인페이지 -> mainService
 export const MAIN_END_POINT = {
   // GET 요청 - 로그인한 사용자의 기본 정보 조회
-  USER_INFO: (userId) => `/user/${userId}`,
+  USER_INFO: `/user/summary`,
 
   // GET 요청 - 참여중인 싸프린트, 싸드컵 리스트 조회
   // NOW_MYSSAPRINT: '/mylist',
-  NOW_MYSSAPRINT: '/',
+  NOW_MYSSAPRINT: '/user/sprint',
 
   // 싸프린트 관련 엔드포인트
   // POST 요청 - 관심사 기반 싸프린트 리스트 조회

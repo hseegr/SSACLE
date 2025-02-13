@@ -3,13 +3,15 @@ import { MAIN_END_POINT } from './endPoints'
 import axios from 'axios'
 
 // 로그인 중인 사용자 기본 정보 조회 (GET 요청, userId 필요)
-export const fetchUserInfo = async (userId) => {
-  return httpCommon.get(MAIN_END_POINT.USER_INFO(userId))
+export const fetchUserInfo = async () => {
+  const response = await httpCommon.get(MAIN_END_POINT.USER_INFO)
+  return response.data
 }
 
 // 참여 중인 싸프린트, 싸드컵 리스트 조회 (GET 요청)
 export const fetchNowMySsaprint = async () => {
-  return httpCommon.get(MAIN_END_POINT.NOW_MYSSAPRINT)
+  const response = await httpCommon.get(MAIN_END_POINT.NOW_MYSSAPRINT)
+  return response.data
 }
 
 // 관심사 기반 싸프린트 리스트 조회 (POST 요청)
