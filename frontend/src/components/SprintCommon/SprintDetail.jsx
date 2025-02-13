@@ -1,10 +1,10 @@
 import SprintOverview from './SprintOverview'
-// import SprintCurriculum from "./SprintCurriculum";
 import SprintProgress from './SprintProgress'
+import SprintCurriculum from './SprintCurriculum'
 import SprintRecommendation from './SprintRecommendation'
 import SprintBenefits from './SprintBenefits'
 
-const SprintDetail = ({ sprint, benefits }) => {
+const SprintDetail = ({ sprint, benefits, todos }) => {
   if (!sprint) return null
 
   return (
@@ -17,7 +17,7 @@ const SprintDetail = ({ sprint, benefits }) => {
       <hr className="border-t border-gray-200 my-4" />
 
       {/* 커리큘럼 */}
-      {/* <SprintCurriculum curriculum={sprint.curriculum} /> */}
+      <SprintCurriculum todos={todos} />
 
       {/* 진행 방식 */}
       <SprintProgress />

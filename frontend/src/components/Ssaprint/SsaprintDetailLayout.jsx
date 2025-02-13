@@ -51,7 +51,11 @@ const SsaprintDetailLayout = ({ sprintData }) => {
       <div className="flex justify-between items-start gap-4 h-auto">
         {/* 상세 정보 */}
         <div className="flex-1">
-          <SprintDetail sprint={sprintData.sprint} benefits={benefits} />
+          <SprintDetail
+            sprint={sprintData.sprint}
+            benefits={benefits}
+            todos={sprintData.todos}
+          />
         </div>
 
         {/* 참여 버튼 */}

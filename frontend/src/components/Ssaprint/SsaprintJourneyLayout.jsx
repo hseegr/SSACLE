@@ -29,7 +29,11 @@ const SsaprintJourneyLayout = ({ sprint }) => {
             setIsOpen={setIsOpen}
           />
           {isOpen && (
-            <SprintDetail sprint={sprint.sprint} benefits={benefits} />
+            <SprintDetail
+              sprint={sprint.sprint}
+              benefits={benefits}
+              todos={sprint.todos}
+            />
           )}
         </div>
 
