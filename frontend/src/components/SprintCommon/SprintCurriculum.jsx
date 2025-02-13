@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+// @ts-nocheck
+import { useState } from 'react'
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa'
 
 const SprintCurriculum = ({ todos = [] }) => {

@@ -77,25 +77,28 @@ export const fetchCompletedSsaprintList = async (page = 0, size = 10) => {
 //   }
 // };
 
-// ✅ 싸프린트 상세 조회
-export const fetchSsaprintDetail = async (id) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockSsaprintDetailData)
-    }, 500)
-  })
-}
-
-// // ✅ 싸프린트 상세 조회
+// // ✅ 싸프린트 상세 조회 (목업 데이터)
 // export const fetchSsaprintDetail = async (id) => {
-//   try {
-//     const response = await httpCommon.get(SSAPRINT_END_POINT.DETAIL(id));
-//     return response.data;
-//   } catch (error) {
-//     console.error(`스프린트 ${id} 상세 정보를 가져오는 중 오류 발생`, error);
-//     return null;
-//   }
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(mockSsaprintDetailData)
+//     }, 500)
+//   })
 // }
+
+// ✅ 싸프린트 상세 조회
+export const fetchSsaprintDetail = async (sprintId) => {
+  try {
+    const response = await httpCommon.get(SSAPRINT_END_POINT.DETAIL(sprintId))
+    return response.data // API 응답 데이터를 반환
+  } catch (error) {
+    console.error(
+      `스프린트 ${sprintId} 상세 정보를 가져오는 중 오류 발생`,
+      error
+    )
+    throw new Error('스프린트 상세 정보를 불러오지 못했습니다.')
+  }
+}
 
 // ✅ 싸프린트 참가 (목업 처리)
 export const joinSsaprint = async (id) => {

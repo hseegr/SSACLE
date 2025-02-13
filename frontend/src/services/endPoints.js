@@ -77,7 +77,7 @@ export const MAIN_END_POINT = {
 export const SSAPRINT_END_POINT = {
   LIST: '/ssaprint', // 전체 싸프린트 목록 조회
   LIST_WITH_FILTER: (major, sub) => `/ssaprint?major=${major}&sub=${sub}`, // 조건별 싸프린트 조회
-  DETAIL: (id) => `/ssaprint/${id}`, // 특정 싸프린트 상세 조회 (참가 이전/이후/완료 동일)
+  DETAIL: (id) => `/ssaprint/${id}/details`, // 스프린트 상세 조회
 
   CREATE: '/ssaprint', // 싸프린트 생성
   UPDATE: (id) => `/ssaprint/${id}`, // 싸프린트 수정

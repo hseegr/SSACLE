@@ -1,4 +1,5 @@
-const SprintBasicInfo = ({ sprint }) => {
+// @ts-nocheck
+const SprintBasicInfo = ({ sprint, categories }) => {
   if (!sprint) {
     return <p className="text-gray-500">데이터를 불러오는 중...</p>
   }
@@ -40,7 +41,16 @@ const SprintBasicInfo = ({ sprint }) => {
   )
 
   // 모집 상태 가져오기
-  const recruitStatus = getRecruitStatus(sprint.participation, sprint.recruit)
+  const recruitStatus = getRecruitStatus(
+    sprint.currentMembers,
+    sprint.maxMembers
+  )
+
+  // 카테고리명 목록 추출
+  const categoryNames = categories.map((category) => category.categoryName)
+
+  // 첫 번째 이미지가 있는 카테고리의 image를 썸네일로 사용
+  const thumbnail = categories.find((category) => category.image)?.image
 
   return (
     <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[7rem] w-[47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
@@ -71,7 +81,7 @@ const SprintBasicInfo = ({ sprint }) => {
         <div className="flex items-center gap-1 text-xs font-medium text-gray-700">
           {recruitStatus.emoji} <span className="font-semibold">모집 인원</span>
           <span>
-            {sprint.participation ?? '0'}명 / {sprint.recruit ?? '0'}명
+            {sprint.currentMembers ?? '0'}명 / {sprint.maxMembers ?? '0'}명
           </span>
           <span
             className={`min-w-16 px-2 py-0.5 rounded-md text-xs font-semibold ${recruitStatus.bgColor} text-center`}
@@ -81,24 +91,22 @@ const SprintBasicInfo = ({ sprint }) => {
         </div>
       </div>
 
-      {/* 태그 표시 (major/subtopic 적용) */}
+      {/* 태그 표시 (categories 적용) */}
       <div className="flex flex-wrap gap-1.5 mt-2">
-        {sprint.majortopic_name && (
-          <span className="px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg">
-            {sprint.majortopic_name}
+        {categoryNames.map((category, index) => (
+          <span
+            key={index}
+            className="px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg"
+          >
+            {category}
           </span>
-        )}
-        {sprint.subtopic_name && (
-          <span className="px-3 py-1 text-xs bg-blue-100 text-blue-600 rounded-lg">
-            {sprint.subtopic_name}
-          </span>
-        )}
+        ))}
       </div>
 
       {/* 썸네일 이미지 */}
-      {sprint.thumbnail && (
+      {thumbnail && (
         <img
-          src={sprint.thumbnail}
+          src={thumbnail}
           alt="Sprint Thumbnail"
           className="absolute bottom-3 right-3 w-10 h-10 opacity-80"
         />

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react'
 import SprintBasicInfo from '@/components/SprintCommon/SprintBasicInfo'
 import SprintSummary from '@/components/SprintCommon/SprintSummary'
@@ -16,6 +17,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
     )
   }
 
+  const { sprint, todos, categories } = sprintData // 데이터 구조 분해 할당
   const benefits = [
     '📄 이전 참가자들의 노트 열람 가능 (총 10개 노트)',
     '🏅 우수 발표자 선정 시 100 피클 지급',
@@ -23,42 +25,30 @@ const SsaprintDetailLayout = ({ sprintData }) => {
 
   return (
     <div className="mt-16 flex flex-col gap-4">
-      {/* 싸프린트 Info 제목 + 두꺼운 선 */}
       <h2 className="text-lg font-semibold flex items-center gap-2 pb-2 border-b-4 border-gray-200 w-full">
-        싸프린트 Info{' '}
-        <span role="img" aria-label="lightbulb">
-          💡
-        </span>
+        싸프린트 Info 💡
       </h2>
 
       <div className="flex justify-between items-stretch gap-4 h-auto">
-        {/* 기본 정보 */}
         <div className="flex-1 h-auto">
-          <SprintBasicInfo sprint={sprintData.sprint} />
+          <SprintBasicInfo sprint={sprint} categories={categories} />
         </div>
 
-        {/* 요약 정보 */}
         <div className="w-[18rem] flex-shrink-0 h-auto flex">
           <SprintSummary
-            recommendedFor={sprintData.sprint.recommendedFor}
+            recommendedFor={sprint.recommendedFor}
             benefits={benefits}
-            participation={sprintData.sprint.currentMembers}
-            recruit={sprintData.sprint.maxMembers}
+            participation={sprint.currentMembers}
+            recruit={sprint.maxMembers}
           />
         </div>
       </div>
 
       <div className="flex justify-between items-start gap-4 h-auto">
-        {/* 상세 정보 */}
         <div className="flex-1">
-          <SprintDetail
-            sprint={sprintData.sprint}
-            benefits={benefits}
-            todos={sprintData.todos}
-          />
+          <SprintDetail sprint={sprint} benefits={benefits} todos={todos} />
         </div>
 
-        {/* 참여 버튼 */}
         <div className="w-[17rem] flex-shrink-0">
           <Button className="w-full" onClick={() => setIsOpen(true)}>
             스프린트 참여하기
@@ -66,10 +56,9 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         </div>
       </div>
 
-      {/* 모달 표시 */}
       {isOpen && (
         <SprintParticipationModal
-          sprintId={sprintData.sprint.id}
+          sprintId={sprint.id}
           onClose={() => setIsOpen(false)}
         />
       )}
