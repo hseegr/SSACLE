@@ -107,9 +107,13 @@ export const SSADCUP_END_POINT = {
 // 관리자 -> adminService
 export const ADMIN_END_POINT = {
   USERS: '/admin/users',
-  REPORTS: '/admin/reports',
-  SETTINGS: '/admin/settings',
-  STATS: '/admin/statistics',
+  SSAPRINT: {
+    // LIST: '',
+    // DETAIL: '',
+    CREATE: {
+      CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
+    }
+  },
 }
 
 // 게시판 -> boardService
