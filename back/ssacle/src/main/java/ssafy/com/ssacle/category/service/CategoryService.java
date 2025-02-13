@@ -3,6 +3,7 @@ package ssafy.com.ssacle.category.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.dto.CategoryResponseDTO;
 import ssafy.com.ssacle.category.dto.CategoryTreeResponseDTO;
@@ -10,6 +11,7 @@ import ssafy.com.ssacle.category.exception.CategoryNotExistException;
 import ssafy.com.ssacle.category.exception.MiddleCategoryNotFoundException;
 import ssafy.com.ssacle.category.exception.TopCategoryNotFoundException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
+import ssafy.com.ssacle.global.aws.S3ImageUploader;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,8 +21,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final S3ImageUploader s3ImageUploader;
 
-    public CategoryResponseDTO createCategory(String param1, String param2, String param3, String image) {
+    public CategoryResponseDTO createCategory(String param1, String param2, String param3, MultipartFile image) {
         Category parentCategory = null;
 
         if (param1 != null && param2 == null) {
@@ -30,7 +33,11 @@ public class CategoryService {
         parentCategory = categoryRepository.findByCategoryName(param1)
                 .orElseThrow(TopCategoryNotFoundException::new);
         if (param2 != null && param3 == null) {
-            return saveCategory(param2, parentCategory, image);
+            if (image != null && !image.isEmpty()) {
+                String profileUrl = s3ImageUploader.uploadCategory(image);
+                return saveCategory(param2, parentCategory, profileUrl);
+            }
+            return saveCategory(param2, parentCategory, null);
         }
 
         parentCategory = categoryRepository.findByCategoryName(param2)

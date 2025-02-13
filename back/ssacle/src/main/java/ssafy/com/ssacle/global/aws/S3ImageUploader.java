@@ -64,6 +64,28 @@ public class S3ImageUploader {
         }
     }
 
+    public String uploadCategory(MultipartFile file) {
+        String fileName = "image/category/"+generateFileName(file.getOriginalFilename());
+        Path tempFilePath = saveTempFile(file);
+
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .acl("public-read") // 파일을 공개로 설정
+                    .build();
+
+            PutObjectResponse response = getS3Client().putObject(putObjectRequest, tempFilePath);
+            if (response.sdkHttpResponse().isSuccessful()) {
+                return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+            } else {
+                throw new RuntimeException("S3에 파일 업로드 실패");
+            }
+        } finally {
+            deleteTempFile(tempFilePath);
+        }
+    }
+
     private Path saveTempFile(MultipartFile file) {
         try {
             Path tempDir = Files.createTempDirectory("temp");
