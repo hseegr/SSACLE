@@ -1,3 +1,4 @@
+// @ts-nocheck
 import SprintProgressStatus from '@/components/SprintCommon/SprintProgressStatus'
 import JoinSprintInfo from '@/components/SprintCommon/JoinSprintInfo'
 import SprintDetail from '@/components/SprintCommon/SprintDetail'
@@ -73,7 +74,7 @@ const SsaprintJourneyLayout = ({ sprint }) => {
 
       {/* 세 번째 줄 - 질문카드 */}
       <div className="flex w-full shadow-md rounded-lg p-4 mb-10">
-        <SprintQuestionCards questions={sprint.sprint.id} />
+        <SprintQuestionCards sprintId={sprint.sprint.id} />
       </div>
     </div>
   )

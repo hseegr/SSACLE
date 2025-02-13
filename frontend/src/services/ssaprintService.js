@@ -3,7 +3,7 @@ import httpCommon from './http-common'
 import { SSAPRINT_END_POINT } from './endPoints'
 
 import { mockSsaprintData } from '@/mocks/ssaprintMockData'
-import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
+// import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
 import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
 import { mockSsaprintQuestions } from '@/mocks/ssaprintQuestionMockData'
 
@@ -92,10 +92,6 @@ export const fetchSsaprintDetail = async (sprintId) => {
     const response = await httpCommon.get(SSAPRINT_END_POINT.DETAIL(sprintId))
     return response.data // API 응답 데이터를 반환
   } catch (error) {
-    console.error(
-      `스프린트 ${sprintId} 상세 정보를 가져오는 중 오류 발생`,
-      error
-    )
     throw new Error('스프린트 상세 정보를 불러오지 못했습니다.')
   }
 }
@@ -156,26 +152,26 @@ export const fetchSsaprintParticipants = (id) =>
   httpCommon.get(SSAPRINT_END_POINT.PRESENTATION_PARTICIPANTS(id))
 
 /**
- * ✅ 특정 스프린트의 질문 목록을 조회하는 함수
+ * ✅ 특정 스프린트의 질문 목록 조회
  */
-export const fetchSsaprintQuestions = async (sprintId) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockSsaprintQuestions)
-    }, 500)
-  })
-}
+// export const fetchSsaprintQuestions = async (sprintId) => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(mockSsaprintQuestions)
+//     }, 500)
+//   })
+// }
 
-// // ✅ 실제 API 요청 방식 (추후 적용 가능)
-// export const getSprintQuestions = async (sprintId) => {
-//   try {
-//     const response = await httpCommon.get(SSAPRINT_END_POINT.QUESTIONS(sprintId));
-//     return response.data;
-//   } catch (error) {
-//     console.error('질문 목록을 불러오는 중 오류 발생:', error);
-//     return [];
-//   }
-// };
+export const fetchSsaprintQuestions = async (sprintId) => {
+  try {
+    const response = await httpCommon.get(
+      SSAPRINT_END_POINT.QUESTIONS(sprintId)
+    )
+    return response.data
+  } catch (error) {
+    return []
+  }
+}
 
 // ✅ 특정 질문 카드 상세 조회
 export const fetchSsaprintCardDetail = (id, cardId) =>
