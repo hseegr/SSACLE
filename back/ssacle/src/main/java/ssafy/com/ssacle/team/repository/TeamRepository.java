@@ -21,4 +21,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "WHERE t.sprint.id IN :sprintIds")
     List<Team> findTeamsWithUsersBySprintIds(@Param("sprintIds") List<Long> sprintIds);
 
+    List<Team> findBySprintIdIn(List<Long> sprintIds);
+
 }

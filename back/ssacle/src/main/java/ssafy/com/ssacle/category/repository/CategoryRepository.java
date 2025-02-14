@@ -2,6 +2,7 @@ package ssafy.com.ssacle.category.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ssafy.com.ssacle.category.domain.Category;
 
@@ -23,5 +24,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Categ
 
     // 특정 카테고리 이름으로 조회
     Optional<Category> findByCategoryName(String categoryName);
+
+    @Query("SELECT c FROM Category c WHERE c.level = 3")
+    List<Category> findLowestLevelCategories();
 
 }

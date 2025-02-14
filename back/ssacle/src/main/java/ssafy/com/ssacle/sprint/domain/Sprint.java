@@ -35,7 +35,7 @@ public class Sprint {
         this.defaultTodos.add(defaultTodo);
     }
 
-    @Column(name = "name", nullable = false, length=25)
+    @Column(name = "name", nullable = false, length=255)
     private String name;
 
     @Column(name = "basic_description", nullable = false, length=100)

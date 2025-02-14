@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.global.aws.S3ImageUploader;
 import ssafy.com.ssacle.global.jwt.JwtFilter;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
+import ssafy.com.ssacle.sprint.dto.SprintRecommendResponseDTO;
 import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.Team;
@@ -181,21 +182,6 @@ public class UserService {
     @Transactional
     public UserResponseDTO getCurrentUser(User user) {
         return UserResponseDTO.of(user);// ⚠️ 보안상 비밀번호를 직접 반환하지 않는 것이 좋음
-    }
-
-    @Transactional
-    public List<SprintSummaryResponse> getParicipateSprint(User user) {
-        List<Team> teams = teamRepository.findTeamsByUserId(user.getId());
-        if (teams.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Long> teamIds = teams.stream().map(Team::getId).toList();
-        List<Sprint> sprints = sprintRepository.findSprintsByTeamIds(teamIds);
-
-        return sprints.stream()
-                .map(SprintSummaryResponse::of)
-                .toList();
     }
 
     @Transactional
