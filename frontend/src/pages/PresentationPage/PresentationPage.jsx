@@ -1,10 +1,16 @@
 import PresentationNoticeModal from '@/components/PresentationPage/PresentationNoticeModal/PresentationNoticeModal'
 import PresentationPageWrapper from '@/components/PresentationPage/PresentationPageWrapper/PresentationPageWrapper'
 import SessionInitializer from '@/components/PresentationPage/SessionInitializer/SessionInitializer'
-import { usePresentationModalStore } from '@/store/usePresentaionModalStore'
+import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
+import { useShallow } from 'zustand/react/shallow'
 const PresentationPage = () => {
   // 모달 열기 상태
-  const { isModalOpen, modalStep } = usePresentationModalStore()
+  const { isModalOpen, modalStep } = usePresentationModalStateStore(
+    useShallow((state) => ({
+      isModalOpen: state.isModalOpen,
+      modalStep: state.modalStep,
+    }))
+  )
 
   // 초기 입장 시 세션 보여줄지 말지 결정
   const isSessionVisible = modalStep === 'welcome' && !isModalOpen

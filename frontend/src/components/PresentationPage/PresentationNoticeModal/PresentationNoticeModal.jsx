@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { Button } from '@/components/ui/button'
-import { MODAL_STEP_CONFIG } from '@/constants/modalStep'
 import {
   Dialog,
   DialogContent,
@@ -8,10 +7,15 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { usePresentationModalStore } from '@/store/usePresentaionModalStore'
+import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
+import useModalStepConfig from '@/hooks/useModalStepConfig'
 
 const PresentationNoticeModal = () => {
-  const { isModalOpen, modalStep } = usePresentationModalStore()
+  const isModalOpen = usePresentationModalStateStore(
+    (state) => state.isModalOpen
+  )
+  const modalStep = usePresentationModalStateStore((state) => state.modalStep)
+  const { MODAL_STEP_CONFIG } = useModalStepConfig()
   const { title, description, buttons } = MODAL_STEP_CONFIG[modalStep]
 
   return (
@@ -22,17 +26,22 @@ const PresentationNoticeModal = () => {
       >
         <DialogHeader className="gap-4">
           <DialogTitle className="text-lg text-center text-ssacle-blue">
-            {title.before}
+            {title.map((t) => t)}
           </DialogTitle>
-          <DialogDescription className="text-sm text-center whitespace-pre-wrap">
-            {description.before}
+          <DialogDescription className="flex flex-col gap-2 text-sm text-center whitespace-pre-wrap">
+            {description.map((d) => (
+              <span className="text-sm font-KR" key={d}>
+                {d}
+              </span>
+            ))}
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-center w-full">
-          {buttons.map(({ text, onClick, style }, index) => (
+        <div className="flex items-center justify-center w-full gap-4">
+          {buttons.map(({ text, onClick, style, variant }, index) => (
             <Button
               key={text + index}
-              className={`w-1/3 hover:bg-ssacle-blue/80 bg-ssacle-blue text-white rounded-full font-KR ${style}`}
+              variant={variant}
+              className={`w-1/3 text-white rounded-full font-KR ${style} hover:bg-${style}/50 focus:ring-0`}
               onClick={onClick}
             >
               {text}
