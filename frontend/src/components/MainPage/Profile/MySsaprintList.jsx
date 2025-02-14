@@ -1,5 +1,11 @@
+import { useNavigate } from 'react-router-dom'
+
 const MySsaprintList = ({ currentSprintsData }) => {
-  const { name, type, duration, endAt } = currentSprintsData
+  const navigate = useNavigate()
+
+  const handleSprintClick = (sprintId) => {
+    navigate(`/my-sprints/${sprintId}`)
+  }
 
   return (
     <div className="bg-white w-full h-60 rounded-xl text-ssacle-black">
@@ -35,8 +41,11 @@ const MySsaprintList = ({ currentSprintsData }) => {
 
             return (
               <div
-                key={sprint.sprintId}
-                className="flex flex-row gap-x-2 mb-2 items-center"
+                key={sprint.id}
+                className="flex flex-row gap-x-2 mb-2 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                onClick={() => {
+                  handleSprintClick(sprint.id)
+                }}
               >
                 {/* 상태 표시 점 */}
                 <div
