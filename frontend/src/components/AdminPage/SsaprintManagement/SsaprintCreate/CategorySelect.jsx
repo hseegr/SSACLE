@@ -9,13 +9,13 @@ const CategorySelect = () => {
   if (isLoading) return <p>⏳ 카테고리 불러오는 중...</p>
   if (isError) return <p>❌ 카테고리를 불러오지 못했습니다.</p>
 
-  // ✅ 대주제 리스트
+  // 대주제 리스트
   const mainCategories = categories.map((cat) => ({
     value: cat.id,
     label: cat.categoryName,
   }))
 
-  // ✅ 선택된 대주제의 중주제 리스트
+  // 선택된 대주제의 중주제 리스트
   const selectedMainCategory = categories.find(
     (cat) => cat.id === parseInt(selectedMain, 10)
   )
@@ -26,7 +26,7 @@ const CategorySelect = () => {
       }))
     : []
 
-  // ✅ 선택된 중주제의 소주제 리스트
+  // 선택된 중주제의 소주제 리스트
   const selectedMidCategory = selectedMainCategory?.subCategories.find(
     (sub) => sub.id === parseInt(selectedMid, 10)
   )

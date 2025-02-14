@@ -10,17 +10,17 @@ const SelectDropdown = ({ label, type, options }) => {
     setSelectedSub,
   } = useSsaprint()
 
-  // 🔥 드롭다운 값 변경 핸들러
+  // 드롭다운 값 변경 핸들러
   const handleChange = (e) => {
     const value = e.target.value
 
     if (type === 'main') {
       setSelectedMain(value)
-      setSelectedMid('') // 🔥 대주제 변경 시 중주제 초기화
-      setSelectedSub('') // 🔥 대주제 변경 시 소주제 초기화
+      setSelectedMid('') // 대주제 변경 시 중주제 초기화
+      setSelectedSub('') // 대주제 변경 시 소주제 초기화
     } else if (type === 'mid') {
       setSelectedMid(value)
-      setSelectedSub('') // 🔥 중주제 변경 시 소주제 초기화
+      setSelectedSub('') // 중주제 변경 시 소주제 초기화
     } else if (type === 'sub') {
       setSelectedSub(value)
     }
@@ -42,7 +42,7 @@ const SelectDropdown = ({ label, type, options }) => {
         }`}
         value={getValue()}
         onChange={handleChange}
-        disabled={options.length === 0} // 🔥 옵션 없을 때 비활성화
+        disabled={options.length === 0} // 옵션 없을 때 비활성화
       >
         <option value="" disabled>
           선택하세요

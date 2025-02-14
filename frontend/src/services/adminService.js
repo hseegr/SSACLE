@@ -11,7 +11,9 @@ export const fetchLoadCategory = async () => {
 }
 
 // GPT API 호출
-export const fetchGptTodos = async () => {
-    const response = await axios.get(ADMIN_END_POINT.SSAPRINT.CREATE.GPT_TODOS)
-    return response.data
+export const fetchGptTodos = async ({ startAt, endAt, topic }) => {
+  const response = await axios.get(ADMIN_END_POINT.SSAPRINT.CREATE.GPT_TODOS, {
+    params: { startAt, endAt, topic },
+  })
+  return response.data
 }
