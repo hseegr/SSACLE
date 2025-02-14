@@ -23,4 +23,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userTeams WHERE u.email = :email")
     Optional<User> findUserWithTeamsByEmail(@Param("email") String email);
+
+
+
+    @Query("SELECT u FROM User u JOIN FETCH u.userTeams ut JOIN FETCH ut.team t WHERE u.id = :userId")
+    Optional<User> findUserWithTeamsById(@Param("userId") Long userId);
+
+
 }

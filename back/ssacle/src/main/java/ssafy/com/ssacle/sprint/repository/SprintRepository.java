@@ -39,4 +39,7 @@ public interface SprintRepository extends JpaRepository<Sprint, Long>, SprintRep
 
     @Query("SELECT t FROM Sprint s JOIN s.teams t WHERE s.status = :status")
     List<Team> findTeamsByStatus(int status);
+
+
 }
+
