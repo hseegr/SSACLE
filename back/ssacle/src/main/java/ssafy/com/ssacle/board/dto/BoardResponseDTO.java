@@ -12,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BoardResponseDTO {
-
+    @NotBlank
+    private Long id;
     @NotBlank
     private String title;
 

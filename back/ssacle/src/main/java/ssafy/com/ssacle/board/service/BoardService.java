@@ -40,6 +40,7 @@ public class BoardService {
         List<Board> total = boardRepository.findAllWithUser();
         for(Board board : total){
             BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder()
+                    .id(board.getId())
                     .title(board.getTitle())
                     .content(board.getContent())
                     .writerInfo(board.getUser().getNickname())
@@ -62,6 +63,7 @@ public class BoardService {
 
         for(Board board : boards){
             BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder()
+                    .id(board.getId())
                     .title(board.getTitle())
                     .content(board.getContent())
                     .writerInfo(board.getUser().getNickname())
@@ -82,6 +84,7 @@ public class BoardService {
         Board board = boardRepository.findByIdWithBoardTypeAndParent(id).orElseThrow(() -> new BoardException(BoardErrorCode.BOARD_NOT_FOUND));
 
         BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder()
+                .id(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .writerInfo(board.getUser().getNickname())

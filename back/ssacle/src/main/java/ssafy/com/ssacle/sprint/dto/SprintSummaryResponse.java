@@ -12,6 +12,8 @@ import java.time.temporal.ChronoUnit;
 @Builder
 public class SprintSummaryResponse {
     @NotBlank
+    private Long id;
+    @NotBlank
     private String name;
 
     @NotBlank
@@ -25,6 +27,7 @@ public class SprintSummaryResponse {
 
     public static SprintSummaryResponse of(Sprint sprint){
         return SprintSummaryResponse.builder()
+                .id(sprint.getId())
                 .name(sprint.getName())
                 .type("싸프린트")
                 .duration((int) ChronoUnit.DAYS.between(sprint.getStartAt(), sprint.getEndAt()))
