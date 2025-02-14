@@ -75,8 +75,7 @@ export const MAIN_END_POINT = {
 
 // 싸프린트 -> ssaprintService
 export const SSAPRINT_END_POINT = {
-  LIST: '/ssaprint', // 전체 싸프린트 목록 조회
-  LIST_WITH_FILTER: (major, sub) => `/ssaprint?major=${major}&sub=${sub}`, // 조건별 싸프린트 조회
+  LIST: '/search', // 전체 싸프린트 목록 조회
   DETAIL: (id) => `/ssaprint/${id}/details`, // 스프린트 상세 조회
 
   CREATE: '/ssaprint', // 싸프린트 생성
@@ -113,7 +112,7 @@ export const ADMIN_END_POINT = {
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
       GPT_TODOS: '/gpt/todos', // gpt 상세 내용 생성
-    }
+    },
   },
 }
 

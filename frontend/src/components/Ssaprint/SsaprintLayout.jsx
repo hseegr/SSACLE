@@ -2,23 +2,18 @@ import { useState, useEffect } from 'react'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
 import Pagination from '@/components/common/Pagination'
-import {
-  fetchSsaprintListWithFilter,
-  fetchCompletedSsaprintList,
-} from '@/services/ssaprintService'
+import { fetchSsaprintListWithFilter } from '@/services/ssaprintService'
 
 const SsaprintLayout = () => {
   const [sprints, setSprints] = useState([])
   const [filters, setFilters] = useState({
-    status: 'available',
-    position: [],
-    stack: [],
-    search: '',
+    status: 0, // 0: 시작 전, 1: 진행 중, 2: 완료
+    categoryId: null,
   })
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
-    pageSize: 10,
+    pageSize: 8,
   })
 
   // 필터 변경 핸들러
@@ -30,64 +25,30 @@ const SsaprintLayout = () => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }))
   }
 
-  // ✅ Mock Data를 불러오는 API 사용 (실제 API 대체)
+  // API 호출하여 싸프린트 목록 가져오기
   useEffect(() => {
     const fetchData = async () => {
-      let data
-      if (filters.status === 'completed') {
-        data = await fetchCompletedSsaprintList(
-          pagination.currentPage,
-          pagination.pageSize
-        )
-      } else {
-        data = await fetchSsaprintListWithFilter(
-          filters.position.join(','),
-          filters.stack.join(','),
-          pagination.currentPage - 1,
-          pagination.pageSize
-        )
-      }
+      const response = await fetchSsaprintListWithFilter(
+        filters.status,
+        filters.categoryId,
+        pagination.currentPage - 1, // API는 0-based index
+        pagination.pageSize
+      )
 
-      if (data) {
-        setSprints(data.content || [])
-        setPagination((prev) => ({
-          ...prev,
-          totalPages: data.totalPages,
-          totalElements: data.totalElements,
-        }))
+      if (response) {
+        setSprints(response.content || [])
+        setPagination((prev) => {
+          return {
+            ...prev,
+            totalPages: response.totalPages,
+            totalElements: response.totalElements,
+          }
+        })
       }
     }
 
     fetchData()
   }, [filters, pagination.currentPage, pagination.pageSize])
-
-  // // API 호출하여 싸프린트 목록 가져오기
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     let data;
-  //     if (filters.status === 'completed') {
-  //       data = await fetchCompletedSsaprintList(pagination.currentPage, pagination.pageSize);
-  //     } else {
-  //       data = await fetchSsaprintListWithFilter(
-  //         filters.position.join(','),
-  //         filters.stack.join(','),
-  //         pagination.currentPage,
-  //         pagination.pageSize
-  //       );
-  //     }
-
-  //     if (data) {
-  //       setSprints(data.content || []); // ✅ `.data`에서 직접 `content` 가져오기
-  //       setPagination((prev) => ({
-  //         ...prev,
-  //         totalPages: data.totalPages, // ✅ `.data`에서 직접 가져오기
-  //         totalElements: data.totalElements,
-  //       }));
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [filters, pagination.currentPage]);
 
   return (
     <div className="mt-16">
@@ -100,7 +61,7 @@ const SsaprintLayout = () => {
       </section>
 
       {/* 필터 UI */}
-      <FilterBar domain="ssaprint" onFilterChange={handleFilterChange} />
+      <FilterBar onFilterChange={handleFilterChange} />
 
       {/* 스프린트 목록 */}
       <section className="mt-1">

@@ -7,23 +7,54 @@ import { mockSsaprintData } from '@/mocks/ssaprintMockData'
 import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
 import { mockSsaprintQuestions } from '@/mocks/ssaprintQuestionMockData'
 
+// /**
+//  * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
+//  */
+// export const fetchSsaprintListWithFilter = async (
+//   major,
+//   sub,
+//   page = 0,
+//   size = 10
+// ) => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve({
+//         ...mockSsaprintData,
+//         content: mockSsaprintData.content.slice(page * size, (page + 1) * size),
+//       })
+//     }, 500)
+//   })
+// }
+
 /**
- * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
+ * 싸프린트 목록 조회 (API 요청)
+ * @param {number} status - 스프린트 상태 (0: 시작 전, 1: 진행 중, 2: 완료)
+ * @param {number} categoryId - 카테고리 ID (선택)
+ * @param {number} page - 페이지 번호 (기본값: 0)
+ * @param {number} size - 페이지당 아이템 개수 (기본값: 8)
  */
 export const fetchSsaprintListWithFilter = async (
-  major,
-  sub,
+  status,
+  categoryId = null,
   page = 0,
-  size = 10
+  size = 8
 ) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        ...mockSsaprintData,
-        content: mockSsaprintData.content.slice(page * size, (page + 1) * size),
-      })
-    }, 500)
-  })
+  try {
+    const response = await httpCommon.get('/search', {
+      params: {
+        status, // 상태 값 (0: 시작 전, 1: 진행 중, 2: 완료)
+        categoryId: categoryId || undefined, // 카테고리 ID (선택)
+        page, // 페이지 번호
+        size, // 한 페이지에 가져올 데이터 수
+        sort: 'startAt,desc', // 정렬 방식 (백엔드 요구사항 반영)
+      },
+    })
+    return response.data // 백엔드 응답 데이터 반환
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('🔥 싸프린트 목록 조회 실패:', error)
+    return null // 오류 발생 시 null 반환
+  }
 }
 
 /**
