@@ -737,7 +737,7 @@ public class DataInitializer {
                             .recommendedFor("이 주제에 관심 있는 개발자")
                             .startAt(LocalDateTime.now().minusDays(random.nextInt(10)))
                             .endAt(LocalDateTime.now().plusDays(random.nextInt(20) + 10))
-                            .announceAt(LocalDateTime.now().minusDays(random.nextInt(5)))
+                            .announceAt(LocalDateTime.now())
                             .maxMembers(5 + random.nextInt(5))
                             .build();
                     sprintRepository.save(sprint);

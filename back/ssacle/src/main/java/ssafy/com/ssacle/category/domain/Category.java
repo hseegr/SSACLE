@@ -44,4 +44,33 @@ public class Category {
 
     @Column(name = "image", nullable = true, length = 1024)
     private String image;
+
+    public String getMajorCategoryName() {
+        Category current = this;
+        while (current.getParent() != null) {
+            current = current.getParent();
+        }
+        return current.getCategoryName();
+    }
+
+    /** ✅ 중간(sub) 카테고리 찾기 */
+    public String getSubCategoryName() {
+        if (this.parent == null) {
+            return null; // 부모가 없으면 중간 카테고리 없음
+        }
+
+        Category parent = this.parent;
+        while (parent.getParent() != null && parent.getParent().getParent() != null) {
+            parent = parent.getParent();
+        }
+        return parent.getCategoryName();
+    }
+
+    public String getLowestCategoryName() {
+        Category current = this;
+        while (!current.getChildren().isEmpty()) {
+            current = current.getChildren().get(0); // 가장 첫 번째 하위 카테고리 선택
+        }
+        return current.getCategoryName();
+    }
 }

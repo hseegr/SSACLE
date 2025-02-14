@@ -206,9 +206,9 @@ public class SprintService {
                 .map(SprintSummaryResponse::of)
                 .toList();
     }
+
     @Transactional
     public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
-        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기
         List<UserCategory> userCategories = userCategoryRepository.findByUserId(user.getId());
         List<Long> interestedMiddleCategoryIds = userCategories.stream()
                 .map(userCategory -> userCategory.getCategory().getId())
@@ -216,13 +216,10 @@ public class SprintService {
 
         log.info("사용자의 관심 중간 카테고리 ID 목록: {}", interestedMiddleCategoryIds);
         if (interestedMiddleCategoryIds.isEmpty()) {
-            return Collections.emptyList(); // 관심 카테고리가 없으면 추천 스프린트 없음
+            return Collections.emptyList();
         }
 
-// 2. 모든 최하위 카테고리 가져오기
         List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
-
-// 3. 최하위 카테고리 중에서 부모가 사용자의 관심 중간 카테고리와 일치하는 것만 필터링
         List<Long> validLowestCategoryIds = lowestLevelCategories.stream()
                 .filter(category -> category.getParent() != null &&
                         interestedMiddleCategoryIds.contains(category.getParent().getId()))
@@ -230,12 +227,10 @@ public class SprintService {
                 .collect(Collectors.toList());
 
         log.info("사용자의 관심 중간 카테고리와 연결된 최하위 카테고리 ID 목록: {}", validLowestCategoryIds);
-
         if (validLowestCategoryIds.isEmpty()) {
-            return Collections.emptyList(); // 사용자의 관심 카테고리와 연결된 최하위 카테고리가 없으면 추천할 스프린트 없음
+            return Collections.emptyList();
         }
 
-// 4. 해당하는 최하위 카테고리에 속한 스프린트 조회
         List<SprintCategory> relatedSprintCategories = sprintCategoryRepository.findByCategoryIdIn(validLowestCategoryIds);
         List<Sprint> relatedSprints = relatedSprintCategories.stream()
                 .map(SprintCategory::getSprint)
@@ -243,7 +238,6 @@ public class SprintService {
 
         log.info("추천 가능한 스프린트 개수: {}", relatedSprints.size());
 
-// 5. 이미 참여한 스프린트 제외 (시작 전인 것만 필터링)
         List<UserTeam> userTeams = userTeamRepository.findByUserId(user.getId());
         Set<Long> joinedSprintIds = userTeams.stream()
                 .map(userTeam -> userTeam.getTeam().getSprint().getId())
@@ -256,26 +250,102 @@ public class SprintService {
 
         log.info("사용자가 참여하지 않은 추천 가능한 스프린트 개수: {}", unjoinedSprints.size());
 
-// 6. 추천 스프린트 목록 반환
         return unjoinedSprints.stream()
-                .map(sprint -> SprintRecommendResponseDTO.builder()
-                        .id(sprint.getId())
-                        .categoryName(
-                                sprint.getSprintCategories().isEmpty() ? "Unknown"
-                                        : sprint.getSprintCategories().get(0).getCategory().getCategoryName()
-                        )
-                        .title(sprint.getName())
-                        .description(sprint.getBasicDescription())
-                        .start_at(sprint.getStartAt().toLocalDate()) // LocalDateTime → LocalDate 변환
-                        .end_at(sprint.getEndAt().toLocalDate()) // LocalDateTime → LocalDate 변환
-                        .currentMembers(sprint.getCurrentMembers())
-                        .maxMembers(sprint.getMaxMembers())
-                        .imageUrl(sprint.getSprintCategories().isEmpty() ? null
-                                : sprint.getSprintCategories().get(0).getCategory().getImage()) // 카테고리 이미지 활용
-                        .build())
-                .collect(Collectors.toList());
+                .map(sprint -> {
+                    if (sprint.getSprintCategories().isEmpty()) {
+                        log.warn("🚨 Sprint ID {}에 연결된 카테고리가 없음", sprint.getId());
+                        return null;
+                    }
+                    Category category = sprint.getSprintCategories().get(0).getCategory(); // ✅ 최하위 카테고리
 
+                    return SprintRecommendResponseDTO.builder()
+                            .id(sprint.getId())
+                            .majorCategoryName(category.getMajorCategoryName()) // ✅ 최상위 카테고리
+                            .subCategoryName(category.getSubCategoryName()) // ✅ 중간 카테고리
+                            .title(sprint.getName())
+                            .description(sprint.getBasicDescription())
+                            .start_at(sprint.getStartAt().toLocalDate())
+                            .end_at(sprint.getEndAt().toLocalDate())
+                            .currentMembers(sprint.getCurrentMembers())
+                            .maxMembers(sprint.getMaxMembers())
+                            .imageUrl(category.getImage()) // ✅ 최하위 카테고리의 이미지 사용
+                            .build();
+                })
+                .filter(Objects::nonNull) // null 값 제거
+                .collect(Collectors.toList());
     }
+
+
+//    @Transactional
+//    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
+//        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기
+//        List<UserCategory> userCategories = userCategoryRepository.findByUserId(user.getId());
+//        List<Long> interestedMiddleCategoryIds = userCategories.stream()
+//                .map(userCategory -> userCategory.getCategory().getId())
+//                .collect(Collectors.toList());
+//
+//        log.info("사용자의 관심 중간 카테고리 ID 목록: {}", interestedMiddleCategoryIds);
+//        if (interestedMiddleCategoryIds.isEmpty()) {
+//            return Collections.emptyList(); // 관심 카테고리가 없으면 추천 스프린트 없음
+//        }
+//
+//// 2. 모든 최하위 카테고리 가져오기
+//        List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategories();
+//
+//// 3. 최하위 카테고리 중에서 부모가 사용자의 관심 중간 카테고리와 일치하는 것만 필터링
+//        List<Long> validLowestCategoryIds = lowestLevelCategories.stream()
+//                .filter(category -> category.getParent() != null &&
+//                        interestedMiddleCategoryIds.contains(category.getParent().getId()))
+//                .map(Category::getId)
+//                .collect(Collectors.toList());
+//
+//        log.info("사용자의 관심 중간 카테고리와 연결된 최하위 카테고리 ID 목록: {}", validLowestCategoryIds);
+//
+//        if (validLowestCategoryIds.isEmpty()) {
+//            return Collections.emptyList(); // 사용자의 관심 카테고리와 연결된 최하위 카테고리가 없으면 추천할 스프린트 없음
+//        }
+//
+//// 4. 해당하는 최하위 카테고리에 속한 스프린트 조회
+//        List<SprintCategory> relatedSprintCategories = sprintCategoryRepository.findByCategoryIdIn(validLowestCategoryIds);
+//        List<Sprint> relatedSprints = relatedSprintCategories.stream()
+//                .map(SprintCategory::getSprint)
+//                .collect(Collectors.toList());
+//
+//        log.info("추천 가능한 스프린트 개수: {}", relatedSprints.size());
+//
+//// 5. 이미 참여한 스프린트 제외 (시작 전인 것만 필터링)
+//        List<UserTeam> userTeams = userTeamRepository.findByUserId(user.getId());
+//        Set<Long> joinedSprintIds = userTeams.stream()
+//                .map(userTeam -> userTeam.getTeam().getSprint().getId())
+//                .collect(Collectors.toSet());
+//
+//        List<Sprint> unjoinedSprints = relatedSprints.stream()
+//                .filter(sprint -> !joinedSprintIds.contains(sprint.getId()))
+////                .filter(sprint -> !joinedSprintIds.contains(sprint.getId()) && sprint.getStartAt().isAfter(LocalDateTime.now()))
+//                .collect(Collectors.toList());
+//
+//        log.info("사용자가 참여하지 않은 추천 가능한 스프린트 개수: {}", unjoinedSprints.size());
+//
+//// 6. 추천 스프린트 목록 반환
+//        return unjoinedSprints.stream()
+//                .map(sprint -> SprintRecommendResponseDTO.builder()
+//                        .id(sprint.getId())
+//                        .categoryName(
+//                                sprint.getSprintCategories().isEmpty() ? "Unknown"
+//                                        : sprint.getSprintCategories().get(0).getCategory().getCategoryName()
+//                        )
+//                        .title(sprint.getName())
+//                        .description(sprint.getBasicDescription())
+//                        .start_at(sprint.getStartAt().toLocalDate()) // LocalDateTime → LocalDate 변환
+//                        .end_at(sprint.getEndAt().toLocalDate()) // LocalDateTime → LocalDate 변환
+//                        .currentMembers(sprint.getCurrentMembers())
+//                        .maxMembers(sprint.getMaxMembers())
+//                        .imageUrl(sprint.getSprintCategories().isEmpty() ? null
+//                                : sprint.getSprintCategories().get(0).getCategory().getImage()) // 카테고리 이미지 활용
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//    }
 
 
 }

@@ -15,7 +15,10 @@ public class SprintRecommendResponseDTO {
     private Long id;
 
     @NotBlank
-    private String categoryName;
+    private String majorCategoryName;
+
+    @NotBlank
+    private String subCategoryName;
 
     @NotBlank
     private String title;
