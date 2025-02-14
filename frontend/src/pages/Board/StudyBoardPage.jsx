@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { posts as mockPosts } from '@/mocks/boardData'
 import PayModal from '@/components/Board/Modal/PayModal'
-import { useQuery } from '@tanstack/react-query'
-import { fetchBoardList } from '@/services/boardService'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
+import { fetchUserInfo } from '@/services/mainService'
 
 const studyTabs = [
   { id: 'legend', label: '명예의 전당' },
@@ -32,74 +33,19 @@ const StudyBoardPage = () => {
   const [showPayModal, setShowPayModal] = useState(false)
   // 선택된 게시글 id
   const [selectPostId, setSelectPostId] = useState(null)
-  // 사용자의 현재 피클 수 (실제로는 API에서 받아와야 함)
-  const [userPickle, setUserPickle] = useState(256)
 
-  // 게시글 목록 불러오기
-  // activeTab이 변경될 때마다 해당하는 게시글 목록을 새로 불러옴
-  // useEffect(() => {
-  //   const fetchPosts = async () => {
-  //     try {
-  //       setLoading(true)
-  //       // 실제 API 대신 mockData 사용
-  //       const filteredPosts = mockPosts.filter(
-  //         (post) => post.type === activeTab
-  //       )
+  // 유저 정보 조회 쿼리 추가
+  const { data: userData } = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: fetchUserInfo,
+    retry: false,
+  })
 
-  //       // 페이지네이션을 위한 데이터 처리
-  //       const ITEMS_PER_PAGE = 10
-  //       const start = (currentPage - 1) * ITEMS_PER_PAGE
-  //       const end = start + ITEMS_PER_PAGE
-  //       const paginatedPosts = filteredPosts.slice(start, end)
-
-  //       setPosts(paginatedPosts)
-  //       setTotalPages(Math.ceil(filteredPosts.length / ITEMS_PER_PAGE))
-  //       setLoading(false)
-  //     } catch (error) {
-  //       console.error('게시글 목록을 불러오는데 실패했습니다:', error)
-  //       setLoading(false)
-  //     }
-  //   }
-  //   fetchPosts()
-  // }, [activeTab, currentPage]) // activeTab이 변경될 때마다 실행
-
-  // TanStack Query
-  // 기본 코드
-  // 전체 게시글 목록 가져오기
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: ['boards'],
-  //   queryFn: fetchBoardList,
-  // })
-
-  // 디버깅 코드 1
-  // TanStack Query
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: ['boards'],
-  //   queryFn: fetchBoardList,
-  //   onSuccess: (data) => {
-  //     console.log('Query 성공, 받아온 데이터:', data)
-  //   },
-  //   onError: (error) => {
-  //     console.log('Query 에러:', error)
-  //   },
-  // })
-
-  // 디버깅 코드 2
-  // TanStack Query
-  // 전체 게시글 조회
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: ['boards'],
-  //   queryFn: fetchBoardList,
-  //   // 에러 처리
-  //   onError: (error) => {
-  //     console.log('에러 발생:', error.response?.status)
-  //     if (error.response && error.response.status === 403) {
-  //       handleLoginCheck()
-  //     }
-  //   },
-  //   // 403 에러가 발생하면 즉시 에러 처리
-  //   retry: false,
-  // })
+  useEffect(() => {
+    if (userData) {
+      console.log('Current user data:', userData)
+    }
+  }, [userData])
 
   // TanStack Query
   // 로그인 알럿 코드
@@ -123,17 +69,28 @@ const StudyBoardPage = () => {
     }
   }, [error, navigate])
 
-  // 프론트에서 필터링
-  // const filteredPosts = data?.filter((post) => post.type === activeTab) || []
+  // 게시글 상세 조회를 위한 쿼리
+  const boardDetailMutation = useMutation({
+    mutationFn: fetchBoardDetail,
+    onSuccess: (data) => {
+      // 데이터 가져오기 성공 후 페이지 이동
+      navigate(`/board/edu/${data.id}`, { state: { boardData: data } })
+    },
+    onError: (error) => {
+      console.error('게시글 조회 실패:', error)
+      alert('게시글을 불러오는데 실패했습니다.')
+    },
+  })
 
   // 필터링 과정
-  // 디버깅용
   const filteredPosts =
-    data?.filter((post) => {
-      // console.log('현재 게시글 type:', post.type)
-      // console.log('현재 activeTab:', activeTab)
-      return post.type === activeTab
-    }) || []
+    data?.filter(
+      (post) =>
+        // 먼저 학습게시판(edu)인지 확인
+        post.majorCategory === 'edu' &&
+        // 그 다음 현재 활성화된 탭(legend/qna)과 일치하는지 확인
+        post.subCategory === activeTab
+    ) || []
 
   // console.log('필터링된 게시글:', filteredPosts)
 
@@ -143,7 +100,8 @@ const StudyBoardPage = () => {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
-      navigate(`/board/edu/${postId}`)
+      // 일반 게시글인 경우 바로 상세 조회 요청
+      boardDetailMutation.mutate(postId)
     }
   }
 
@@ -151,10 +109,11 @@ const StudyBoardPage = () => {
   const handlePayConfirm = async () => {
     try {
       const requiredPickles = 5
-      if (userPickle >= requiredPickles) {
-        setUserPickle((prev) => prev - requiredPickles)
+      if (userData?.pickles >= requiredPickles) {
+        // 피클 차감 성공 시 게시글 상세 조회
+        boardDetailMutation.mutate(selectPostId)
         setShowPayModal(false)
-        navigate(`/board/edu/${selectPostId}`)
+        // navigate(`/board/edu/${selectPostId}`)
       }
     } catch (error) {
       console.error('피클 차감 중 오류가 발생했습니다:', error)
@@ -277,7 +236,7 @@ const StudyBoardPage = () => {
         onClose={handlePayCancel}
         onConfirm={handlePayConfirm}
         requiredPickle={5}
-        currentPickle={userPickle}
+        currentPickle={userData?.pickles || 0}
       />
     </main>
   )

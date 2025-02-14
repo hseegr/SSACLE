@@ -15,13 +15,13 @@ const PayModal = ({
   onClose,
   onConfirm,
   requiredPickles = 5,
-  currentPickles = 256,
+  currentPickle,
 }) => {
-  const hasEnoughPickles = currentPickles >= requiredPickles
+  const hasEnoughPickles = currentPickle >= requiredPickles
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="max-w-[400px]">
+      <AlertDialogContent className="max-w-[440px]">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-ssacle-blue" />
@@ -36,7 +36,7 @@ const PayModal = ({
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">현재 보유 피클</p>
               <p className="text-lg font-bold text-ssacle-blue flex items-center gap-1">
-                {currentPickles} 🥒
+                {currentPickle} 🥒
               </p>
             </div>
 

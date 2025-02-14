@@ -20,7 +20,13 @@ export const fetchBoardList = async () => {
 
 // 게시글 상세 조회 (GET)
 export const fetchBoardDetail = async (boardId) => {
-  return httpCommon.get(BOARD_END_POINT.DETAIL(boardId))
+  try {
+    const response = httpCommon.get(BOARD_END_POINT.DETAIL(boardId))
+    return response.data
+  } catch (error) {
+    console.error('게시글 상세 조회 실패:', error)
+    throw error
+  }
 }
 
 // 게시글 수 조회 (GET)

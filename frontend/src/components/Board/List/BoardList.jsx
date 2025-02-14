@@ -20,12 +20,12 @@ const BoardList = ({ posts, boardType, type, onPostClick }) => {
           className="flex items-center justify-between p-4 border border-ssacle-gray rounded-lg hover:border-blue-500 transition-colors"
         >
           <div className="flex items-center space-x-4">
-            {post.type === 'legend' && (
+            {post.subCategory === 'legend' && (
               <span className="text-yellow-500" title="명예의 전당">
                 🏆
               </span>
             )}
-            {post.type === 'qna' && (
+            {post.subCategory === 'qna' && (
               <span className="text-blue-500 font-bold" title="질문">
                 Q
               </span>
@@ -39,9 +39,9 @@ const BoardList = ({ posts, boardType, type, onPostClick }) => {
               </h3>
 
               <div className="flex space-x-4 text-sm text-gray-500">
-                <span>{post.author}</span>
-                <span>{post.date}</span>
-                <span>조회수 {post.views}</span>
+                <span>{post.writerInfo}</span>
+                <span>{post.time.split('T')[0]}</span>
+                {/* <span>조회수 {post.views}</span> */}
               </div>
             </div>
           </div>
