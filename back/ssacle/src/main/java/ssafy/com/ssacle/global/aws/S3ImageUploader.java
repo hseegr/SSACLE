@@ -10,6 +10,10 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import ssafy.com.ssacle.category.exception.CategoryErrorCode;
+import ssafy.com.ssacle.category.exception.CategoryException;
+import ssafy.com.ssacle.user.exception.CannotUpdateProfileException;
+import ssafy.com.ssacle.user.exception.UpdateProfileErrorCode;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +61,7 @@ public class S3ImageUploader {
             if (response.sdkHttpResponse().isSuccessful()) {
                 return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
             } else {
-                throw new RuntimeException("S3에 파일 업로드 실패");
+                throw new CannotUpdateProfileException(UpdateProfileErrorCode.FILE_UPLOAD_FAILED);
             }
         } finally {
             deleteTempFile(tempFilePath);
@@ -79,7 +83,7 @@ public class S3ImageUploader {
             if (response.sdkHttpResponse().isSuccessful()) {
                 return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
             } else {
-                throw new RuntimeException("S3에 파일 업로드 실패");
+                throw new CategoryException(CategoryErrorCode.FILE_UPLOAD_FAILED);
             }
         } finally {
             deleteTempFile(tempFilePath);

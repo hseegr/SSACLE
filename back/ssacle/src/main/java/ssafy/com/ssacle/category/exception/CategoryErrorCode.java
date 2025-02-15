@@ -19,7 +19,7 @@ public enum CategoryErrorCode implements ErrorCode {
     CATEGORY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "CATEGORY_008", "해당 카테고리에 접근할 수 있는 권한이 없습니다."),
     CATEGORY_NOT_SELECTABLE(HttpStatus.BAD_REQUEST, "CATEGORY_009", "이 카테고리는 선택할 수 없습니다."),
     CATEGORY_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "CATEGORY_010", "카테고리 데이터 검증에 실패했습니다."),
-    
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "CATEGORY_011", "파일 업로드에 실패했습니다."),
     TOP_CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_400_1", "해당하는 최상위 카테고리가 존재하지 않습니다."),
     MIDDLE_CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_400_2", "해당하는 중간 카테고리가 존재하지 않습니다."),
     CATEGORY_NOT_EXIST(HttpStatus.BAD_REQUEST, "CATEGORY_400_3", "잘못된 데이터 입니다.");

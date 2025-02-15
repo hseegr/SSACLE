@@ -23,15 +23,17 @@ import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.*;
 import ssafy.com.ssacle.user.exception.CannotLoginException;
+import ssafy.com.ssacle.user.exception.CannotUpdateProfileException;
 import ssafy.com.ssacle.user.exception.LoginErrorCode;
+import ssafy.com.ssacle.user.exception.UpdateProfileErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.usercategory.domain.UserCategory;
+import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
+
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,8 +43,7 @@ public class UserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
     private final RefreshRepository refreshRepository;
-    private final TeamRepository teamRepository;
-    private final SprintRepository sprintRepository;
+    private final UserCategoryRepository userCategoryRepository;
     private final TokenService tokenService;
     private final S3ImageUploader s3ImageUploader;
 
@@ -136,6 +137,9 @@ public class UserService {
             user.setProfile(profileUrl);
         }
         if(profileUpdateRequestDTO.getNickname() !=null){
+            if(userRepository.existsByNickname(profileUpdateRequestDTO.getNickname())){
+                throw new CannotUpdateProfileException(UpdateProfileErrorCode.NICKNAME_ALREADY_EXISTS);
+            }
             user.setNickname(profileUpdateRequestDTO.getNickname());
         }
         userRepository.save(user);
@@ -182,16 +186,20 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO getCurrentUser(User user) {
-        return UserResponseDTO.of(user);// ⚠️ 보안상 비밀번호를 직접 반환하지 않는 것이 좋음
+        List<String> categoryIds = userCategoryRepository.findByUserId(user.getId())
+                .stream()
+                .map(userCategory -> userCategory.getCategory().getCategoryName())
+                .toList();
+        return UserResponseDTO.of(user, categoryIds);
     }
 
     @Transactional
     public UpdatePasswordResponseDTO updatePassword(User user, UpdatePasswordRequestDTO updatePasswordRequestDTO){
         if(!BCrypt.checkpw(updatePasswordRequestDTO.getCurrentPassword(), user.getPassword())){
-            throw new RuntimeException("실패1");
+            throw new CannotUpdateProfileException(UpdateProfileErrorCode.INCORRECT_CURRENT_PASSWORD);
         }
         if(!updatePasswordRequestDTO.getNewPassword().equals(updatePasswordRequestDTO.getConfirmPassword())){
-            throw new RuntimeException("실패2");
+            throw new CannotUpdateProfileException(UpdateProfileErrorCode.PASSWORD_CONFIRMATION_MISMATCH);
         }
         user.updatePassword(updatePasswordRequestDTO.getNewPassword());
         userRepository.save(user);
