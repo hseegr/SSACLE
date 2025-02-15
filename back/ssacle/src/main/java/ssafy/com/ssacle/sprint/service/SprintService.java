@@ -16,6 +16,7 @@ import ssafy.com.ssacle.notion.service.NotionService;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.dto.*;
+import ssafy.com.ssacle.sprint.exception.SprintAnnouncementNotYetException;
 import ssafy.com.ssacle.sprint.exception.SprintNotExistException;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
@@ -275,7 +276,13 @@ public class SprintService {
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional
+    public void initial_Presentation(Long sprintId){
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(() -> new SprintNotExistException());
+        if(LocalDateTime.now().isBefore(sprint.getAnnounceAt())){
+            throw new SprintAnnouncementNotYetException();
+        }
+    }
 //    @Transactional
 //    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
 //        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기

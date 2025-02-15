@@ -1,6 +1,7 @@
 package ssafy.com.ssacle.sprint.domain;
 
-public enum PresenatationStep {
+public enum PresentationStatus  {
+    BEFORE_START("PRESENTATION_BEFORE_START"),
     INITIAL("PRESENTATION_INITIAL"), // 발표 페이지에 입장했을 상태
     READY("PRESENTATION_READY"), // 모든 참여자가 참여했을 상태
     START("PRESENTATION_START"), // 발표 시작 상태
@@ -25,7 +26,7 @@ public enum PresenatationStep {
 
     private final String description;
 
-    PresenatationStep(String description){
+    PresentationStatus(String description){
         this.description=description;
     }
     public String getDescription(){
@@ -34,15 +35,15 @@ public enum PresenatationStep {
 
     public static boolean isValidPresentationStep(String presentationStep){
         try{
-            PresenatationStep.valueOf(presentationStep);
+            PresentationStatus .valueOf(presentationStep);
             return true;
         }catch (IllegalArgumentException e){
             return false;
         }
     }
 
-    public static PresenatationStep fromDescription(String description){
-        for(PresenatationStep step: PresenatationStep.values()){
+    public static PresentationStatus  fromDescription(String description){
+        for(PresentationStatus  step: PresentationStatus .values()){
             if(step.description.equals((description))){
                 return step;
             }
