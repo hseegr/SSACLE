@@ -1,6 +1,6 @@
 export const mockActiveSsaprintDetailData = {
   sprint: {
-    id: 1,
+    id: 67,
     name: 'Sprint1',
     basicDescription: 'Spring Security 초급 과정.',
     detailDescription:
