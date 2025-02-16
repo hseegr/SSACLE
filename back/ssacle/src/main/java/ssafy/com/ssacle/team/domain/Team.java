@@ -7,6 +7,7 @@ import ssafy.com.ssacle.diary.domain.Diary;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
 import ssafy.com.ssacle.sprint.domain.Sprint;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.todo.domain.Todo;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.userteam.domain.UserTeam;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name="team")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team {
 
@@ -41,6 +43,12 @@ public class Team {
     @Setter
     @JsonIgnore
     private Sprint sprint;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="ssaldcup_id")
+    @Setter
+    @JsonIgnore
+    private SsaldCup ssaldCup;
 
     @OneToMany(mappedBy = "team", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Todo> todos;
@@ -69,7 +77,7 @@ public class Team {
     @Setter
     private int point;
 
-    protected Team(String name, Integer currentMembers){
+    public Team(String name, Integer currentMembers){
         ValidationUtils.validationCount(currentMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
         this.name=name;
         this.currentMembers = currentMembers;

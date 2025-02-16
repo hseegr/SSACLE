@@ -54,4 +54,16 @@ public interface QuestionCardSwaggerController {
     })
     @DeleteMapping("/question-cards/{id}")
     ResponseEntity<Void> deleteQuestionCard(@PathVariable Long id);
+
+    @Operation(summary = "특정 QuestionCard 조회", description = "특정 Sprint에 속한 사용자가 선택한QuestionCard를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Sprint를 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/sprints/{sprintId}/question-cards/{questionId}")
+    ResponseEntity<QuestionCardResponse> selectQuestionCardsBySprintAndQuestionId(@PathVariable Long sprintId, @PathVariable("questionId") Long questionId);
+
 }
+

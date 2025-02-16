@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.sprint.domain;
 
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
 import ssafy.com.ssacle.todo.dto.TodoRequest;
 
@@ -16,6 +17,7 @@ public class SprintBuilder {
     private LocalDateTime announceAt;
     private Integer maxMembers;
     private List<TodoRequest> defaultTodoRequests;
+    private SsaldCup ssaldCup;
 
     public static SprintBuilder builder() {
         return new SprintBuilder();
@@ -58,6 +60,11 @@ public class SprintBuilder {
         return this;
     }
 
+    public SprintBuilder ssaldCup(SsaldCup ssaldCup){
+        this.ssaldCup=ssaldCup;
+        return this;
+    }
+
     private Integer calculateStatus(){
         LocalDateTime now = LocalDateTime.now();
 
@@ -73,6 +80,8 @@ public class SprintBuilder {
     public Sprint build(){
         Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), 1, maxMembers, 1, LocalDateTime.now());
 
+        if(ssaldCup !=null)
+            sprint.setSsaldCup(ssaldCup);
         if (defaultTodoRequests != null && !defaultTodoRequests.isEmpty()) {
             List<DefaultTodo> defaultTodos = defaultTodoRequests.stream()
                     .flatMap(todoRequest -> todoRequest.toEntity(sprint).stream())
@@ -83,3 +92,4 @@ public class SprintBuilder {
         return sprint;
     }
 }
+

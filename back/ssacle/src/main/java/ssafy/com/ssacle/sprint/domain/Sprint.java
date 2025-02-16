@@ -6,8 +6,12 @@ import ssafy.com.ssacle.SprintCategory.domain.SprintCategory;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
+import ssafy.com.ssacle.sprint.exception.PresentationAlreadyEndedException;
+import ssafy.com.ssacle.sprint.exception.PresentationInvalidStepException;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.todo.domain.DefaultTodo;
+import ssafy.com.ssacle.user.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +25,10 @@ import java.util.List;
 public class Sprint {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ssaldcup_id")
+    private SsaldCup ssaldCup;
 
     @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SprintCategory> sprintCategories;
@@ -108,6 +116,12 @@ public class Sprint {
 
     public void addCategory(Category category) {
         this.sprintCategories.add(new SprintCategory(this, category));
+    }
+
+
+    public void updatePresentationStatus(PresentationStatus newStatus) {
+        // 다음 상태만 허용 (현재 상태 +1 단계)
+        this.presentationStatus = newStatus;
     }
 
 

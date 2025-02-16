@@ -84,4 +84,9 @@ public class SprintController implements SprintSwaggerController{
         ActiveSprintResponse response = sprintService.getActiveSprint(sprintId, teamId);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<PresentationStatusUpdateResponseDTO> updatePresentationStatus(Long sprintId) {
+        return ResponseEntity.ok().body(sprintService.updatePresentationStatus(sprintId));
+    }
 }

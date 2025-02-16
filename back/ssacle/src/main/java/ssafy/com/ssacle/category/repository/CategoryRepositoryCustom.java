@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CategoryRepositoryCustom {
     List<CategoryNameAndLevelResponseDTO> findCategoryNamesBySprintId(Long SprintId);
+
+    List<CategoryNameAndLevelResponseDTO> findCategoryNamesBySsaldCupId(Long ssaldCupId);
 }

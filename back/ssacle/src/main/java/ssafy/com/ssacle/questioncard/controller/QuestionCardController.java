@@ -50,4 +50,10 @@ public class QuestionCardController implements QuestionCardSwaggerController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
+    public ResponseEntity<QuestionCardResponse> selectQuestionCardsBySprintAndQuestionId(Long sprintId, Long questionId) {
+        QuestionCardResponse response = questionCardService.selectQuestionCardsBySprintAndQuestionId(sprintId, questionId);
+        return ResponseEntity.ok(response);
+    }
 }
+
