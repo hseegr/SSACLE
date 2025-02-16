@@ -7,24 +7,59 @@ import { mockSsaprintData } from '@/mocks/ssaprintMockData'
 import { mockActiveSsaprintDetailData } from '@/mocks/ssaprintActiveMockData'
 import { mockSsaprintQuestions } from '@/mocks/ssaprintQuestionMockData'
 
-// /**
-//  * ✅ 참여 가능 스프린트 목록을 불러오는 함수 (비동기 API처럼 동작)
-//  */
-// export const fetchSsaprintListWithFilter = async (
-//   major,
-//   sub,
-//   page = 0,
-//   size = 10
-// ) => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve({
-//         ...mockSsaprintData,
-//         content: mockSsaprintData.content.slice(page * size, (page + 1) * size),
-//       })
-//     }, 500)
-//   })
-// }
+/**
+ * ✅ 카테고리 전체 조회 (포지션 및 기술 스택 포함)
+ * @returns {Promise<Array>} - 전체 카테고리 데이터
+ */
+export const fetchCategories = async () => {
+  try {
+    const response = await httpCommon.get(SSAPRINT_END_POINT.CATEGORY_ALL)
+
+    return response.data // API 응답 데이터 반환
+  } catch (error) {
+    return []
+  }
+}
+
+/**
+ * ✅ 포지션 & 1차 기술 스택 가공 함수
+ */
+export const transformCategories = (categories) => {
+  return categories.map((position) => ({
+    id: position.id, // 포지션 ID
+    name: position.categoryName, // 포지션 이름
+    stacks: position.subCategories.map((stack) => ({
+      id: stack.id, // 기술 스택 ID
+      name: stack.categoryName, // 기술 스택 이름
+    })),
+  }))
+}
+
+/**
+ * ✅ 최상위 카테고리 조회 (포지션 목록)
+ */
+export const fetchTopCategories = async () => {
+  try {
+    const response = await httpCommon.get(SSAPRINT_END_POINT.CATEGORY_TOP)
+    return response.data // 포지션 목록 반환
+  } catch (error) {
+    return []
+  }
+}
+
+/**
+ * ✅ 하위 카테고리 조회 (기술 스택 목록)
+ */
+export const fetchSubCategories = async (categoryId) => {
+  try {
+    const response = await httpCommon.get(
+      SSAPRINT_END_POINT.CATEGORY_SUB(categoryId)
+    )
+    return response.data // 해당 포지션의 기술 스택 목록 반환
+  } catch (error) {
+    return []
+  }
+}
 
 /**
  * 싸프린트 목록 조회 (API 요청)
@@ -58,64 +93,31 @@ export const fetchSsaprintListWithFilter = async (
 }
 
 /**
- * ✅ 완료된 스프린트 목록을 불러오는 함수
+ * ✅ 완료된 싸프린트 조회 (API 요청)
+ * @param {number} page - 페이지 번호 (기본값: 0)
+ * @param {number} size - 페이지당 아이템 개수 (기본값: 8)
+ * @returns {Promise<Object>} - 완료된 스프린트 목록 데이터 반환
  */
-export const fetchCompletedSsaprintList = async (page = 0, size = 10) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const completedSprints = mockSsaprintData.content.filter(
-        (sprint) => new Date(sprint.endAt) < new Date()
-      )
+export const fetchCompletedSsaprintList = async (page = 0, size = 8) => {
+  try {
+    const response = await httpCommon.get(SSAPRINT_END_POINT.COMPLETED, {
+      params: {
+        page, // 현재 페이지 번호
+        size, // 한 페이지에 가져올 개수
+        sort: 'startAt,desc', // 시작 날짜 기준 내림차순 정렬
+      },
+    })
 
-      resolve({
-        ...mockSsaprintData,
-        content: completedSprints.slice(page * size, (page + 1) * size),
-        totalElements: completedSprints.length,
-        totalPages: Math.ceil(completedSprints.length / size),
-      })
-    }, 500)
-  })
+    return response.data // 백엔드 응답 데이터 반환
+  } catch (error) {
+    return {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      number: page,
+    }
+  }
 }
-
-// // ✅ 조건별 싸프린트 조회 (참여 가능 목록)
-// export const fetchSsaprintListWithFilter = async (major, sub, page = 0, size = 10) => {
-//   try {
-//     const response = await httpCommon.get(SSAPRINT_END_POINT.LIST, {
-//       params: {
-//         major: major || undefined,
-//         sub: sub || undefined,
-//         page,
-//         size,
-//       },
-//     });
-//     return response.data; // ✅ `.data` 반환하여 오류 해결
-//   } catch (error) {
-//     console.error('Error fetching available sprints:', error);
-//     return null;
-//   }
-// };
-
-// // ✅ 완료된 싸프린트 조회
-// export const fetchCompletedSsaprintList = async (page = 0, size = 10) => {
-//   try {
-//     const response = await httpCommon.get(SSAPRINT_END_POINT.COMPLETED, {
-//       params: { page, size },
-//     });
-//     return response.data; // ✅ `.data` 반환하여 오류 해결
-//   } catch (error) {
-//     console.error('Error fetching completed sprints:', error);
-//     return null;
-//   }
-// };
-
-// // ✅ 싸프린트 상세 조회 (목업 데이터)
-// export const fetchSsaprintDetail = async (id) => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve(mockSsaprintDetailData)
-//     }, 500)
-//   })
-// }
 
 // ✅ 싸프린트 상세 조회
 export const fetchSsaprintDetail = async (sprintId) => {
@@ -249,7 +251,6 @@ export const addSsaprintQuestion = async (sprintId, description) => {
     })
     return response.data // API 응답 데이터 반환
   } catch (error) {
-    console.error('🔥 질문 추가 실패:', error)
     throw new Error('질문 추가에 실패했습니다.')
   }
 }

@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
 import Pagination from '@/components/common/Pagination'
-import { fetchSsaprintListWithFilter } from '@/services/ssaprintService'
+import {
+  fetchSsaprintListWithFilter,
+  fetchCompletedSsaprintList,
+} from '@/services/ssaprintService'
 
 const SsaprintLayout = () => {
   const [sprints, setSprints] = useState([])
   const [filters, setFilters] = useState({
-    status: 0, // 0: 시작 전, 1: 진행 중, 2: 완료
+    status: 0, // 0: 참여 가능, 1: 진행 중, 2: 완료
     categoryId: null,
   })
   const [pagination, setPagination] = useState({
@@ -16,11 +19,17 @@ const SsaprintLayout = () => {
     pageSize: 8,
   })
 
-  // 필터 변경 핸들러
+  // 필터 변경 핸들러 (상태 변경 시 기존 목록 초기화)
   const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
+    setFilters((prev) => {
+      if (key === 'status' && value === 2) {
+        setSprints([])
+      }
+      return { ...prev, [key]: value }
+    })
   }
 
+  // 페이지 변경 핸들러
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }))
   }
@@ -28,22 +37,39 @@ const SsaprintLayout = () => {
   // API 호출하여 싸프린트 목록 가져오기
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetchSsaprintListWithFilter(
-        filters.status,
-        filters.categoryId,
-        pagination.currentPage - 1, // API는 0-based index
-        pagination.pageSize
-      )
+      setSprints([]) // 기존 데이터 초기화
 
-      if (response) {
-        setSprints(response.content || [])
-        setPagination((prev) => {
-          return {
+      if (filters.status === 2) {
+        // 참여 완료 스프린트 조회
+        const response = await fetchCompletedSsaprintList(
+          pagination.currentPage - 1,
+          pagination.pageSize
+        )
+
+        if (response) {
+          setSprints(response.content || [])
+          setPagination((prev) => ({
             ...prev,
             totalPages: response.totalPages,
             totalElements: response.totalElements,
-          }
-        })
+          }))
+        }
+      } else {
+        // 참여 가능 스프린트 조회
+        const response = await fetchSsaprintListWithFilter(
+          filters.status,
+          filters.categoryId,
+          pagination.currentPage - 1,
+          pagination.pageSize
+        )
+        if (response) {
+          setSprints(response.content || [])
+          setPagination((prev) => ({
+            ...prev,
+            totalPages: response.totalPages,
+            totalElements: response.totalElements,
+          }))
+        }
       }
     }
 
@@ -65,7 +91,12 @@ const SsaprintLayout = () => {
 
       {/* 스프린트 목록 */}
       <section className="mt-1">
-        <ItemList items={sprints} domain="ssaprint" />
+        <ItemList
+          items={
+            filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
+          }
+          domain="ssaprint"
+        />
       </section>
 
       {/* 페이지네이션 추가 */}

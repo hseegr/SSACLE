@@ -1,36 +1,23 @@
-import { useState } from 'react'
-
-const StatusTabs = ({ domain, onFilterChange }) => {
-  // TODO: 추후 domain 활용 예정
-  // console.log(domain);
-  const [activeTab, setActiveTab] = useState('available') // 기본값: 참여 가능
-
-  const handleTabChange = (status) => {
-    setActiveTab(status)
-    onFilterChange('status', status)
-  }
-
+const StatusTabs = ({ selectedStatus, onStatusChange }) => {
   return (
     <div className="flex gap-6 text-[14px] font-medium">
       <button
-        className={`border-b-2 pb-1 ${
-          activeTab === 'available'
-            ? 'border-black text-black'
-            : 'text-gray-400'
-        }`}
-        onClick={() => handleTabChange('available')}
+        className={`relative pb-1 ${selectedStatus === 0 ? 'text-black' : 'text-gray-400'}`}
+        onClick={() => onStatusChange(0)}
       >
         참여 가능
+        {selectedStatus === 0 && (
+          <div className="absolute left-0 bottom-0 w-full h-[2px] bg-black"></div>
+        )}
       </button>
       <button
-        className={`border-b-2 pb-1 ${
-          activeTab === 'completed'
-            ? 'border-black text-black'
-            : 'text-gray-400'
-        }`}
-        onClick={() => handleTabChange('completed')}
+        className={`relative pb-1 ${selectedStatus === 2 ? 'text-black' : 'text-gray-400'}`}
+        onClick={() => onStatusChange(2)}
       >
         참여 완료
+        {selectedStatus === 2 && (
+          <div className="absolute left-0 bottom-0 w-full h-[2px] bg-black"></div>
+        )}
       </button>
     </div>
   )

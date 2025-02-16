@@ -76,6 +76,7 @@ export const MAIN_END_POINT = {
 // 싸프린트 -> ssaprintService
 export const SSAPRINT_END_POINT = {
   LIST: '/search', // 전체 싸프린트 목록 조회
+  COMPLETED: '/completed', // 사용자가 완료한 스프린트 목록 조회
   DETAIL: (id) => `/ssaprint/${id}/details`, // 스프린트 상세 조회
 
   CREATE: '/ssaprint', // 싸프린트 생성
@@ -94,6 +95,10 @@ export const SSAPRINT_END_POINT = {
   PRESENTATION_EXIT: (id) => `/ssaprint/${id}/presentation/exit`, // 발표 종료
 
   TODO_STATUS: (ssaprintId, todoId) => `/ssaprint/${ssaprintId}/todo/${todoId}`, // TODO 상태 수정
+
+  CATEGORY_ALL: '/category/all', // 싸프린트 내 카테고리 전체 조회
+  CATEGORY_TOP: '/category/parents', // 최상위 카테고리 조회 (포지션 목록)
+  CATEGORY_SUB: (parentId) => `/category/subcategories/${parentId}`, // 하위 카테고리 조회 (포지션별 기술 스택)
 }
 
 // 싸드컵 -> ssadcupService

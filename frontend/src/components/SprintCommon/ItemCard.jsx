@@ -66,10 +66,11 @@ const ItemCard = ({ item, domain }) => {
   const durationStatus = getDurationStatus(durationDays)
 
   // 카테고리 태그 최대 2개만 표시
-  const categoryTags = item.categories.slice(0, 2)
+  const categoryTags = (item.categories || []).slice(0, 2)
 
   // 썸네일 이미지 (categories 중 image가 있는 첫 번째 것)
-  const thumbnail = item.categories.find((cat) => cat.image)?.image || ''
+  const thumbnail =
+    (item.categories || []).find((cat) => cat.image)?.image || ''
 
   return (
     <div
