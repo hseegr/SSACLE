@@ -30,9 +30,7 @@ public interface SprintRepository extends JpaRepository<Sprint, Long>, SprintRep
 //            "WHERE ut.user.id = :userId")
 //    List<Sprint> findAllByUserId(Long userId);
 
-    @Query("SELECT DISTINCT s FROM Sprint s " +
-            "JOIN FETCH s.teams t " +
-            "WHERE FUNCTION('DATE', s.announceAt) = CURRENT_DATE")
+    @Query("SELECT s FROM Sprint s WHERE DATE(s.announceAt) = CURRENT_DATE")
     List<Sprint> findSprintsByPresentationDate();
 
     List<Sprint> findByStatus(int status);

@@ -388,6 +388,18 @@ public class SprintService {
         return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getPresentationStatus());
     }
 
+    @Transactional(readOnly = true)
+    public boolean checkPresentationAvailability(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(SprintNotExistException::new);
+        // 발표 시작 시간(announced_at) 30분전부터 입장 가능하며 해당 시간이 아니면 입장할 수 없는 로직 구현
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime presentationStartTime = sprint.getAnnounceAt().minusMinutes(30);
+        LocalDateTime presentationEndTime = sprint.getAnnounceAt();
+
+        return now.isAfter(presentationStartTime) && now.isBefore(presentationEndTime);
+    }
+
 //    @Transactional
 //    public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {
 //        // 1. 사용자의 관심 카테고리(중간 카테고리) 가져오기
