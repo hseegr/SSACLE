@@ -153,6 +153,37 @@ export const getActiveSsaprint = async (sprintId, teamId) => {
   }
 }
 
+// ToDo 등록
+export const createTodo = async (teamId, data) => {
+  try {
+    const response = await httpCommon.post(
+      SSAPRINT_END_POINT.ADD_TODO(teamId),
+      data
+    )
+    return response.data
+  } catch (error) {
+    throw new Error('🔥 To-Do 추가 실패:', error)
+  }
+}
+
+// ToDo 삭제
+export const deleteTodo = async (todoId) => {
+  try {
+    await httpCommon.delete(SSAPRINT_END_POINT.DELETE_TODO(todoId))
+  } catch (error) {
+    throw new Error('🔥 To-Do 삭제 실패:', error)
+  }
+}
+
+// To-Do 완료 상태 변경
+export const updateTodoStatus = async (todoId) => {
+  try {
+    await httpCommon.patch(SSAPRINT_END_POINT.UPDATE_TODO_STATUS(todoId))
+  } catch (error) {
+    throw new Error('🔥 To-Do 상태 변경 실패:', error)
+  }
+}
+
 // 일기 상세 조회
 export const fetchDiaryDetail = async (diaryId) => {
   try {

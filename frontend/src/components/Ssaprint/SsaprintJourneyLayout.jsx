@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import SprintProgressStatus from '@/components/SprintCommon/SprintProgressStatus'
 import JoinSprintInfo from '@/components/SprintCommon/JoinSprintInfo'
 import SprintDetail from '@/components/SprintCommon/SprintDetail'
@@ -6,10 +7,11 @@ import SprintPresentationSession from '@/components/SprintCommon/SprintPresentat
 import SprintCalendar from '@/components/SprintCommon/SprintCalendar'
 import SprintQuestionCards from '@/components/SprintCommon/SprintQuestionCards'
 import Button from '@/components/common/Button'
-import { useState } from 'react'
+import { getActiveSsaprint } from '@/services/ssaprintService'
 
 const SsaprintJourneyLayout = ({ sprintData }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [todoList, setTodoList] = useState(sprintData.todos || [])
 
   const benefits = [
     '📄 이전 참가자들의 노트 열람 가능 (총 10개 노트)',
@@ -19,8 +21,18 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
   // sprintData 또는 sprint 속성이 없는 경우 렌더링하지 않음
   if (!sprintData || !sprintData.sprint) return null
 
-  const { sprint, categories, questionCards, team, todos, diaries } = sprintData
+  const { sprint, categories, questionCards, team, diaries } = sprintData
   const isBeforeStart = sprint.status === 0 // 스프린트 시작 전 여부 체크
+
+  // To-Do 추가 후 최신 데이터를 다시 불러옴
+  const refreshTodos = async () => {
+    try {
+      const updatedData = await getActiveSsaprint(sprint.id, team.id)
+      setTodoList(updatedData.todos) // 최신 To-Do 목록 갱신
+    } catch (error) {
+      alert('❌ 최신 To-Do 목록을 불러오는 데 실패했습니다.')
+    }
+  }
 
   // 싸프린트 학습 노트 열기 버튼 클릭 시 URL 이동
   const handleOpenNotion = () => {
@@ -46,7 +58,7 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
             <SprintDetail
               sprint={sprint}
               benefits={benefits}
-              todos={todos || []}
+              todos={sprintData.todos || []}
             />
           )}
         </div>
@@ -94,7 +106,11 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
           <div
             className={`mt-6 relative ${isBeforeStart ? 'opacity-30 pointer-events-none cursor-not-allowed' : ''}`}
           >
-            <SprintToDoList todos={todos} />
+            <SprintToDoList
+              todos={todoList}
+              teamId={team.id}
+              refreshTodos={refreshTodos}
+            />
           </div>
         </div>
       </div>
