@@ -21,7 +21,7 @@ export const fetchBoardList = async () => {
 // 게시글 상세 조회 (GET)
 export const fetchBoardDetail = async (boardId) => {
   try {
-    const response = httpCommon.get(BOARD_END_POINT.DETAIL(boardId))
+    const response = await httpCommon.get(BOARD_END_POINT.DETAIL(boardId))
     return response.data
   } catch (error) {
     console.error('게시글 상세 조회 실패:', error)
@@ -36,15 +36,36 @@ export const fetchBoardCount = async () => {
 
 // 게시글 생성 (POST)
 export const fetchCreateBoard = async (boardData) => {
-  return httpCommon.post(BOARD_END_POINT.CREATE, boardData)
+  try {
+    const response = await httpCommon.post(BOARD_END_POINT.CREATE, boardData)
+    return response.data
+  } catch (error) {
+    console.error('게시글 생성 실패:', error)
+    throw error
+  }
 }
 
 // 게시글 삭제 (DELETE)
 export const fetchDeleteBoard = async (boardId) => {
-  return httpCommon.delete(BOARD_END_POINT.DELETE(boardId))
+  try {
+    const response = await httpCommon.delete(BOARD_END_POINT.DELETE(boardId))
+    return response.data
+  } catch (error) {
+    console.error('게시글 삭제 실패:', error)
+    throw error
+  }
 }
 
 // 게시글 수정 (PATCH)
 export const fetchUpdateBoard = async (boardId, boardData) => {
-  return httpCommon.patch(BOARD_END_POINT.UPDATE(boardId), boardData)
+  try {
+    const response = await httpCommon.patch(
+      BOARD_END_POINT.UPDATE(boardId),
+      boardData
+    )
+    return response.data
+  } catch (error) {
+    console.error('게시글 수정 실패:', error)
+    throw error
+  }
 }

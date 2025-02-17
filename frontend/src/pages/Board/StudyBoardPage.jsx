@@ -1,9 +1,8 @@
 import BoardList from '@/components/Board/List/BoardList'
 import BoardPagination from '@/components/Board/List/BoardPagination'
 import BoardTab from '@/components/Board/List/BoardTab'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { posts as mockPosts } from '@/mocks/boardData'
 import PayModal from '@/components/Board/Modal/PayModal'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
@@ -16,143 +15,76 @@ const studyTabs = [
 
 const StudyBoardPage = () => {
   const navigate = useNavigate()
-
-  // 상태관리
   const [activeTab, setActiveTab] = useState('legend') // 현재 활성화된 탭
-
-  // 기존 로딩 및 post 관련 state는 제거
-  // const [posts, setPosts] = useState([]) // 게시글 목록
-  // const [loading, setLoading] = useState(true) // 로딩 상태
-  const [totalPages, setTotalPages] = useState(1)
-
-  // 페이지네이션 관련 상태 추가
   const [currentPage, setCurrentPage] = useState(1)
-
-  // 피클 차감 모달
-  // 피클 결제 모달 표시 여부
   const [showPayModal, setShowPayModal] = useState(false)
-  // 선택된 게시글 id
   const [selectPostId, setSelectPostId] = useState(null)
 
-  // 유저 정보 조회 쿼리 추가
+  // 유저 정보 조회
   const { data: userData } = useQuery({
     queryKey: ['userInfo'],
     queryFn: fetchUserInfo,
     retry: false,
   })
 
-  useEffect(() => {
-    if (userData) {
-      console.log('Current user data:', userData)
-    }
-  }, [userData])
-
-  // TanStack Query
-  // 로그인 알럿 코드
-  // 전체 게시글 조회
+  // 게시글 목록 조회
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['boards'],
     queryFn: fetchBoardList,
-    retry: false, // 에러 발생 시 재시도하지 않음
+    retry: false,
   })
 
-  // 403 에러 발생 시 한 번만 처리
-  useEffect(() => {
-    if (error?.response?.status === 403) {
-      if (
-        window.confirm(
-          '로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?'
-        )
-      ) {
-        navigate('/account/login')
-      }
-    }
-  }, [error, navigate])
-
-  // 게시글 상세 조회를 위한 쿼리
+  // 게시글 상세 조회
   const boardDetailMutation = useMutation({
     mutationFn: fetchBoardDetail,
     onSuccess: (data) => {
-      // 데이터 가져오기 성공 후 페이지 이동
       navigate(`/board/edu/${data.id}`, { state: { boardData: data } })
     },
-    onError: (error) => {
-      console.error('게시글 조회 실패:', error)
+    onError: () => {
       alert('게시글을 불러오는데 실패했습니다.')
     },
   })
 
-  // 필터링 과정
+  // 학습 게시판(edu) + 현재 탭(legend/qna) 필터링
   const filteredPosts =
     data?.filter(
-      (post) =>
-        // 먼저 학습게시판(edu)인지 확인
-        post.majorCategory === 'edu' &&
-        // 그 다음 현재 활성화된 탭(legend/qna)과 일치하는지 확인
-        post.subCategory === activeTab
+      (post) => post.majorCategory === 'edu' && post.subCategory === activeTab
     ) || []
 
-  // console.log('필터링된 게시글:', filteredPosts)
-
-  // 게시글 클릭 핸들러
+  // 게시글 클릭 시 실행
   const handlePostClick = (postId) => {
-    if (activeTab === 'legend') {
+    // 클릭된 게시글 찾기
+    const clickedPost = filteredPosts.find((post) => post.id === postId)
+
+    if (!clickedPost) return
+
+    if (clickedPost.subCategory === 'legend') {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
-      // 일반 게시글인 경우 바로 상세 조회 요청
       boardDetailMutation.mutate(postId)
     }
   }
 
-  // 피클 결제 확인
-  const handlePayConfirm = async () => {
-    try {
-      const requiredPickles = 5
-      if (userData?.pickles >= requiredPickles) {
-        // 피클 차감 성공 시 게시글 상세 조회
-        boardDetailMutation.mutate(selectPostId)
-        setShowPayModal(false)
-        // navigate(`/board/edu/${selectPostId}`)
-      }
-    } catch (error) {
-      console.error('피클 차감 중 오류가 발생했습니다:', error)
-      alert('처리 중 오류가 발생했습니다. 다시 시도해주세요.')
+  // 피클 결제 확인 후 게시글 상세 조회
+  const handlePayConfirm = () => {
+    if (userData?.pickles >= 5) {
+      boardDetailMutation.mutate(selectPostId)
+      setShowPayModal(false)
+    } else {
+      alert('피클이 부족합니다.')
     }
   }
-  // 모달 취소
-  const handlePayCancel = () => {
-    setShowPayModal(false)
-    setSelectPostId(null)
-  }
 
-  // 글 작성 페이지로 이동
-  // 현재 탭 정보 유지 및 state로 전달하여 글 유형 지정
+  // 글 작성 페이지 이동
   const handleWrite = () => {
     navigate('/board/edu/write', {
-      state: {
-        boardType: 'study', // 게시판 종류 (학습 or 자유)
-        type: activeTab, // 게시글 유형 (명예의 전당 or 질의응답)
-      },
+      state: { boardType: 'study', type: activeTab },
     })
   }
 
-  // 탭 변경 시 페이지 초기화
-  const handleTabChange = (tabId) => {
-    setActiveTab(tabId)
-    setCurrentPage(1) // 탭 변경 시 1페이지로 리셋
-  }
-
-  // TanStack Query 에러 분기
-  // 로딩 중일 때 표시할 내용
-  if (isLoading) {
-    return <div>로딩 중...</div>
-  }
-
-  // 에러 발생 시 표시할 내용
-  if (isError) {
-    return <div>에러가 발생했습니다: {error.message}</div>
-  }
+  if (isLoading) return <div>로딩 중...</div>
+  if (isError) return <div>에러가 발생했습니다: {error.message}</div>
 
   return (
     <main className="min-w-max my-20">
@@ -164,6 +96,7 @@ const StudyBoardPage = () => {
           onTabChange={setActiveTab}
         />
       </section>
+
       {/* 배너 */}
       <section>
         <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
@@ -193,8 +126,9 @@ const StudyBoardPage = () => {
           )}
         </div>
       </section>
+
+      {/* 글 작성 버튼 */}
       <div className="flex flex-row justify-between">
-        {/* 글 작성 버튼 */}
         <section>
           <button
             onClick={handleWrite}
@@ -205,35 +139,32 @@ const StudyBoardPage = () => {
         </section>
         <section>분류 및 검색창</section>
       </div>
+
       <div className="border-b my-3"></div>
+
+      {/* 게시글 목록 */}
       <section>
-        {/* <BoardList
+        <BoardList
           posts={filteredPosts}
           type={activeTab}
           boardType="edu"
           onPostClick={handlePostClick}
-        /> */}
-        <BoardList
-          posts={filteredPosts.map((post, index) => ({
-            ...post,
-            id: post.id || index, // id가 없는 경우 index를 사용
-          }))}
-          type={activeTab}
-          boardType="edu"
-          onPostClick={handlePostClick}
         />
       </section>
+
+      {/* 페이지네이션 */}
       <section>
-        {/* 페이지네이션 추가 */}
         <BoardPagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          totalPages={totalPages}
+          totalPages={1}
         />
       </section>
+
+      {/* 피클 결제 모달 */}
       <PayModal
         isOpen={showPayModal}
-        onClose={handlePayCancel}
+        onClose={() => setShowPayModal(false)}
         onConfirm={handlePayConfirm}
         requiredPickle={5}
         currentPickle={userData?.pickles || 0}

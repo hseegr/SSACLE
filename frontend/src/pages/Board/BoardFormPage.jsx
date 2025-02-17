@@ -1,72 +1,135 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { posts as mockPosts } from '@/mocks/boardData'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  fetchBoardDetail,
+  fetchCreateBoard,
+  fetchUpdateBoard,
+} from '@/services/boardService'
 
 const BoardFormPage = () => {
   const navigate = useNavigate()
   const { id } = useParams()
-  const { state } = useLocation()
+  const location = useLocation()
+  const { state } = location
   const [loading, setLoading] = useState(!!id)
+
+  // URL에서 majorCategory 가져오기
+  const majorCategory = location.pathname.includes('/board/edu')
+    ? 'edu'
+    : 'free'
+
+  // searchParams에서 subCategory 가져오기
+  const searchParams = new URLSearchParams(location.search)
+  // state의 type을 우선적으로 사용하고, 없을 경우 URL의 tab 값 사용
+  const subCategory =
+    location.state?.type || searchParams.get('tab') || 'legend'
 
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    type: state?.type || 'legend',
+    majorCategory,
+    subCategory,
     tags: [],
     tagInput: '', // 사용자 태그 입력 값 저장
   })
 
+  // 수정 모드일 때 기존 게시글 데이터 불러오기
+  const { data: existingPost } = useQuery({
+    queryKey: ['post', id],
+    queryFn: () => fetchBoardDetail(id),
+    enabled: !!id,
+    onSuccess: (data) => {
+      setFormData({
+        title: data.title || '',
+        content: data.content || '',
+        majorCategory: data.majorCategory || majorCategory,
+        subCategory: data.subCategory || subCategory,
+        tags: data.tags || [],
+        tagInput: '',
+      })
+      setLoading(false)
+    },
+    onError: (error) => {
+      console.error('게시글을 불러오는데 실패했습니다:', error)
+      alert('게시글을 불러오는데 실패했습니다.')
+      navigate(-1)
+    },
+  })
+
+  // 게시글 생성 mutation
+  const createPostMutation = useMutation({
+    mutationFn: fetchCreateBoard,
+    onSuccess: () => {
+      alert('게시글이 작성되었습니다.')
+      // 작성 완료 후 해당 게시판 목록으로 이동
+      navigate(`/board/${majorCategory}?tab=${subCategory}`)
+    },
+    onError: (error) => {
+      console.error('게시글 작성 실패:', error)
+      const errorMessage =
+        error.response?.data?.message || '게시글 작성에 실패했습니다.'
+      alert(errorMessage)
+    },
+  })
+
+  // 게시글 수정 mutation
+  const updatePostMutation = useMutation({
+    mutationFn: ({ id, data }) => fetchUpdateBoard(id, data),
+    onSuccess: () => {
+      alert('게시글이 수정되었습니다.')
+      navigate(`/board/${majorCategory}?tab=${subCategory}`)
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.message || '게시글 수정에 실패했습니다.'
+      alert(errorMessage)
+    },
+  })
+
   // 기존 게시글 데이터 불러오기
-  useEffect(() => {
-    if (id) {
-      const fetchPost = async () => {
-        try {
-          const post = mockPosts.find((p) => p.id === Number(id))
-          if (post) {
-            setFormData({
-              title: post.title,
-              content: post.content || '',
-              type: post.type,
-              tags: post.tags || [],
-              tagInput: '',
-            })
-          }
-          setLoading(false)
-        } catch (error) {
-          console.error('게시글을 불러오는데 실패했습니다:', error)
-          navigate(-1)
-        }
-      }
-      fetchPost()
-    }
-  }, [id, navigate])
+  // const { data: postData } = useQuery({
+  //   queryKey: ['post', id],
+  //   queryFn: () => fetchBoardDetail(id),
+  //   enabled: !!id,
+  //   onSuccess: (data) => {
+  //     setFormData({
+  //       title: data.title,
+  //       content: data.content,
+  //       majorCategory: data.majorCategory,
+  //       subCategory: data.subCategory,
+  //       tags: data.tags || [],
+  //       tagInput: '',
+  //     })
+  //     setLoading(false)
+  //   },
+  //   onError: (error) => {
+  //     console.error('게시글을 불러오는데 실패했습니다:', error)
+  //     alert('게시글을 불러오는데 실패했습니다.')
+  //     navigate(-1)
+  //   },
+  // })
 
   const isValid = formData.title.trim() && formData.content?.trim()
 
   // 게시글 작성 및 수정
-  // API 연결 시 console 삭제
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!isValid) return
 
-    try {
-      const currentDate = new Date().toISOString().split('T')[0]
-      const newPost = {
-        ...formData,
-        date: currentDate,
-        views: 0,
-        author: '작성자',
-        comments: [],
-      }
+    const postData = {
+      majorCategory: formData.majorCategory,
+      subCategory: formData.subCategory,
+      title: formData.title.trim(),
+      content: formData.content.trim(),
+      tags: formData.tags,
+    }
 
-      if (id) {
-        console.log('수정:', { id, ...newPost })
-      } else {
-        console.log('작성:', newPost)
-      }
-      navigate(-1)
-    } catch (error) {
-      console.error('저장 중 오류가 발생했습니다:', error)
+    if (id) {
+      updatePostMutation.mutate({ id, data: postData })
+    } else {
+      createPostMutation.mutate(postData)
     }
   }
 
@@ -110,7 +173,11 @@ const BoardFormPage = () => {
   }
 
   const handleCancel = () => {
-    if (window.confirm('작성을 취소하시겠습니까?')) {
+    if (
+      window.confirm(
+        id ? '수정을 취소하시겠습니까?' : '작성을 취소하시겠습니까?'
+      )
+    ) {
       navigate(-1)
     }
   }
@@ -189,14 +256,24 @@ const BoardFormPage = () => {
         <div className="flex justify-center gap-4">
           <button
             type="submit"
-            disabled={!isValid}
+            disabled={
+              !isValid ||
+              createPostMutation.isPending ||
+              updatePostMutation.isPending
+            }
             className={`px-6 py-2 rounded transition-colors ${
-              isValid
+              isValid &&
+              !createPostMutation.isPending &&
+              !updatePostMutation.isPending
                 ? 'bg-blue-500 text-white hover:bg-blue-600'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {id ? '수정하기' : '작성하기'}
+            {createPostMutation.isPending || updatePostMutation.isPending
+              ? '처리 중...'
+              : id
+                ? '수정하기'
+                : '작성하기'}
           </button>
           <button
             type="button"
