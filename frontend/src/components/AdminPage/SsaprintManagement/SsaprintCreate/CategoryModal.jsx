@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fetchLoadCategory, fetchCreateCategory } from '@/services/adminService'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { X, ImagePlus, FolderCheck } from 'lucide-react'
 
 const CategoryModal = ({ onClose }) => {
@@ -13,13 +13,10 @@ const CategoryModal = ({ onClose }) => {
     sub: false,
   })
   const [uploadedImage, setUploadedImage] = useState(null)
+  const queryClient = useQueryClient()
 
   // 카테고리 데이터 불러오기
-  const {
-    data: categories = [],
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: fetchLoadCategory,
     staleTime: 1000 * 60 * 5,
@@ -29,13 +26,18 @@ const CategoryModal = ({ onClose }) => {
   const { mutate: createCategory, isPending: isCreating } = useMutation({
     mutationFn: fetchCreateCategory,
     onSuccess: (data) => {
-      alert('카테고리가 성공적으로 생성되었습니다!')
-      console.log(data)
-      onClose()
+      if (data?.categoryName) {
+        alert('카테고리가 성공적으로 생성되었습니다!')
+        queryClient.invalidateQueries(['categories'])
+        onClose()
+      }
     },
     onError: (error) => {
+      console.error(
+        '❌ API 요청 실패:',
+        error.response ? error.response.data : error
+      )
       alert('카테고리 생성에 실패했습니다.')
-      console.error(error)
     },
   })
 
@@ -118,29 +120,58 @@ const CategoryModal = ({ onClose }) => {
     }
   }
 
-  // 🔥 카테고리 생성 API 호출 함수
+  // 카테고리 생성 요청
   const handleCreateCategory = () => {
-    if (!selectedMain || !selectedMid) {
-      alert('대주제와 중주제를 선택해야 합니다.')
-      return
+    if (!selectedMain) return alert('최상위 카테고리를 입력해야 합니다.');
+  
+    const mainCategoryName = selectedMainCategory?.categoryName || selectedMain;
+    if (!mainCategoryName)
+      return alert('선택한 최상위 카테고리가 존재하지 않습니다.');
+  
+    let midCategoryName = selectedMid || null;
+    let subCategoryName = selectedSub || null;
+  
+    // 중주제를 직접 입력할 경우, 이미지 필수 체크
+    if (customInput.mid && !uploadedImage) {
+      return alert('중주제를 생성할 때는 이미지가 필수입니다!');
     }
-
-    console.log("🔍 선택된 최상위 카테고리 ID:", selectedMain, "타입:", typeof selectedMain);
-    console.log("🔍 선택된 중주제 ID:", selectedMid, "타입:", typeof selectedMid);
-    console.log("🔍 선택된 소주제 ID:", selectedSub, "타입:", typeof selectedSub);
-    
-
+  
+    // 중주제가 기존에 존재하는 경우와 새로 생성하는 경우 구분
+    if (!customInput.mid && selectedMid) {
+      const existingMidCategory = selectedMainCategory?.subCategories?.find(
+        (sub) => String(sub.id) === selectedMid
+      );
+  
+      if (!existingMidCategory) {
+        return alert('선택한 중주제가 존재하지 않습니다.');
+      }
+      midCategoryName = existingMidCategory.categoryName;
+    }
+  
+    // 소주제가 기존에 존재하는 경우 확인 후 차단
+    if (!customInput.sub && selectedSub) {
+      const existingSubCategory = selectedMidCategory?.subCategories?.find(
+        (sub) => String(sub.id) === selectedSub
+      );
+  
+      if (existingSubCategory) {
+        return alert('이미 존재하는 카테고리입니다.');
+      }
+  
+      subCategoryName = existingSubCategory?.categoryName || selectedSub;
+    }
+  
     const categoryData = {
-      param1: String(selectedMain),  // 🔥 string으로 변환
-      param2: selectedMid ? String(selectedMid) : null,
-      param3: selectedSub ? String(selectedSub) : null,
+      param1: mainCategoryName,
+      param2: midCategoryName || null,
+      param3: subCategoryName || null,
       image: uploadedImage || null,
-    }
-
-    console.log('🚀 API 요청 데이터 확인:', categoryData)
-
-    createCategory(categoryData)
-  }
+    };
+  
+    // console.log('🚀 API 요청 전송:', categoryData);
+    createCategory(categoryData);
+  };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -162,6 +193,9 @@ const CategoryModal = ({ onClose }) => {
         <p className="text-gray-600 text-xs text-center mt-2">
           직접 입력은 영어로 작성해주세요😊
         </p>
+        <p className="text-ssacle-blue text-xs text-center mt-2">
+          대주제, 중주제, 소주제를 각각 생성해야 해요
+        </p>
 
         {/* 대주제 선택 (직접 입력 가능) */}
         {!customInput.main ? (
@@ -170,7 +204,9 @@ const CategoryModal = ({ onClose }) => {
             value={selectedMain}
             onChange={handleMainChange}
           >
-            <option value="">대주제 선택</option>
+            <option value="" disabled>
+              대주제 선택
+            </option>
             {mainCategories.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -195,7 +231,7 @@ const CategoryModal = ({ onClose }) => {
               className="w-full p-3 border rounded-md"
               value={selectedMid}
               onChange={handleMidChange}
-              disabled={!selectedMain}
+              disabled={!selectedMain || customInput.main}
             >
               <option value="">중주제 선택</option>
               {midCategories.map((option) => (
@@ -236,11 +272,7 @@ const CategoryModal = ({ onClose }) => {
             className="w-full mt-4 p-3 border rounded-md"
             value={selectedSub}
             onChange={handleSubChange}
-            disabled={
-              !selectedMain ||
-              !selectedMid ||
-              (customInput.mid && !uploadedImage)
-            }
+            disabled={!selectedMid || customInput.main || customInput.mid}
           >
             {/* 대주제 & 중주제 없으면 비활성화, 중주제 직접 입력 + 이미지 없으면 비활성화 */}
             <option value="">소주제 선택</option>
@@ -264,7 +296,7 @@ const CategoryModal = ({ onClose }) => {
         {/* 생성 버튼 */}
         <button
           className="w-full mt-6 bg-ssacle-blue text-white py-2 rounded-md"
-          disabled={!selectedMain || !selectedMid}
+          disabled={!selectedMain}
           onClick={handleCreateCategory}
         >
           생성하기

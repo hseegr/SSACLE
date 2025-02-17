@@ -4,7 +4,7 @@ import useCategories from '@/hooks/useCategories'
 import { fetchGptTodos } from '@/services/adminService'
 
 export const useGptTodos = () => {
-  const { startDate, endDate, selectedSub, setDescription, } = useSsaprint()
+  const { startDate, endDate, selectedSub, setDescription, setTodos, } = useSsaprint()
   const { categories } = useCategories()
 
   const topic =

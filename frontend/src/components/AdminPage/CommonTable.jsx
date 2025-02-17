@@ -6,7 +6,8 @@ const CommonTable = ({
   selectable = false,
   perPage = 5,
   renderActions,
-  onSelect // 📍 부모 컴포넌트에서 선택된 행을 관리하도록 `onSelect` 추가
+  onSelect, // 📍 부모 컴포넌트에서 선택된 행을 관리하도록 `onSelect` 추가
+  onRowClick,
 }) => {
   const [selectedRows, setSelectedRows] = useState([])
   const [sortKey, setSortKey] = useState(null)
@@ -67,16 +68,19 @@ const CommonTable = ({
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse border border-gray-300 text-sm">
         <thead className="bg-blue-100">
           <tr>
             {selectable && (
-              <th className="p-2 border text-center">
+              <th className="p-2 border text-center text-sm">
                 <div className="flex items-center justify-center">
                   <input
                     type="checkbox"
                     onChange={toggleAll}
-                    checked={selectedRows.length === paginatedData.length && selectedRows.length > 0} // 📍 선택된 행이 모두 체크되어야 true
+                    checked={
+                      selectedRows.length === paginatedData.length &&
+                      selectedRows.length > 0
+                    }
                   />
                 </div>
               </th>
@@ -86,6 +90,7 @@ const CommonTable = ({
                 key={col.key}
                 className="p-2 border text-left cursor-pointer"
                 onClick={() => handleSort(col.key)}
+                style={{ width: col.width || 'auto' }}
               >
                 <div className="flex items-center">
                   {col.label}
@@ -106,14 +111,18 @@ const CommonTable = ({
         </thead>
         <tbody>
           {paginatedData.map((row) => (
-            <tr key={row.id} className="border-b">
+            <tr
+              key={row.id}
+              className="border-b"
+              onClick={() => onRowClick && onRowClick(row)}
+            >
               {selectable && (
                 <td className="p-2 border text-center">
                   <div className="flex items-center justify-center">
                     <input
                       type="checkbox"
                       checked={selectedRows.includes(row.id)}
-                      onChange={() => handleRowSelect(row.id)} // 📍 체크박스 선택 시 부모 컴포넌트에 업데이트
+                      onChange={() => handleRowSelect(row.id)}
                     />
                   </div>
                 </td>

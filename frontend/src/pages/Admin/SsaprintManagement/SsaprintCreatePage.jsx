@@ -95,15 +95,17 @@ const SsaprintCreate = () => {
   // 뒤로가기 버튼 클릭 시 실행
   const handleGoBack = () => {
     clearLocalStorage()
-    navigate('/admin/user')
+    navigate('/admin/ssaprint')
   }
-
 
   return (
     <div className="min-w-max min-h-screen bg-white flex flex-col items-center py-10 shrink-0">
       <h1 className="text-center text-ssacle-blue text-2xl font-bold">
         새로운 싸프린트
       </h1>
+      <p className="text-ssacle-gray text-sm mt-2">
+        입력된 정보는 자동 저장됩니다. 초기화를 원한다면 뒤로가기를 눌러주세요!
+      </p>
 
       <div className="w-3/5 mt-8">
         <h2 className="text-ssacle-black text-lg font-bold">기본 정보 입력</h2>
@@ -126,7 +128,12 @@ const SsaprintCreate = () => {
         </div>
 
         <div className="flex justify-between mt-4">
-          <DateInput label="시작일" value={startDate} setValue={setStartDate} min={getTomorrowDate()}/>
+          <DateInput
+            label="시작일"
+            value={startDate}
+            setValue={setStartDate}
+            min={getTomorrowDate()}
+          />
           <DateInput
             label="종료일"
             value={endDate}

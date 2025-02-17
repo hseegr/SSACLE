@@ -44,7 +44,7 @@ const SelectDropdown = ({ label, type, options }) => {
         onChange={handleChange}
         disabled={options.length === 0} // 옵션 없을 때 비활성화
       >
-        <option value="" disabled>
+        <option value="">
           선택하세요
         </option>
         {options.map((option, index) => (
