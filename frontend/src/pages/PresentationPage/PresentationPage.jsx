@@ -3,13 +3,11 @@ import PresentationPageWrapper from '@/components/PresentationPage/PresentationP
 import SessionInitializer from '@/components/PresentationPage/SessionInitializer/SessionInitializer'
 import StepContainer from '@/components/PresentationPage/StepConainer/StepContainer'
 import { ModalSteps } from '@/constants/modalStep'
-import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
-import { usePresentationModalStateStateStore } from '@/store/usePresentattionModalStateStateStore'
+import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useShallow } from 'zustand/react/shallow'
 const PresentationPage = () => {
   // 모달 열기 상태
   const { isModalOpen, modalStep } = usePresentationModalStateStore(

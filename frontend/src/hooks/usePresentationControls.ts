@@ -20,6 +20,7 @@ import { useModal } from '@/hooks/useModal'
 import { ModalSteps } from '@/constants/modalStep'
 import { useConnect } from '@/hooks/useConnect'
 import { useShallow } from 'zustand/shallow'
+import useRoomStateStore from '@/store/useRoomStateStore'
 
 export const usePresentationControls = () => {
   const { cameraPublisher, screenPublisher, session, subscribers } =
