@@ -3,6 +3,8 @@ package ssafy.com.ssacle.board.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.board.domain.BoardType;
@@ -20,7 +22,9 @@ import ssafy.com.ssacle.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -171,6 +175,34 @@ public class BoardService {
     @Transactional
     public int countBoardsByBoardTypeName(String boardTypeName) {
         return boardRepository.countBoardsByBoardTypeName(boardTypeName);
+    }
+    @Transactional
+    public Page<BoardResponseDTO> getAllBoards(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAllWithPagination(pageable);
+        return boardPage.map(this::convertToDto);
+    }
+
+    /** 📌 2. 특정 게시판 타입의 게시글 목록 조회 (페이지네이션) */
+    @Transactional
+    public Page<BoardResponseDTO> getBoardsbyBoardTypeName(String name, Pageable pageable) {
+        BoardType boardType = boardTypeRepository.findByName(name)
+                .orElseThrow(() -> new BoardException(BoardErrorCode.INVALID_BOARD_TYPE));
+
+        Page<Board> boardPage = boardRepository.findByBoardTypeId(boardType.getId(), pageable);
+        return boardPage.map(this::convertToDto);
+    }
+
+    private BoardResponseDTO convertToDto(Board board) {
+        return BoardResponseDTO.builder()
+                .id(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .writerInfo(board.getUser().getNickname())
+                .time(board.getCreatedAt())
+                .tags(splitTags(board.getTag()))
+                .majorCategory(board.getBoardType().getParent() != null ? board.getBoardType().getParent().getName() : null)
+                .subCategory(board.getBoardType().getName())
+                .build();
     }
 
     private List<String> splitTags(String tagString) {

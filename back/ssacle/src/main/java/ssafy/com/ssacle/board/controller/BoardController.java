@@ -3,6 +3,8 @@ package ssafy.com.ssacle.board.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,5 +69,15 @@ public class BoardController implements BoardSwaggerController{
     @Override
     public ResponseEntity<Integer> countBoard(String boardTypeName) {
         return ResponseEntity.ok().body(boardService.countBoardsByBoardTypeName(boardTypeName));
+    }
+
+    @Override
+    public ResponseEntity<Page<BoardResponseDTO>> getAllBoardsPaged(Pageable pageable) {
+        return ResponseEntity.ok().body(boardService.getAllBoards(pageable));
+    }
+
+    @Override
+    public ResponseEntity<Page<BoardResponseDTO>> getBoardsByBoardTypePaged(String name, Pageable pageable) {
+        return ResponseEntity.ok().body(boardService.getBoardsbyBoardTypeName(name, pageable));
     }
 }

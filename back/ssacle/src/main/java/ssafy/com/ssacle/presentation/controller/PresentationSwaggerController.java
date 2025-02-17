@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ssafy.com.ssacle.presentation.dto.PresentationRequestDTO;
 import ssafy.com.ssacle.presentation.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
 
 import java.util.List;
 
@@ -55,4 +56,19 @@ public interface PresentationSwaggerController {
     ResponseEntity<Team> calculateFinalScores(
             @Parameter(description = "팀과 발표 점수를 포함한 요청 리스트") @RequestBody List<PresentationRequestDTO> requestList
     );
+
+    @Operation(summary = "발표 참가자 목록 조회",
+            description = "특정 Sprint의 발표 참가자 목록을 반환하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "참가자 목록 반환 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 스프린트를 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+    })
+    @GetMapping("/ssaprint/{sprintId}/presentation-participants")
+    ResponseEntity<List<UserResponseDTO>> getPresentationParticipants(
+            @Parameter(description = "발표 참가자 목록을 조회할 Sprint ID", example = "1")
+            @PathVariable Long sprintId
+    );
+
 }

@@ -7,13 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ssafy.com.ssacle.board.domain.Board;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
     @Query("SELECT b FROM Board b JOIN FETCH b.user")
     List<Board> findAllWithUser();
 
@@ -38,5 +39,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT b FROM Board b JOIN FETCH b.boardType bt LEFT JOIN FETCH bt.parent WHERE b.id = :id")
     Optional<Board> findByIdWithBoardTypeAndParent(@Param("id") Long id);
+
+    Page<Board> findAll(Pageable pageable);
 
 }

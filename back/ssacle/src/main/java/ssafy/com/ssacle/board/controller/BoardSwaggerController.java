@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -112,5 +114,22 @@ public interface BoardSwaggerController {
     })
     @GetMapping("/count")
     ResponseEntity<Integer> countBoard(@RequestParam("type") String boardTypeName);
+
+    @Operation(summary = "게시글 목록 조회", description = "모든 게시글을 최신순으로 페이지네이션하여 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
+    @GetMapping("/paged")
+    ResponseEntity<Page<BoardResponseDTO>> getAllBoardsPaged(Pageable pageable);
+
+    /** 📌 1-1. 게시판 타입별 게시글 목록 조회 (페이지네이션 적용) */
+    @Operation(summary = "게시판 타입별 게시글 목록 조회", description = "게시판 타입명을 기준으로 페이지네이션된 게시글 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 조회 성공", content = @Content(schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음", content = @Content)
+    })
+    @GetMapping("/boardtype/paged")
+    ResponseEntity<Page<BoardResponseDTO>> getBoardsByBoardTypePaged(
+            @RequestParam("name") String name, Pageable pageable
+    );
 }
 

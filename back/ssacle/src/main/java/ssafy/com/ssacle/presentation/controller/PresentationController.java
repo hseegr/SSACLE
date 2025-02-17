@@ -11,6 +11,7 @@ import ssafy.com.ssacle.presentation.service.PresentationService;
 import ssafy.com.ssacle.sprint.service.SprintService;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.repository.TeamRepository;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
 
 import java.util.Comparator;
 import java.util.List;
@@ -48,4 +49,10 @@ public class PresentationController implements PresentationSwaggerController{
 
         return ResponseEntity.ok(topTeam);
     }
+
+    @Override
+    public ResponseEntity<List<UserResponseDTO>> getPresentationParticipants(Long sprintId) {
+        return ResponseEntity.ok().body(sprintService.getPresentationParticipants(sprintId));
+    }
+
 }

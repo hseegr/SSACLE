@@ -12,6 +12,8 @@ import java.util.List;
 @Builder
 public class UserResponseDTO {
     @NotBlank
+    private Long id;
+    @NotBlank
     private String nickname;
     @NotBlank
     private int level;
@@ -24,6 +26,7 @@ public class UserResponseDTO {
 
     public static UserResponseDTO of(User user,List<String> categories) {
         return UserResponseDTO.builder()
+                .id(user.getId())
                 .nickname(user.getNickname())
                 .level(user.getLevel())
                 .pickles(user.getPickles())
