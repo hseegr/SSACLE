@@ -1,8 +1,8 @@
 import { useSsaprint } from '@/contexts/SsaprintContext'
 
 const DateInput = ({ label, value, setValue, min, max, disabled }) => {
-  const { formatToDisplayDate } = useSsaprint()
-  
+  const { formatToDisplayDate, getTomorrowDate } = useSsaprint()
+
   return (
     <div className="relative w-[48%]">
       <label className="text-ssacle-black text-sm font-bold">{label}</label>

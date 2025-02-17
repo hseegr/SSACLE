@@ -68,9 +68,52 @@ export const SsaprintProvider = ({ children }) => {
       basicDescription: '',
       detailDescription: '',
       recommendedFor: '',
-      todos: '',
+      todos: [],
     })
   )
+
+  // API 요청 데이터 변환 함수 추가
+  const transformSsaprintData = () => {
+    // console.log('❤️ 변환 전 todos 데이터:', description.todos)
+
+    let todosArray = [];
+
+    if (
+      typeof description.todos === 'string' &&
+      description.todos.trim() !== ''
+    ) {
+      todosArray = description.todos.split('\n').map((line) => {
+        const [date, ...tasks] = line.split(': ').map((item) => item.trim()) // 날짜와 태스크 분리
+        return {
+          date,
+          tasks:
+            tasks.length > 0
+              ? tasks[0].split(', ').map((task) => task.trim())
+              : [], // 태스크를 배열로 변환
+        }
+      })
+    }
+
+    // console.log("🧡 변환 후 todos 데이터:", todosArray)
+
+    return {
+      name: sprintName,
+      basicDescription: description.basicDescription,
+      detailDescription: description.detailDescription,
+      recommendedFor: description.recommendedFor,
+      startAt: startDate,
+      endAt: endDate,
+      announceAt: startDate,
+      maxMembers: maxParticipants,
+      todos: todosArray.length > 0 ? todosArray : undefined,
+      categoryIds: [
+        parseInt(selectedMain),
+        parseInt(selectedMid),
+        parseInt(selectedSub),
+      ],
+    }
+  }
+
   // 변경될 때 localStorage에 저장 (자동 저장)
   useEffect(() => {
     localStorage.setItem('selectedMain', JSON.stringify(selectedMain))
@@ -94,7 +137,7 @@ export const SsaprintProvider = ({ children }) => {
 
   // 등록 버튼 클릭 시 로컬스토리지 초기화
   const clearLocalStorage = () => {
-    console.log('🔥 로컬스토리지 삭제')
+    // console.log('🔥 로컬스토리지 삭제')
     localStorage.removeItem('selectedMain')
     localStorage.removeItem('selectedMid')
     localStorage.removeItem('selectedSub')
@@ -139,11 +182,12 @@ export const SsaprintProvider = ({ children }) => {
         formatToDisplayDate, // 날짜 표시용 포맷 함수
         description,
         setDescription,
-        clearLocalStorage,
         sprintName,
         setSprintName,
         maxParticipants,
         setMaxParticipants,
+        transformSsaprintData,
+        clearLocalStorage,
       }}
     >
       {children}

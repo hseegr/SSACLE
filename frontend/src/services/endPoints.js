@@ -113,11 +113,13 @@ export const SSADCUP_END_POINT = {
 export const ADMIN_END_POINT = {
   USERS: '/admin/users',
   SSAPRINT: {
-    // LIST: '',
+    LIST: '/search',
     // DETAIL: '',
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
       GPT_TODOS: '/gpt/todos', // gpt 상세 내용 생성
+      SSAPRINT: '/admin/ssaprints', // 싸프린트 생성
+      CATEGORY: '/category/admin/create'
     },
   },
 }

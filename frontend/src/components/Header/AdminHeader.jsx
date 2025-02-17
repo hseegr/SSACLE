@@ -16,7 +16,7 @@ const AdminHeader = () => {
 
       {/* 네비게이션 */}
       <nav className="flex space-x-12 text-ssacle-black text-base font-medium font-noto-sans-kr">
-        <Link to="/sprint" className="hover:underline">
+        <Link to="admin/ssaprint" className="hover:underline">
           싸프린트
         </Link>
         <Link to="/ssadcup" className="hover:underline">

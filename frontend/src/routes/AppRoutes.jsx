@@ -23,6 +23,7 @@ import FreeBoardPage from '@/pages/Board/FreeBoardPage'
 import GuardedRoute from '@/components/common/GuardedRoute'
 import UnGuardedRoute from '@/components/common/UnGuardedRoute'
 import SsaprintCreatePage from '@/pages/Admin/SsaprintManagement/SsaprintCreatePage'
+import SsaprintListPage from '@/pages/Admin/SsaprintManagement/SsaprintListPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -142,9 +143,12 @@ const router = createBrowserRouter([
         path: '/admin',
         element: <AdminBaseLayout />, // 기본 header, footer가 있는 Page
         children: [
-          { index: true, element: <SsaprintCreatePage /> },
+          { index: true, element: <SsaprintListPage /> },
           { path: 'user', element: <UserList /> },
-          { path: 'sprint', element: <h1>admin sprint</h1> },
+          { path: 'ssaprint', children: [
+            { index: 'list', element: <SsaprintListPage /> },
+            { path: 'create', element: <SsaprintCreatePage /> },
+          ] },
           { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
           { path: 'board', element: <h1>admin board</h1> },
         ],

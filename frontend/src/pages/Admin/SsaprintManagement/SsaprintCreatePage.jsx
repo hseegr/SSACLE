@@ -7,6 +7,8 @@ import CategoryModal from '@/components/AdminPage/SsaprintManagement/SsaprintCre
 import { CirclePlus } from 'lucide-react'
 import { useSsaprint } from '@/contexts/SsaprintContext'
 import { useGptTodos } from '@/hooks/useGptTodos'
+import { fetchCreateSsaprint } from '@/services/adminService'
+import { useMutation } from '@tanstack/react-query'
 
 const SsaprintCreate = () => {
   const {
@@ -18,6 +20,9 @@ const SsaprintCreate = () => {
     selectedMain,
     selectedMid,
     selectedSub,
+    sprintName,
+    transformSsaprintData,
+    getTomorrowDate,
   } = useSsaprint()
 
   const [showDetails, setShowDetails] = useState(
@@ -26,6 +31,38 @@ const SsaprintCreate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
   const { triggerGptFetch, isPending } = useGptTodos()
+
+  // 싸프린트 생성 Mutation
+  const createSsaprint = useMutation({
+    mutationFn: fetchCreateSsaprint, // ✅ mutationFn 사용
+    onSuccess: (data) => {
+      alert(`싸프린트 생성 완료! ID: ${data.ssaprintId}`)
+      clearLocalStorage()
+      navigate('/admin/user')
+    },
+    onError: (error) => {
+      alert(
+        `⚠️ 싸프린트 생성 실패: ${error.response?.data?.message || '알 수 없는 오류'}`
+      )
+    },
+  })
+
+  // 등록 버튼 클릭 시 API 호출
+  const handleRegister = () => {
+    if (!startDate || !endDate || !sprintName) {
+      alert('⚠️ 모든 정보를 입력해야 합니다.')
+      return
+    }
+
+    const formattedData = transformSsaprintData()
+    // console.log("🔥 변환된 데이터:", formattedData) // 디버깅용 로그 추가
+
+    if (!formattedData.categoryIds.length) {
+      alert('⚠️ 카테고리 정보가 없습니다. 다시 선택해주세요.')
+      return
+    }
+    createSsaprint.mutate(formattedData)
+  }
 
   // 상세 정보 입력 폼 상태 변경 시 로컬스토리지 업데이트
   const toggleDetails = () => {
@@ -61,6 +98,7 @@ const SsaprintCreate = () => {
     navigate('/admin/user')
   }
 
+
   return (
     <div className="min-w-max min-h-screen bg-white flex flex-col items-center py-10 shrink-0">
       <h1 className="text-center text-ssacle-blue text-2xl font-bold">
@@ -88,7 +126,7 @@ const SsaprintCreate = () => {
         </div>
 
         <div className="flex justify-between mt-4">
-          <DateInput label="시작일" value={startDate} setValue={setStartDate} />
+          <DateInput label="시작일" value={startDate} setValue={setStartDate} min={getTomorrowDate()}/>
           <DateInput
             label="종료일"
             value={endDate}
@@ -97,7 +135,7 @@ const SsaprintCreate = () => {
               startDate
                 ? new Date(
                     new Date(startDate).setDate(
-                      new Date(startDate).getDate() + 1
+                      new Date(startDate).getDate() + 2
                     )
                   )
                     .toISOString()
@@ -108,7 +146,7 @@ const SsaprintCreate = () => {
               startDate
                 ? new Date(
                     new Date(startDate).setDate(
-                      new Date(startDate).getDate() + 6
+                      new Date(startDate).getDate() + 7
                     )
                   )
                     .toISOString()
@@ -126,7 +164,7 @@ const SsaprintCreate = () => {
 
       <div className="flex flex-col items-center space-y-4">
         <button
-          onClick={toggleDetails}
+          onClick={showDetails ? handleRegister : toggleDetails}
           className="w-60 bg-ssacle-blue text-white text-lg font-bold rounded-full py-3"
         >
           {showDetails ? '등록' : '상세 정보 생성하기'}
