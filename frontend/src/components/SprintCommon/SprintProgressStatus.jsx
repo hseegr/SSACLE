@@ -5,9 +5,9 @@ const SprintProgressStatus = ({ sprint }) => {
   if (!sprint) return null
 
   // 날짜 데이터 처리
-  const startDate = dayjs(sprint.sprint.startAt)
-  const endDate = dayjs(sprint.sprint.endAt)
-  const today = dayjs()
+  const startDate = dayjs(sprint.startAt).startOf('day')
+  const endDate = dayjs(sprint.endAt).startOf('day')
+  const today = dayjs().startOf('day') // 오늘 날짜 00:00 기준
   const totalDays = endDate.diff(startDate, 'day') + 1
   const currentDay = today.isBefore(startDate)
     ? 0
@@ -15,8 +15,22 @@ const SprintProgressStatus = ({ sprint }) => {
       ? totalDays
       : today.diff(startDate, 'day') + 1
 
+  // 스프린트 상태 확인
+  const statusMap = {
+    0: { label: '시작 전', color: 'text-gray-600', iconColor: 'text-gray-500' },
+    1: { label: '참여 중', color: 'text-gray-800', iconColor: 'text-red-500' },
+    2: {
+      label: '수료 완료',
+      color: 'text-green-700',
+      iconColor: 'text-green-500',
+    },
+  }
+
+  const sprintStatus = statusMap[sprint.status] || statusMap[1] // 기본값: 참여 중
+  const hideProgressBar = sprint.status === 0 || sprint.status === 2 // 시작 전 or 수료 완료면 진행 바 숨기기
+
   return (
-    <div className="p-4 bg-white rounded-lg flex flex-col gap-2">
+    <div className="p-2 bg-white rounded-lg flex flex-col gap-2">
       {/* 진행 기간 */}
       <div className="flex items-center gap-2 text-[11px] text-gray-700">
         <FaCalendarAlt className="text-gray-500 text-[13px]" />
@@ -33,16 +47,18 @@ const SprintProgressStatus = ({ sprint }) => {
       <div className="flex items-center gap-2 text-[11px] text-gray-700">
         <FaUsers className="text-gray-500 text-[13px]" />
         <span className="font-bold text-gray-900">참여 인원</span>
-        <span>{sprint.sprint.currentMembers}명</span>
+        <span>{sprint.currentMembers}명</span>
       </div>
 
-      {/* 현재 상태 + 진행 바 */}
+      {/* 현재 상태 */}
       <div className="flex items-center gap-2 text-[11px] text-gray-700">
-        <FaRocket className="text-red-500 text-[13px]" />
+        <FaRocket className={sprintStatus.iconColor} />
         <span className="font-bold text-gray-900">현재 상태</span>
-        <span className="text-gray-800">참여 중</span>
+        <span className={sprintStatus.color}>{sprintStatus.label}</span>
+      </div>
 
-        {/* DAY X */}
+      {/* 진행 바 */}
+      {!hideProgressBar && (
         <div className="flex items-center gap-1 ml-3">
           <span className="text-blue-600 font-semibold text-[11px]">
             DAY {currentDay}
@@ -54,7 +70,7 @@ const SprintProgressStatus = ({ sprint }) => {
             ></div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

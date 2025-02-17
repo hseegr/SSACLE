@@ -1,7 +1,15 @@
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-const JoinSprintInfo = ({ sprint, isOpen, setIsOpen }) => {
-  if (!sprint) return null
+const JoinSprintInfo = ({ sprintData, isOpen, setIsOpen }) => {
+  if (!sprintData || !sprintData.sprint) return null
+
+  const { sprint, categories } = sprintData
+
+  // 첫 번째 이미지가 있는 카테고리의 image를 썸네일로 사용
+  const thumbnail = categories.find((category) => category.image)?.image
+
+  // 태그 최대 2개만 표시
+  const displayedTags = categories.slice(0, 2)
 
   return (
     <div className="p-5 bg-white shadow-md rounded-xl transition-all w-[47rem] min-h-[8rem]">
@@ -9,28 +17,26 @@ const JoinSprintInfo = ({ sprint, isOpen, setIsOpen }) => {
       <div className="w-full flex flex-col text-gray-800">
         {/* 상단 정보 */}
         <div className="text-left">
-          <img
-            src={sprint.sprint.thumbnail}
-            alt={sprint.sprint.name}
-            className="w-10 h-10 mb-3 mt-1"
-          />
-          <h2 className="text-lg font-bold">{sprint.sprint.name}</h2>
-          <p className="text-xs text-gray-600">
-            {sprint.sprint.basicDescription}
-          </p>
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt={sprint.name}
+              className="w-10 h-10 mb-3 mt-1"
+            />
+          )}
+          <h2 className="text-lg font-bold">{sprint.name}</h2>
+          <p className="text-xs text-gray-600">{sprint.basicDescription}</p>
 
-          {/* 태그 (majortopic_name & subtopic_name) */}
+          {/* 태그 */}
           <div className="flex gap-2 mt-2">
-            {sprint.sprint.majortopic_name && (
-              <span className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg">
-                {sprint.sprint.majortopic_name}
+            {displayedTags.map((category) => (
+              <span
+                key={category.id}
+                className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg"
+              >
+                {category.categoryName}
               </span>
-            )}
-            {sprint.sprint.subtopic_name && (
-              <span className="px-3 py-1 text-[10px] bg-blue-100 text-blue-600 rounded-lg">
-                {sprint.sprint.subtopic_name}
-              </span>
-            )}
+            ))}
           </div>
         </div>
 

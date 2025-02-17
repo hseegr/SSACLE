@@ -6,14 +6,26 @@ const SprintToDoList = ({ todos }) => {
   const [newTask, setNewTask] = useState('')
 
   // 오늘 날짜 포맷 (YYYY-MM-DD)
-  const [today] = useMemo(() => new Date().toISOString().split('T'), [])
+  // const today = useMemo(
+  //   () => new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' }).replace(/. /g, '-').replace('.', '').trim(),
+  //   []
+  // );
+  const today = useMemo(() => {
+    const now = new Date()
+    now.setHours(now.getHours() + 9) // UTC 기준을 한국 시간으로 변환
+    return now.toISOString().split('T')[0] // YYYY-MM-DD 형식 반환
+  }, [])
 
   // todos 데이터에서 오늘 날짜의 To-Do 찾기
   useEffect(() => {
     const todayTasks = todos.find((day) => day.date === today)
     if (todayTasks) {
       setTasks(
-        todayTasks.tasks.map((task) => ({ text: task, completed: false }))
+        todayTasks.contents?.map((content) => ({
+          id: content.id,
+          text: content.task,
+          completed: content.done, // API에서 받은 done 값을 반영
+        })) || []
       )
     } else {
       setTasks([])
@@ -53,7 +65,7 @@ const SprintToDoList = ({ todos }) => {
           {tasks.length > 0 ? (
             tasks.map((task, taskIndex) => (
               <li
-                key={taskIndex}
+                key={task.id || taskIndex}
                 className="flex items-center justify-between gap-2"
               >
                 <div className="flex items-center gap-2 w-full">

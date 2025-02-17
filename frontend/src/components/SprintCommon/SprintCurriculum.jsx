@@ -10,7 +10,7 @@ const SprintCurriculum = ({ todos = [] }) => {
   const formattedTodos = todos.map((todo, index) => ({
     day: `Day ${index + 1}`,
     date: todo.date,
-    tasks: todo.tasks,
+    tasks: todo.tasks || todo.contents?.map((content) => content.task) || [], // `tasks` 또는 `contents`에서 변환
     icon: index === 5 ? '📝' : index === 6 ? '🎤' : '📚',
   }))
 

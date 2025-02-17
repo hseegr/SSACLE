@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 
 const SprintPresentationSession = ({ sprint }) => {
-  if (!sprint || !sprint.sprint.announceAt) return null
+  if (!sprint || !sprint.announceAt) return null
 
-  const presentationDate = dayjs(sprint.sprint.announceAt)
-  const today = dayjs()
+  const today = dayjs().startOf('day')
+  const presentationDate = dayjs(sprint.announceAt).startOf('day')
   const dDay = presentationDate.diff(today, 'day')
 
   return (
@@ -24,7 +24,7 @@ const SprintPresentationSession = ({ sprint }) => {
       {/* D-Day & 입장 버튼 */}
       <div className="mt-6 flex items-center justify-between">
         <span className="text-blue-600 text-md font-bold">
-          {dDay === 0 ? 'D-DAY' : `D-DAY ${dDay + 1}`}
+          {dDay === 0 ? 'D-DAY' : `D-DAY ${dDay}`}
         </span>
 
         <button
