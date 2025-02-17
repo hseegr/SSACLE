@@ -1,7 +1,8 @@
-import SsaCard from '@/components/commons/SsapCard'
+import SsapCard from '@/components/commons/SsapCard'
 
 const CurruntSsaprint = ({ userData, recommendedSprints }) => {
   const { name } = userData
+  const sliceRecommended = recommendedSprints.slice(0, 10)
   return (
     <div>
       <div>
@@ -11,8 +12,8 @@ const CurruntSsaprint = ({ userData, recommendedSprints }) => {
           있어요! 💡
         </p>
         <div className="grid grid-cols-4 gap-y-5 gap-x-4">
-          {recommendedSprints.map((sprint) => (
-            <SsaCard key={sprint.id} sprintData={sprint} />
+          {sliceRecommended.map((sprint) => (
+            <SsapCard key={`sprint-${sprint.id}`} sprintData={sprint} />
           ))}
         </div>
       </div>

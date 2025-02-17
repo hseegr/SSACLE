@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 const MySsaprintList = ({ currentSprintsData }) => {
   const navigate = useNavigate()
 
-  const handleSprintClick = (sprintId) => {
-    navigate(`/my-sprints/${sprintId}`)
+  const handleSprintClick = (sprintId, teamId) => {
+    if (sprintId && teamId) {
+      navigate(`/my-sprints/${sprintId}`, { state: { sprintId, teamId } })
+    }
   }
 
   // 현재 날짜 기준으로 진행 중인 스프린트와 종료된 스프린트 분리
@@ -73,9 +75,9 @@ const MySsaprintList = ({ currentSprintsData }) => {
             return (
               <div
                 key={sprint.id}
-                className="flex flex-row gap-x-2 mb-1 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                className="flex flex-row gap-x-2 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
                 onClick={() => {
-                  handleSprintClick(sprint.id)
+                  handleSprintClick(sprint.id, sprint.teamId)
                 }}
               >
                 {/* 상태 표시 점 */}
