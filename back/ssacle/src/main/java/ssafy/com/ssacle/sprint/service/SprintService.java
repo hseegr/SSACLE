@@ -53,10 +53,7 @@ import ssafy.com.ssacle.userteam.domain.UserTeam;
 import ssafy.com.ssacle.userteam.repository.UserTeamRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -134,8 +131,8 @@ public class SprintService {
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
 
         // 팀 <-> 노션 연동
-//        String notionUrl = saveNotion(teamName, defaultTodos, categories);
-//        team.setNotionURL(notionUrl);
+        String notionUrl = saveNotion(teamName, defaultTodos, categories);
+        team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);
@@ -310,19 +307,29 @@ public class SprintService {
     }
 
     @Transactional
-    public List<SprintSummaryResponse> getParicipateSprint(User user) {
+    public List<SprintSummaryResponse> getParticipateSprint(User user) {
+
         List<Team> teams = teamRepository.findTeamsByUserId(user.getId());
         if (teams.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<Long> teamIds = teams.stream().map(Team::getId).toList();
-        List<Sprint> sprints = sprintRepository.findSprintsByTeamIds(teamIds);
+        Map<Long, Long> sprintToTeamMap = teams.stream()
+                .collect(Collectors.toMap(team -> team.getSprint().getId(), Team::getId, (existing, replacement) -> existing)); // 중복 Sprint ID는 기존 값 유지
 
+        List<Long> sprintIds = new ArrayList<>(sprintToTeamMap.keySet());
+
+        List<Sprint> sprints = sprintRepository.findSprintsByTeamIds(sprintIds);
+
+        // ✅ Sprint와 Team ID 매핑하여 Response 생성
         return sprints.stream()
-                .map(SprintSummaryResponse::of)
+                .map(sprint -> {
+                    Long teamId = sprintToTeamMap.getOrDefault(sprint.getId(), null); // 매핑된 팀 ID 가져오기
+                    return SprintSummaryResponse.of(sprint, teamId);
+                })
                 .toList();
     }
+
 
     @Transactional
     public List<SprintRecommendResponseDTO> getRecommendSprint(User user) {

@@ -20,8 +20,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findTopLevelComments(@Param("boardId") Long boardId);
 
     // 특정 부모 댓글에 대한 대댓글 조회 (최신순)
-    List<Comment> findByParentOrderByCreatedAtDesc(Comment parent);
+    @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.parent.id = :parentId ORDER BY c.createdAt DESC")
+    List<Comment> findByParentOrderByCreatedAtDesc(@Param("parentId") Long parentId);
 
+    @Query("SELECT c FROM Comment c where c.parent.id=:parentId")
+    List<Comment> findByParent(@Param("parentId") Long parentId);
     @Transactional
     @Modifying
     @Query("UPDATE Comment c SET c.content = :content, c.updatedAt = :updatedAt WHERE c.id = :id")

@@ -41,7 +41,7 @@ public class UserController implements UserSwaggerController{
     @Override
     public ResponseEntity<List<SprintSummaryResponse>> getUserParticipateSprint() {
         User user = userService.getAuthenticatedUser();
-        return ResponseEntity.ok().body(sprintService.getParicipateSprint(user));
+        return ResponseEntity.ok().body(sprintService.getParticipateSprint(user));
     }
 
     @Override

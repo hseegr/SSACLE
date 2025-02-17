@@ -715,15 +715,19 @@ public class DataInitializer {
             List<Comment> replyList = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now();
 
-            // 기존 댓글 중 일부를 부모로 하여 대댓글 추가
+            // 기존 댓글 중 일부를 부모로 하여 대댓글 추가 (깊이 제한 설정)
             for (Comment parentComment : allComments) {
                 if (random.nextBoolean()) { // 50% 확률로 대댓글 생성
+                    if (getDepth(parentComment) >= 3) { // 깊이가 3 이상이면 생성하지 않음
+                        continue;
+                    }
+
                     User randomUser = users.get(random.nextInt(users.size())); // 랜덤 사용자 선택
 
                     Comment reply = Comment.builder()
                             .user(randomUser)
                             .board(parentComment.getBoard())
-                            .parent(parentComment) // 부모 댓글 설정 (깊이 1)
+                            .parent(parentComment) // 부모 댓글 설정 (깊이 1~3까지만 허용)
                             .content("대댓글입니다! 부모 댓글 ID: " + parentComment.getId())
                             .createdAt(now.minusDays(random.nextInt(5))) // 최근 5일 내 랜덤 날짜 설정
                             .updatedAt(now)
@@ -737,12 +741,23 @@ public class DataInitializer {
             // 대댓글 저장
             if (!replyList.isEmpty()) {
                 commentRepository.saveAll(replyList);
-                System.out.println("Default reply comment data added.");
+                System.out.println("✅ Default reply comment data added.");
             }
         } else {
-            System.out.println("No parent comments found. Initialize comments first.");
+            System.out.println("⚠️ No parent comments found. Initialize comments first.");
         }
     }
+
+    // 댓글의 깊이를 계산하는 메서드 (부모-자식 관계 확인)
+    private int getDepth(Comment comment) {
+        int depth = 0;
+        while (comment.getParent() != null) {
+            depth++;
+            comment = comment.getParent();
+        }
+        return depth;
+    }
+
 
 
     @Transactional
@@ -980,4 +995,6 @@ public class DataInitializer {
             System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
         }
     }
+
 }
+

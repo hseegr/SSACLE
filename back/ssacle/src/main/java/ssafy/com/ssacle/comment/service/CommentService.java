@@ -1,10 +1,10 @@
 package ssafy.com.ssacle.comment.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.board.domain.Board;
 import ssafy.com.ssacle.board.exception.BoardErrorCode;
 import ssafy.com.ssacle.board.exception.BoardException;
@@ -133,44 +133,34 @@ public class CommentService {
     }
 
     /** 📌 6. 특정 댓글의 대댓글 조회 */
+    @Transactional(readOnly = true)
     public List<CommentResponseDTO> getReplies(Long parentCommentId) {
-        Comment parentComment = commentRepository.findById(parentCommentId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
-
-        List<Comment> replies = commentRepository.findByParentOrderByCreatedAtDesc(parentComment);
-
+//        Comment parentComment = commentRepository.findById(parentCommentId)
+//                .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
+//        System.out.println(parentComment.get)
+        System.out.println("상위 아이디 : "+parentCommentId);
+        List<Comment> replies = commentRepository.findByParentOrderByCreatedAtDesc(parentCommentId);
+        System.out.println("대댓글 갯수 : "+replies.size());
         return replies.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-//        List<CommentResponseDTO> responseDTOList = new ArrayList<>();
-//
-//        for(Comment reply : replies){
-//            User user = userRepository.findById(reply.getUser().getId()).orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
-//            CommentResponseDTO commentResponseDTO = CommentResponseDTO.builder()
-//                    .content(reply.getContent())
-//                    .writerInfo(reply.getUser().getNickname())
-//                    .time(reply.getCreatedAt())
-//                    .build();
-//            responseDTOList.add(commentResponseDTO);
-//        }
-//        Collections.sort(responseDTOList, (o1, o2) -> o2.getTime().compareTo(o1.getTime()));
-//        return responseDTOList;
     }
 
 
     private CommentResponseDTO convertToDTO(Comment comment) {
-        List<CommentResponseDTO> childComments = commentRepository.findByParentOrderByCreatedAtDesc(comment)
+        List<CommentResponseDTO> childComments = commentRepository.findByParentOrderByCreatedAtDesc(comment.getId())
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
 
         return CommentResponseDTO.builder()
                 .content(comment.getContent())
-                .writerInfo(comment.getBoard().getUser().getNickname())
+                .writerInfo(comment.getUser().getNickname())  // ✅ 변경
                 .time(comment.getCreatedAt())
                 .child(childComments)
                 .build();
     }
+
 
     private void validateCommentContent(String content) {
         if (content == null || content.trim().isEmpty()) {
