@@ -1,12 +1,14 @@
 import BoardList from '@/components/Board/List/BoardList'
 import BoardPagination from '@/components/Board/List/BoardPagination'
 import BoardTab from '@/components/Board/List/BoardTab'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PayModal from '@/components/Board/Modal/PayModal'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
 import { fetchUserInfo } from '@/services/mainService'
+import axios from 'axios'
+import httpCommon from '@/services/http-common'
 
 const studyTabs = [
   { id: 'legend', label: '명예의 전당' },
@@ -16,9 +18,11 @@ const studyTabs = [
 const StudyBoardPage = () => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('legend') // 현재 활성화된 탭
-  const [currentPage, setCurrentPage] = useState(1)
   const [showPayModal, setShowPayModal] = useState(false)
   const [selectPostId, setSelectPostId] = useState(null)
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   // 유저 정보 조회
   const { data: userData } = useQuery({
@@ -27,12 +31,54 @@ const StudyBoardPage = () => {
     retry: false,
   })
 
-  // 게시글 목록 조회
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['boards'],
-    queryFn: fetchBoardList,
-    retry: false,
+  // 페이지네이션 상태 관리
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    pageSize: 10,
   })
+
+  // 게시글 목록 조회
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const response = await httpCommon.get('/board/paged', {
+          data: {
+            page: pagination.currentPage - 1,
+            size: pagination.pageSize,
+            sort: ['time,desc'],
+          },
+        })
+
+        if (response.data) {
+          // 현재 탭에 맞는 게시글만 필터링
+          const filteredContent = response.data.content.filter(
+            (post) =>
+              post.majorCategory === 'edu' && post.subCategory === activeTab
+          )
+
+          setPosts(filteredContent)
+
+          // 필터링된 게시글 수에 맞게 전체 페이지 수 다시 계산
+          const totalFilteredPages = Math.ceil(
+            filteredContent.length / pagination.pageSize
+          )
+          setPagination((prev) => ({
+            ...prev,
+            totalPages: totalFilteredPages || 1,
+          }))
+        }
+      } catch (err) {
+        console.error('Error fetching board data:', err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [pagination.currentPage, activeTab])
 
   // 게시글 상세 조회
   const boardDetailMutation = useMutation({
@@ -45,11 +91,13 @@ const StudyBoardPage = () => {
     },
   })
 
-  // 학습 게시판(edu) + 현재 탭(legend/qna) 필터링
-  const filteredPosts =
-    data?.filter(
-      (post) => post.majorCategory === 'edu' && post.subCategory === activeTab
-    ) || []
+  // filteredPosts는 이제 posts를 바로 사용
+  const filteredPosts = posts
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, currentPage: newPage }))
+  }
 
   // 게시글 클릭 시 실행
   const handlePostClick = (postId) => {
@@ -76,6 +124,12 @@ const StudyBoardPage = () => {
     }
   }
 
+  // 탭 변경 시 페이지 초기화
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId)
+    setPagination((prev) => ({ ...prev, currentPage: 1 }))
+  }
+
   // 글 작성 페이지 이동
   const handleWrite = () => {
     navigate('/board/edu/write', {
@@ -83,8 +137,8 @@ const StudyBoardPage = () => {
     })
   }
 
-  if (isLoading) return <div>로딩 중...</div>
-  if (isError) return <div>에러가 발생했습니다: {error.message}</div>
+  if (loading) return <div>로딩 중...</div>
+  if (error) return <div>에러가 발생했습니다: {error.message}</div>
 
   return (
     <main className="min-w-max my-20">
@@ -93,7 +147,7 @@ const StudyBoardPage = () => {
         <BoardTab
           tabs={studyTabs}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
       </section>
 
@@ -155,9 +209,9 @@ const StudyBoardPage = () => {
       {/* 페이지네이션 */}
       <section>
         <BoardPagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={1}
+          currentPage={pagination.currentPage}
+          setCurrentPage={handlePageChange}
+          totalPages={pagination.totalPages}
         />
       </section>
 
