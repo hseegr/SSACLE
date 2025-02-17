@@ -106,10 +106,15 @@ const StudyBoardPage = () => {
 
     if (!clickedPost) return
 
-    if (clickedPost.subCategory === 'legend') {
+    // 명예의 전당 게시글이고 작성자가 아닌 경우에만 피클 결제 모달 표시
+    if (
+      clickedPost.subCategory === 'legend' &&
+      clickedPost.writerInfo !== userData?.nickname
+    ) {
       setSelectPostId(postId)
       setShowPayModal(true)
     } else {
+      // 작성자이거나 일반 게시글인 경우 바로 상세 페이지로 이동
       boardDetailMutation.mutate(postId)
     }
   }

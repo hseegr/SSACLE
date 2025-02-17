@@ -92,18 +92,18 @@ const BoardDetailPage = () => {
     // 같은 카테고리(subCategory)의 게시글만 필터링하고 시간순 정렬
     const sameTypeList = boardList
       .filter((item) => item.subCategory === post.subCategory)
-      .sort((a, b) => new Date(a.time) - new Date(b.time)) // 시간 오름차순 정렬로 변경
+      .sort((a, b) => new Date(b.time) - new Date(a.time)) // 시간 오름차순 정렬로 변경
 
     const currentIndex = sameTypeList.findIndex((item) => item.id === post.id)
 
     return {
-      // 이전글은 현재 인덱스보다 하나 앞의 글
-      prev: currentIndex > 0 ? sameTypeList[currentIndex - 1] : null,
-      // 다음글은 현재 인덱스보다 하나 뒤의 글
-      next:
+      // 이전글은 현재 인덱스보다 하나 뒤의 글 (더 오래된 글)
+      prev:
         currentIndex < sameTypeList.length - 1
           ? sameTypeList[currentIndex + 1]
           : null,
+      // 다음글은 현재 인덱스보다 하나 앞의 글 (더 최신 글)
+      next: currentIndex > 0 ? sameTypeList[currentIndex - 1] : null,
     }
   }
 
@@ -121,21 +121,27 @@ const BoardDetailPage = () => {
   // 게시글 이동 핸들러 (명예의 전당일 경우 피클 결제 필요)
   const handlePostNavigate = (postId) => {
     if (!postId) return
-    console.log('📌 이동할 게시글 ID:', postId)
 
-    if (post?.type === 'legend') {
+    // 이전글/다음글 정보 찾기
+    const targetPost = postId === prev?.id ? prev : next
+
+    // 명예의 전당 게시글이고 작성자가 아닌 경우에만 피클 결제 모달 표시
+    if (
+      post?.subCategory === 'legend' &&
+      targetPost?.writerInfo !== userData?.nickname
+    ) {
       setSelectedPostId(postId)
       setShowPayModal(true)
     } else {
+      // 작성자이거나 일반 게시글인 경우 바로 이동
       navigate(`/board/${boardType}/${postId}`)
     }
   }
-
   // 피클 결제 확인 후 게시글 열기
   const handlePayConfirm = async () => {
     try {
       const requiredPickles = 5
-      if (userPickle >= requiredPickles) {
+      if (userData?.pickles >= requiredPickles) {
         setUserPickle((prev) => prev - requiredPickles)
         setShowPayModal(false)
         navigate(`/board/${boardType}/${selectedPostId}`)
@@ -274,7 +280,7 @@ const BoardDetailPage = () => {
         onClose={() => setShowPayModal(false)}
         onConfirm={handlePayConfirm}
         requiredPickle={5}
-        currentPickle={userPickle}
+        currentPickle={userData?.pickles}
       />
 
       {/* 버튼 그룹 */}
