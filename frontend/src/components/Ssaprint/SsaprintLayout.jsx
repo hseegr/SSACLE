@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
 import Pagination from '@/components/common/Pagination'
+import SprintBanner from '@/components/SprintCommon/SprintBanner'
 import {
   fetchSsaprintListWithFilter,
   fetchCompletedSsaprintList,
@@ -79,15 +80,16 @@ const SsaprintLayout = () => {
   return (
     <div className="mt-16">
       {/* 싸프린트 소개 배너 */}
-      <section className="bg-[#F0F7F3] text-gray-700 text-center py-3 rounded-lg mb-3">
-        <h1 className="text-sm font-semibold">싸프린트</h1>
-        <p className="text-xs">
-          함께 배우고 성장하는, 짧고 집중적인 스프린트 학습 공간입니다.
-        </p>
-      </section>
+      <SprintBanner
+        title="싸프린트"
+        description="함께 배우고 성장하는, 짧고 집중적인 스프린트 학습 공간입니다."
+        domain="ssaprint"
+      />
 
       {/* 필터 UI */}
-      <FilterBar onFilterChange={handleFilterChange} />
+      <div className="mt-4">
+        <FilterBar onFilterChange={handleFilterChange} />
+      </div>
 
       {/* 스프린트 목록 */}
       <section className="mt-1">

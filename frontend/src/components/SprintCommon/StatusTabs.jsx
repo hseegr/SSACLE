@@ -1,8 +1,8 @@
 const StatusTabs = ({ selectedStatus, onStatusChange }) => {
   return (
-    <div className="flex gap-6 text-[14px] font-medium">
+    <div className="flex gap-1 text-sm font-medium">
       <button
-        className={`relative pb-1 ${selectedStatus === 0 ? 'text-black' : 'text-gray-400'}`}
+        className={`relative pb-1 min-w-[80px] ml-1 ${selectedStatus === 0 ? 'text-black' : 'text-gray-400'}`}
         onClick={() => onStatusChange(0)}
       >
         참여 가능
@@ -11,7 +11,7 @@ const StatusTabs = ({ selectedStatus, onStatusChange }) => {
         )}
       </button>
       <button
-        className={`relative pb-1 ${selectedStatus === 2 ? 'text-black' : 'text-gray-400'}`}
+        className={`relative pb-1 min-w-[80px] ${selectedStatus === 2 ? 'text-black' : 'text-gray-400'}`}
         onClick={() => onStatusChange(2)}
       >
         참여 완료

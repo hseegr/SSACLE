@@ -67,30 +67,35 @@ const FilterBar = ({ onFilterChange }) => {
         selectedStatus={selectedStatus}
         onStatusChange={handleStatusChange}
       />
-      <hr className="border-gray-200" />
-      <div className="flex gap-2 items-center">
+      <hr className="border-gray-200 min-w-[500px] w-full mx-auto" />
+
+      {/* 필터 버튼 & 초기화 버튼 */}
+      <div className="flex items-center">
         <button
           onClick={handleOpenModal}
           disabled={selectedStatus === 2} // 참여 완료일 때 비활성화
-          className={`flex items-center gap-1 px-2 py-1 text-xs rounded-md transition ${
-            selectedStatus === 2
-              ? 'border border-gray-200 text-gray-200 bg-white cursor-not-allowed'
-              : isFiltered
-                ? 'border border-blue-500 bg-blue-500 text-white'
-                : 'border border-blue-400 text-blue-400 bg-white'
-          }`}
+          className={`flex items-center justify-center gap-1 px-3 py-1 text-xs font-medium rounded-md transition min-w-[80px] h-[28px] ml-1
+            ${
+              selectedStatus === 2
+                ? 'border border-gray-200 text-gray-400 bg-white cursor-not-allowed'
+                : isFiltered
+                  ? 'border border-blue-500 bg-blue-500 text-white'
+                  : 'border border-blue-400 text-blue-400 bg-white'
+            }`}
         >
-          <FiFilter size={14} /> 필터
+          <FiFilter className="w-4 h-4" /> 필터
         </button>
+
         {isFiltered && selectedStatus === 0 && (
           <button
             onClick={handleResetFilters}
-            className="text-gray-500 text-xs flex items-center gap-1"
+            className="text-gray-500 text-xs flex items-center justify-center gap-1 min-w-[80px] h-[32px]"
           >
-            <FiRotateCcw size={14} /> 초기화
+            <FiRotateCcw className="w-4 h-3" /> 초기화
           </button>
         )}
       </div>
+
       {isModalOpen && selectedStatus === 0 && (
         <FilterModal
           positions={positions}
@@ -100,7 +105,8 @@ const FilterBar = ({ onFilterChange }) => {
           onClose={handleCloseModal}
         />
       )}
-      <hr className="border-gray-200" />
+
+      <hr className="border-gray-200 min-w-[500px] w-full mx-auto" />
     </div>
   )
 }
