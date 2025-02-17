@@ -101,8 +101,8 @@ const router = createBrowserRouter([
                 path: 'edu',
                 children: [
                   { index: true, element: <StudyBoardPage /> }, // 학습 게시판 메인
-                  { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
                   { path: 'write', element: <BoardFormPage /> }, // 새 게시글 작성
+                  { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
                   { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
                 ],
               },
@@ -145,10 +145,13 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SsaprintListPage /> },
           { path: 'user', element: <UserList /> },
-          { path: 'ssaprint', children: [
-            { index: 'list', element: <SsaprintListPage /> },
-            { path: 'create', element: <SsaprintCreatePage /> },
-          ] },
+          {
+            path: 'ssaprint',
+            children: [
+              { index: 'list', element: <SsaprintListPage /> },
+              { path: 'create', element: <SsaprintCreatePage /> },
+            ],
+          },
           { path: 'ssadcup', element: <h1>admin ssadcup</h1> },
           { path: 'board', element: <h1>admin board</h1> },
         ],

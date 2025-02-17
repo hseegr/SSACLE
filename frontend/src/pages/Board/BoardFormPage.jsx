@@ -10,10 +10,10 @@ import {
 
 const BoardFormPage = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { boardId } = useParams()
   const location = useLocation()
   const { state } = location
-  const [loading, setLoading] = useState(!!id)
+  const [loading, setLoading] = useState(!!boardId)
 
   // URL에서 majorCategory 가져오기
   const majorCategory = location.pathname.includes('/board/edu')
@@ -37,26 +37,30 @@ const BoardFormPage = () => {
 
   // 수정 모드일 때 기존 게시글 데이터 불러오기
   const { data: existingPost } = useQuery({
-    queryKey: ['post', id],
-    queryFn: () => fetchBoardDetail(id),
-    enabled: !!id,
-    onSuccess: (data) => {
-      setFormData({
-        title: data.title || '',
-        content: data.content || '',
-        majorCategory: data.majorCategory || majorCategory,
-        subCategory: data.subCategory || subCategory,
-        tags: data.tags || [],
-        tagInput: '',
-      })
-      setLoading(false)
-    },
+    queryKey: ['post', boardId],
+    queryFn: () => fetchBoardDetail(boardId),
+    enabled: !!boardId,
     onError: (error) => {
       console.error('게시글을 불러오는데 실패했습니다:', error)
       alert('게시글을 불러오는데 실패했습니다.')
       navigate(-1)
     },
   })
+
+  useEffect(() => {
+    if (existingPost) {
+      console.log('Setting form data with:', existingPost)
+      setFormData((prev) => ({
+        ...prev, // 기존 값 유지
+        title: existingPost.title || '',
+        content: existingPost.content || '',
+        majorCategory: existingPost.majorCategory || prev.majorCategory,
+        subCategory: existingPost.subCategory || prev.subCategory,
+        tags: existingPost.tags || [],
+      }))
+      setLoading(false) // 데이터 반영 후 로딩 해제
+    }
+  }, [existingPost])
 
   // 게시글 생성 mutation
   const createPostMutation = useMutation({
@@ -88,29 +92,6 @@ const BoardFormPage = () => {
     },
   })
 
-  // 기존 게시글 데이터 불러오기
-  // const { data: postData } = useQuery({
-  //   queryKey: ['post', id],
-  //   queryFn: () => fetchBoardDetail(id),
-  //   enabled: !!id,
-  //   onSuccess: (data) => {
-  //     setFormData({
-  //       title: data.title,
-  //       content: data.content,
-  //       majorCategory: data.majorCategory,
-  //       subCategory: data.subCategory,
-  //       tags: data.tags || [],
-  //       tagInput: '',
-  //     })
-  //     setLoading(false)
-  //   },
-  //   onError: (error) => {
-  //     console.error('게시글을 불러오는데 실패했습니다:', error)
-  //     alert('게시글을 불러오는데 실패했습니다.')
-  //     navigate(-1)
-  //   },
-  // })
-
   const isValid = formData.title.trim() && formData.content?.trim()
 
   // 게시글 작성 및 수정
@@ -126,8 +107,8 @@ const BoardFormPage = () => {
       tags: formData.tags,
     }
 
-    if (id) {
-      updatePostMutation.mutate({ id, data: postData })
+    if (boardId) {
+      updatePostMutation.mutate({ id: boardId, data: postData })
     } else {
       createPostMutation.mutate(postData)
     }
@@ -175,7 +156,7 @@ const BoardFormPage = () => {
   const handleCancel = () => {
     if (
       window.confirm(
-        id ? '수정을 취소하시겠습니까?' : '작성을 취소하시겠습니까?'
+        boardId ? '수정을 취소하시겠습니까?' : '작성을 취소하시겠습니까?'
       )
     ) {
       navigate(-1)
@@ -189,7 +170,7 @@ const BoardFormPage = () => {
   return (
     <div className="min-w-max my-20 container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-2xl font-bold mb-6">
-        {id ? '게시글 수정' : '새 게시글 작성'}
+        {boardId ? '게시글 수정' : '새 게시글 작성'}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -271,7 +252,7 @@ const BoardFormPage = () => {
           >
             {createPostMutation.isPending || updatePostMutation.isPending
               ? '처리 중...'
-              : id
+              : boardId
                 ? '수정하기'
                 : '작성하기'}
           </button>
