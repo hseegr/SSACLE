@@ -16,6 +16,7 @@ public class SprintBuilder {
     private LocalDateTime endAt;
     private LocalDateTime announceAt;
     private Integer maxMembers;
+    private Integer sequence = 1;
     private List<TodoRequest> defaultTodoRequests;
     private SsaldCup ssaldCup;
 
@@ -55,6 +56,12 @@ public class SprintBuilder {
         this.maxMembers = maxMembers;
         return this;
     }
+    public SprintBuilder sequence(Integer sequence){
+        if(sequence !=null){
+            this.sequence=sequence;
+        }
+        return this;
+    }
     public SprintBuilder defaultTodos(List<TodoRequest> defaultTodoRequests) {
         this.defaultTodoRequests = defaultTodoRequests;
         return this;
@@ -78,7 +85,7 @@ public class SprintBuilder {
     }
 
     public Sprint build(){
-        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), 1, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), sequence, maxMembers, 1, LocalDateTime.now());
 
         if(ssaldCup !=null)
             sprint.setSsaldCup(ssaldCup);

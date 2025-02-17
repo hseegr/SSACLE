@@ -36,7 +36,6 @@ public class VideoController {
     @PostMapping("/sessions/distribute")
     public ResponseEntity<String> distributeSessions() throws OpenViduJavaClientException, OpenViduHttpException {
         videoService.distributeSessionForSprints();
-        log.info("✅ [수동 실행] 모든 팀원에게 세션 ID 배정 완료");
         return ResponseEntity.ok().body("세션 ID 배정 완료 (로그 확인)");
     }
 
@@ -44,10 +43,7 @@ public class VideoController {
     @PostMapping("/sessions/{sprintId}/token")
     public ResponseEntity<String> generateToken(@PathVariable Long sprintId)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        log.info("SecurityContext 인증 객체: {}", SecurityContextHolder.getContext().getAuthentication());
-
         User user = userService.getAuthenticatedUser();
-
         Long teamId = videoService.getUserTeamId(user, sprintId);
         if (teamId == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 Sprint에 참여하는 팀이 없습니다.");

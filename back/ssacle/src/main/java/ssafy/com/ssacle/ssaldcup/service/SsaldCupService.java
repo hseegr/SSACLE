@@ -30,6 +30,7 @@ import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +64,7 @@ public class SsaldCupService {
             });
         }
         if (ssaldCupCreateRequestDTO.getSprints() != null && !ssaldCupCreateRequestDTO.getSprints().isEmpty()) {
+            AtomicInteger sequence = new AtomicInteger(1);
             List<Sprint> sprints = ssaldCupCreateRequestDTO.getSprints().stream()
                     .map(sprintRequest -> SprintBuilder.builder()
                             .name(sprintRequest.getName())
@@ -73,6 +75,7 @@ public class SsaldCupService {
                             .endAt(sprintRequest.getEndAt())
                             .announceAt(sprintRequest.getAnnounceAt())
                             .maxMembers(sprintRequest.getMaxMembers())
+                            .sequence(sequence.getAndIncrement())
                             .ssaldCup(ssaldCup)
                             .defaultTodos(sprintRequest.getTodos())
                             .build())

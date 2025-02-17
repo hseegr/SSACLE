@@ -17,6 +17,7 @@ import ssafy.com.ssacle.board.repository.BoardTypeRepository;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.exception.CategoryErrorCode;
 import ssafy.com.ssacle.category.exception.CategoryException;
+import ssafy.com.ssacle.category.exception.CategoryNotExistException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.comment.domain.Comment;
 import ssafy.com.ssacle.comment.repository.CommentRepository;
@@ -30,6 +31,11 @@ import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.sprint.service.SprintService;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
+import ssafy.com.ssacle.ssaldcup.domain.SsaldCupBuilder;
+import ssafy.com.ssacle.ssaldcup.repository.SsaldCupRepository;
+import ssafy.com.ssacle.ssaldcupcategory.domain.SsaldCupCategory;
+import ssafy.com.ssacle.ssaldcupcategory.repository.SsaldCupCategoryRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
@@ -50,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Configuration
 public class DataInitializer {
@@ -70,7 +77,9 @@ public class DataInitializer {
             SprintCategoryRepository sprintCategoryRepository,
             SprintService sprintService,
             QuestionCardService questionCardService,
-            DiaryService diaryService
+            DiaryService diaryService,
+            SsaldCupRepository ssaldCupRepository,
+            SsaldCupCategoryRepository ssaldCupCategoryRepository
     ) {
         return args -> {
             initializeUsers(userRepository);
@@ -85,6 +94,7 @@ public class DataInitializer {
             initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
             initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
+            initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
         };
     }
 
@@ -889,5 +899,85 @@ public class DataInitializer {
         System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
     }
 
+    @Transactional
+    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository, SprintRepository sprintRepository,
+                                    CategoryRepository categoryRepository,
+                                    SsaldCupCategoryRepository ssaldCupCategoryRepository, SprintCategoryRepository sprintCategoryRepository){
+        if(ssaldCupRepository.count()==0){
+            List<SsaldCup> ssaldCups = new ArrayList<>();
+            List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
+            LocalDateTime now = LocalDateTime.now();
+            Random random = new Random();
+            List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
+            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
+            for(Category category : midLevelCategories){
+                List<Long> categoryIds = new ArrayList<>();
+                categoryIds.add(category.getId());
+                Category parent = category.getParent();
+                if(parent!=null){
+                    categoryIds.add(parent.getId());
+                }
 
+                for(int i=0; i<3; i++){
+                    LocalDateTime startAt;
+                    LocalDateTime endAt;
+                    if (i == 0) { // 시작 전 (status = 0)
+                        startAt = now.plusDays(random.nextInt(10) + 5);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    } else if (i == 1) { // 진행 중 (status = 1)
+                        startAt = now.minusDays(random.nextInt(10));
+                        endAt = now.plusDays(random.nextInt(10) + 5);
+                    } else { // 종료됨 (status = 2)
+                        startAt = now.minusDays(random.nextInt(20) + 20);
+                        endAt = startAt.plusDays(random.nextInt(10) + 5);
+                    }
+                    SsaldCup ssaldCup = SsaldCupBuilder.builder()
+                            .name(category.getCategoryName()+" SsaldCup "+(i+1))
+                            .description("학습 내용: "+category.getCategoryName())
+                            .maxTeams(2 + random.nextInt(3))
+                            .maxTeamMembers(3+random.nextInt(2))
+                            .startAt(startAt)
+                            .endAt(endAt)
+                            .build();
+                    ssaldCupRepository.save(ssaldCup);
+                    categoryIds.forEach(categoryId ->{
+                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
+                                .orElseThrow(CategoryNotExistException::new);
+                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
+                    });
+                    ssaldCups.add(ssaldCup);
+                    List<Category> relatedLowestCategories = lowestLevelCategories.stream()
+                            .filter(lowestCategory -> lowestCategory.getParent() != null &&
+                                    lowestCategory.getParent().getId().equals(category.getId()))
+                            .collect(Collectors.toList());
+                    int sprintCount = 2 + random.nextInt(3);
+
+                    for(int j=0; j<sprintCount; j++){
+                        LocalDateTime sprintStart = startAt.plusDays(random.nextInt(3));
+                        LocalDateTime sprintEnd = sprintStart.plusDays(random.nextInt(5) + 2);
+                        LocalDateTime announceAt = sprintEnd.minusDays(0);
+                        Category selectedLowestCategory = relatedLowestCategories.get(random.nextInt(relatedLowestCategories.size()));
+
+                        Sprint sprint = SprintBuilder.builder()
+                                .name(ssaldCup.getName()+"_Sprint_"+(j+1))
+                                .basicDescription("학습 내용: " + category.getCategoryName())
+                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                                .recommendedFor("이 주제에 관심 있는 개발자")
+                                .startAt(sprintStart)
+                                .endAt(sprintEnd)
+                                .announceAt(announceAt)
+                                .maxMembers(5 + random.nextInt(5))
+                                .sequence(j+1)
+                                .ssaldCup(ssaldCup)
+                                .build();
+                        sprintRepository.save(sprint);
+                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+                    }
+                }
+            }
+            System.out.println("싸드컵 더미 데이터 추가 성공");
+        }else{
+            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
+        }
+    }
 }

@@ -31,5 +31,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Categ
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.parent WHERE c.level = 3")
     List<Category> findLowestLevelCategoriesByJoin();
 
-
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.parent WHERE c.level = 2")
+    List<Category> findMidLevelCategoriesByJoin();
 }
