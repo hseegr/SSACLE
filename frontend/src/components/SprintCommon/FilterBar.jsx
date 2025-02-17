@@ -86,14 +86,13 @@ const FilterBar = ({ onFilterChange }) => {
           <FiFilter className="w-4 h-4" /> 필터
         </button>
 
-        {isFiltered && selectedStatus === 0 && (
-          <button
-            onClick={handleResetFilters}
-            className="text-gray-500 text-xs flex items-center justify-center gap-1 min-w-[80px] h-[32px]"
-          >
-            <FiRotateCcw className="w-4 h-3" /> 초기화
-          </button>
-        )}
+        <button
+          onClick={handleResetFilters}
+          className={`text-gray-500 text-xs flex items-center justify-center gap-1 min-w-[80px] h-[28px] 
+      ${isFiltered ? 'visible' : 'invisible'}`}
+        >
+          <FiRotateCcw className="w-4 h-3" /> 초기화
+        </button>
       </div>
 
       {isModalOpen && selectedStatus === 0 && (

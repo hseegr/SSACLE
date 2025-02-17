@@ -37,9 +37,9 @@ const SsaprintLayout = () => {
 
   // API 호출하여 싸프린트 목록 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      setSprints([]) // 기존 데이터 초기화
+    let isMounted = true // 최신 요청만 반영하기 위한 플래그
 
+    const fetchData = async () => {
       if (filters.status === 2) {
         // 참여 완료 스프린트 조회
         const response = await fetchCompletedSsaprintList(
@@ -47,7 +47,7 @@ const SsaprintLayout = () => {
           pagination.pageSize
         )
 
-        if (response) {
+        if (response && isMounted) {
           setSprints(response.content || [])
           setPagination((prev) => ({
             ...prev,
@@ -63,7 +63,7 @@ const SsaprintLayout = () => {
           pagination.currentPage - 1,
           pagination.pageSize
         )
-        if (response) {
+        if (response && isMounted) {
           setSprints(response.content || [])
           setPagination((prev) => ({
             ...prev,
@@ -75,6 +75,10 @@ const SsaprintLayout = () => {
     }
 
     fetchData()
+
+    return () => {
+      isMounted = false // 이전 요청 취소
+    }
   }, [filters, pagination.currentPage, pagination.pageSize])
 
   return (

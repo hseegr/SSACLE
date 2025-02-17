@@ -1,6 +1,37 @@
 // @ts-nocheck
 import { useNavigate } from 'react-router-dom'
 
+const stackLogos = {
+  Angular: '/src/assets/logo/Angular.png',
+  AWS: '/src/assets/logo/AWS.png',
+  Azure: '/src/assets/logo/Azure.png',
+  'C#': '/src/assets/logo/C#.png',
+  'C++': '/src/assets/logo/C++.png',
+  CSS3: '/src/assets/logo/CSS3.png',
+  default: '/src/assets/logo/default.png',
+  Django: '/src/assets/logo/Django.png',
+  Docker: '/src/assets/logo/Docker.png',
+  'Google Cloud': '/src/assets/logo/Google Cloud.png',
+  HTML5: '/src/assets/logo/HTML5.png',
+  Java: '/src/assets/logo/Java.png',
+  JavaScript: '/src/assets/logo/JavaScript.png',
+  Kubernetes: '/src/assets/logo/Kubernetes.png',
+  MariaDB: '/src/assets/logo/MariaDB.png',
+  MongoDB: '/src/assets/logo/MongoDB.png',
+  MySQL: '/src/assets/logo/MySQL.png',
+  NestJS: '/src/assets/logo/NestJS.png',
+  'Node.js': '/src/assets/logo/Node.js.png',
+  Oracle: '/src/assets/logo/Oracle.png',
+  PostgreSQL: '/src/assets/logo/PostgreSQL.png',
+  Python: '/src/assets/logo/Python.png',
+  React: '/src/assets/logo/React.png',
+  Redis: '/src/assets/logo/Redis.png',
+  'Ruby on Rails': '/src/assets/logo/Ruby on Rails.png',
+  Spring: '/src/assets/logo/Spring.png',
+  Svelte: '/src/assets/logo/svelte.png',
+  'Vue.js': '/src/assets/logo/Vue.js.png',
+}
+
 const ItemCard = ({ item, domain }) => {
   const navigate = useNavigate()
 
@@ -9,10 +40,10 @@ const ItemCard = ({ item, domain }) => {
     navigate(`/${domain}/${item.id}`)
   }
 
-  // 진행 기간 포맷팅
+  // 진행 기간 포맷팅 (월, 일만 표시)
   const formatDate = (date) => {
     const d = new Date(date)
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
+    return `${d.getMonth() + 1}월 ${d.getDate()}일`
   }
 
   // 모집 상태 결정
@@ -68,41 +99,49 @@ const ItemCard = ({ item, domain }) => {
   // 카테고리 태그 최대 2개만 표시
   const categoryTags = (item.categories || []).slice(0, 2)
 
-  // 썸네일 이미지 (categories 중 image가 있는 첫 번째 것)
-  const thumbnail =
-    (item.categories || []).find((cat) => cat.image)?.image || ''
+  // **썸네일 로직**
+  // 1. 첫 번째 이미지가 있는 카테고리의 image를 사용
+  let thumbnail = (item.categories || []).find((cat) => cat.image)?.image
+
+  // 2. 이미지가 없으면, 기술 태그(오른쪽 태그)와 stackLogos 매칭
+  if (!thumbnail && categoryTags.length > 0) {
+    const firstTag = categoryTags[0].categoryName
+    thumbnail = stackLogos[firstTag] || stackLogos.default
+  }
 
   return (
     <div
-      className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative w-full cursor-pointer ${recruitStatus.cardBg}`}
+      className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative
+        w-full min-w-[270px] min-h-[200px] cursor-pointer ${recruitStatus.cardBg} hover:shadow-lg hover:scale-[1.02]`}
       onClick={handleCardClick}
     >
       {/* 제목 & 설명 */}
-      <div className="flex flex-col">
-        <h3 className="text-[16px] font-bold leading-tight">{item.name}</h3>
-        <p className="text-[10px] text-gray-600 leading-tight mt-1">
+      <div className="flex flex-col flex-1 mt-1">
+        <h3 className="text-[clamp(12px, 4vw, 16px)] font-bold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+          {item.name}
+        </h3>
+        <p className="text-[10px] text-gray-600 leading-tight mt-2">
           {item.basicDescription}
         </p>
       </div>
 
-      {/* 진행 기간 (싸프린트 & 싸드컵 공통) */}
-      <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
-        📅 <span className="font-semibold">진행 기간:</span>
-        <span className="mx-1">
+      {/* 진행 기간 */}
+      <div className="flex items-center gap-x-2 text-[10px] font-medium text-gray-700">
+        <span className="flex items-center gap-x-1">
+          📅 <span className="font-semibold">진행 기간:</span>
+        </span>
+        <span className="whitespace-nowrap">
           {formatDate(item.startAt)} ~ {formatDate(item.endAt)}
         </span>
-        <span
-          className={`mx-1 px-2 py-0.5 rounded-md text-[9px] font-semibold ${durationStatus}`}
-        >
+        <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-green-100 text-green-800">
           {durationDays}일
         </span>
       </div>
 
-      {/* 모집 정보 (싸프린트 vs 싸드컵) */}
-      <div className="mt-2 flex flex-col gap-1">
+      {/* 모집 정보 */}
+      <div className="mt-1 flex flex-col gap-0.5 mb-1">
         {domain === 'ssaprint' ? (
           <>
-            {/* 모집 인원 */}
             <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
               👥 <span className="font-semibold">모집 인원:</span>
               <span className="mx-1">
@@ -117,7 +156,6 @@ const ItemCard = ({ item, domain }) => {
           </>
         ) : (
           <>
-            {/* 모집 팀 수 */}
             <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
               🏆 <span className="font-semibold">모집 팀 수:</span>
               <span className="mx-1">
@@ -130,7 +168,6 @@ const ItemCard = ({ item, domain }) => {
               </span>
             </div>
 
-            {/* 팀당 인원 */}
             <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
               👤 <span className="font-semibold">팀 당 인원:</span>
               <span className="mx-1">{item.maxMembers}명</span>
@@ -140,15 +177,18 @@ const ItemCard = ({ item, domain }) => {
       </div>
 
       {/* 태그 (포지션, 기술 스택) */}
-      <div className="mt-3 flex flex-col gap-1">
-        {categoryTags.map((cat, index) => (
-          <span
-            key={cat.id || `category-${index}`}
-            className="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-full text-[10px] font-medium"
-          >
-            {cat.categoryName}
-          </span>
-        ))}
+      <div className="mt-4 flex flex-wrap gap-2 w-full items-start mb-2">
+        {categoryTags
+          .slice()
+          .reverse()
+          .map((cat, index) => (
+            <span
+              key={cat.id || `category-${index}`}
+              className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-[10px] font-medium text-center"
+            >
+              {cat.categoryName}
+            </span>
+          ))}
       </div>
 
       {/* 썸네일 이미지 */}
@@ -156,7 +196,7 @@ const ItemCard = ({ item, domain }) => {
         <img
           src={thumbnail}
           alt="Thumbnail"
-          className="absolute bottom-4 right-4 w-8 h-8 opacity-60"
+          className="absolute bottom-4 right-4 w-10 h-10"
         />
       )}
     </div>
