@@ -14,9 +14,10 @@ export const fetchNowMySsaprint = async () => {
   return response.data
 }
 
-// 관심사 기반 싸프린트 리스트 조회 (POST 요청)
+// 관심사 기반 싸프린트 리스트 조회 (get 요청)
 export const fetchSsaprintList = async () => {
-  return httpCommon.post(MAIN_END_POINT.SSAPRINT_LIST)
+  const response = await httpCommon.get(MAIN_END_POINT.SSAPRINT_LIST)
+  return response.data
 }
 
 // 관심사 기반 싸드컵 리스트 조회 (POST 요청)

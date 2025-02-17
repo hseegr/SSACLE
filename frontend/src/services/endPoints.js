@@ -51,7 +51,7 @@ export const MAIN_END_POINT = {
   // 싸프린트 관련 엔드포인트
   // POST 요청 - 관심사 기반 싸프린트 리스트 조회
   // SSAPRINT_LIST: '/ssaprint/interest',
-  SSAPRINT_LIST: '/',
+  SSAPRINT_LIST: '/user/recommend-sprint',
 
   // 싸드컵 관련 엔드포인트
   // POST 요청 - 관심사 기반 싸드컵 리스트 조회

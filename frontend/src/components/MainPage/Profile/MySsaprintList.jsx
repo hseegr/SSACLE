@@ -7,6 +7,37 @@ const MySsaprintList = ({ currentSprintsData }) => {
     navigate(`/my-sprints/${sprintId}`)
   }
 
+  // 현재 날짜 기준으로 진행 중인 스프린트와 종료된 스프린트 분리
+  const currentDate = new Date()
+  const { activeSprints, completedSprints } = currentSprintsData.reduce(
+    (acc, sprint) => {
+      const endDate = new Date(sprint.endAt)
+      if (currentDate <= endDate) {
+        acc.activeSprints.push(sprint)
+      } else {
+        acc.completedSprints.push(sprint)
+      }
+      return acc
+    },
+    { activeSprints: [], completedSprints: [] }
+  )
+
+  // 진행 중인 스프린트는 종료일이 임박한 순으로 정렬
+  const sortedActiveSprints = activeSprints.sort(
+    (a, b) => new Date(a.endAt) - new Date(b.endAt)
+  )
+
+  // 종료된 스프린트는 최근 종료된 순으로 정렬
+  const sortedCompletedSprints = completedSprints.sort(
+    (a, b) => new Date(b.endAt) - new Date(a.endAt)
+  )
+
+  // 진행 중인 스프린트가 4개 미만일 경우, 종료된 스프린트로 채움
+  const displaySprints = [
+    ...sortedActiveSprints.slice(0, 4),
+    ...sortedCompletedSprints.slice(0, 4 - sortedActiveSprints.length),
+  ].slice(0, 4)
+
   return (
     <div className="bg-white w-full h-60 rounded-xl text-ssacle-black">
       {currentSprintsData.length === 0 ? (
@@ -20,12 +51,12 @@ const MySsaprintList = ({ currentSprintsData }) => {
       ) : (
         <div className="flex flex-col pl-6 pt-4">
           {/* 제목 영역 */}
-          <p className="tracking-tighter text-xl font-bold mb-8">
+          <p className="tracking-tighter text-xl font-bold mb-6">
             나의 싸프린트 & 싸드컵 🌟
           </p>
 
           {/* currentSprintsData 배열을 순회하며 각 스프린트 정보 표시 */}
-          {currentSprintsData.map((sprint) => {
+          {displaySprints.map((sprint) => {
             const currentDate = new Date()
             const endDate = new Date(sprint.endAt)
             const isActive = currentDate <= endDate // 현재 진행중이면 true
@@ -42,7 +73,7 @@ const MySsaprintList = ({ currentSprintsData }) => {
             return (
               <div
                 key={sprint.id}
-                className="flex flex-row gap-x-2 mb-2 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                className="flex flex-row gap-x-2 mb-1 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
                 onClick={() => {
                   handleSprintClick(sprint.id)
                 }}

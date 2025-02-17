@@ -9,10 +9,16 @@ import { useQuery } from '@tanstack/react-query'
 import {
   fetchAiNews,
   fetchNowMySsaprint,
+  fetchSsaprintList,
   fetchUserInfo,
 } from '@/services/mainService'
 
 const MainPage = () => {
+  // 임시 관심사 데이터
+  const mockInterests = [
+    { majorCategory: 'Back-end', subCategory: 'Spring' },
+    { majorCategory: 'Database', subCategory: 'MySQL' },
+  ]
   // 목업 데이터 관련
   const { user, currentSprints, recommendedSprints } = mockData
 
@@ -29,6 +35,13 @@ const MainPage = () => {
     queryFn: fetchNowMySsaprint,
   })
 
+  // 유저 관심사에 맞는 싸프린트 필터링
+  const { data: sprintListData, isLoading: isSprintLoading } = useQuery({
+    queryKey: ['sprintList'],
+    queryFn: fetchSsaprintList,
+    retry: false,
+  })
+
   // AI 뉴스 조회
   const { data: aiNewsData, isLoading: isNewsLoading } = useQuery({
     queryKey: ['aiNews'],
@@ -39,6 +52,28 @@ const MainPage = () => {
   if (isUserLoading || isNewsLoading || isSprintsLoading) {
     return <div>로딩 중...</div>
   }
+
+  // API 응답 데이터를 컴포넌트가 기대하는 형태로 변환
+  const filteredSprints =
+    sprintListData
+      ?.filter((sprint) =>
+        mockInterests.some(
+          (interest) =>
+            interest.majorCategory === sprint.majorCategoryName &&
+            interest.subCategory === sprint.subCategoryName
+        )
+      )
+      .map((sprint) => ({
+        sprintId: sprint.id,
+        title: sprint.title,
+        category: sprint.subCategoryName,
+        status: '모집중', // 상태 정보가 API에 없다면 기본값 설정
+        requiredSkills: [sprint.subCategoryName], // 기술 스택을 배열로 변환
+        currentMembers: sprint.currentMembers,
+        maxMembers: sprint.maxMembers,
+        startDate: sprint.start_at,
+        endDate: sprint.end_at,
+      })) || []
 
   return (
     <main className="min-w-max my-20">
@@ -54,8 +89,8 @@ const MainPage = () => {
       {/* 모집중인 싸프린트 */}
       <section className="mb-20">
         <CurruntSsaprint
-          userData={user}
-          recommendedSprints={recommendedSprints}
+          userData={userData}
+          recommendedSprints={filteredSprints}
         />
       </section>
       {/* 모집중인 싸드컵 */}
