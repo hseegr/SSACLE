@@ -1,13 +1,32 @@
-import { useState, useEffect } from 'react'
+// @ts-nocheck
 import dayjs from 'dayjs'
+import { useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 const SprintPresentationSession = ({ sprint }) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   if (!sprint || !sprint.announceAt) return null
 
   const today = dayjs().startOf('day')
   const presentationDate = dayjs(sprint.announceAt).startOf('day')
   const dDay = presentationDate.diff(today, 'day')
 
+  // 캐싱된 userId, nickname 가져오기
+  const userData = queryClient.getQueryData(['validateToken'])
+  const userId = userData?.id || ''
+  const userNickname = userData?.nickname || ''
+
+  const handlePresentation = () => {
+    if (!userId || !userNickname) {
+      alert('사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.')
+      return
+    }
+    navigate(
+      `/presentation/ssaprint/${sprint.id}?useId=${userId}&username=${userNickname}`
+    )
+  }
   return (
     <div
       className={`p-4 shadow-md rounded-lg w-full transition ${
@@ -28,6 +47,7 @@ const SprintPresentationSession = ({ sprint }) => {
         </span>
 
         <button
+          onClick={handlePresentation}
           className={`w-28 p-2 text-xs rounded-md transition ${
             dDay === 0
               ? 'bg-blue-500 text-white hover:bg-blue-600'
