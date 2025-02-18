@@ -34,6 +34,8 @@ import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.team.domain.SprintTeamBuilder;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamResponse;
+import ssafy.com.ssacle.team.dto.TeamWinnerResponseDTO;
+import ssafy.com.ssacle.team.dto.TeamWithMembersDTO;
 import ssafy.com.ssacle.team.exception.TeamNameExistException;
 import ssafy.com.ssacle.team.exception.TeamNotFoundException;
 import ssafy.com.ssacle.team.repository.TeamRepository;

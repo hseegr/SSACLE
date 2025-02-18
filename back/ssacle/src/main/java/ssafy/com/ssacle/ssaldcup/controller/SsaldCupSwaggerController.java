@@ -15,10 +15,7 @@ import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintAndCategoriesResponseDTO;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
-import ssafy.com.ssacle.ssaldcup.dto.SingleSsaldCupResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupAndCategoriesResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateRequestDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateResponseDTO;
+import ssafy.com.ssacle.ssaldcup.dto.*;
 
 @Tag(name = "SsaldCup API", description = "SsaldCup 관련 API입니다.")
 public interface SsaldCupSwaggerController {
@@ -28,7 +25,7 @@ public interface SsaldCupSwaggerController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
-    @PostMapping("/admin/ssalcup")
+    @PostMapping("/admin/ssaldcup")
     ResponseEntity<SsaldCupCreateResponseDTO> createSsaldCup(@RequestBody SsaldCupCreateRequestDTO ssaldCupCreateRequestDTO);
 
     @Operation(summary = "싸드컵 참가", description = "사용자가 특정 싸드컵에 참가합니다.")
@@ -70,4 +67,28 @@ public interface SsaldCupSwaggerController {
 
             Pageable pageable
     );
+
+    @Operation(summary = "리그전 생성", description = "참가한 팀들 간의 리그전 일정을 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리그전 생성 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 싸드컵을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @PostMapping("/ssaldcup/{ssaldCupId}/league")
+    ResponseEntity<Void> createLeague(@PathVariable Long ssaldCupId);
+
+    @Operation(summary = "특정 싸드컵의 N주차 리그 일정 조회",
+            description = "해당 싸드컵의 특정 주차(N주차) 리그 일정을 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리그 일정 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (주차 범위 초과)", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 싸드컵을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생")
+    })
+    @GetMapping("/ssaldcup/{ssaldCupId}/league/{week}")
+    ResponseEntity<LeagueScheduleDTO> getLeagueSchedule(
+            @Parameter(description = "싸드컵 ID", example = "1") @PathVariable Long ssaldCupId,
+            @Parameter(description = "조회할 주차 (1부터 시작)", example = "3") @PathVariable int week
+    );
+
 }

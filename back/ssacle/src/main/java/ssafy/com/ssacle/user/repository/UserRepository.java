@@ -41,5 +41,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.id IN :userIds")
     List<User> findUsersByIds(@Param("userIds") List<Long> userIds);
 
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userTeams")
+    List<User> findAllWithUserTeams();
+
+
 }
 

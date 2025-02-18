@@ -38,8 +38,11 @@ public class SsaldCup {
     @Column(name = "name", nullable = false, length=255)
     private String name;
 
-    @Column(name = "description", nullable = false, length=100)
-    private String description;
+    @Column(name = "basic_description", nullable = false, length=100)
+    private String basicDescription;
+
+    @Column(name = "detail_description", nullable = false)
+    private String detailDescription;
 
     @Column(name = "max_teams", columnDefinition = "TINYINT UNSIGNED", nullable = false)
     private Integer maxTeams;
@@ -65,13 +68,14 @@ public class SsaldCup {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    protected  SsaldCup(String name, String description, Integer maxTeams, Integer currentTeams, Integer maxTeamMembers, Integer status, Boolean isProcess, LocalDateTime startAt, LocalDateTime endAt,LocalDateTime createdAt){
+    protected  SsaldCup(String name, String basicDescription, String detailDescription, Integer maxTeams, Integer currentTeams, Integer maxTeamMembers, Integer status, Boolean isProcess, LocalDateTime startAt, LocalDateTime endAt,LocalDateTime createdAt){
         ValidationUtils.validationCount(status, UtilErrorCode.STATUS_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(maxTeams, UtilErrorCode.TEAM_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(currentTeams, UtilErrorCode.TEAM_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(maxTeamMembers, UtilErrorCode.MEMBER_VALIDATION_COUNT_FAILED);
         this.name=name;
-        this.description=description;
+        this.basicDescription=basicDescription;
+        this.detailDescription=detailDescription;
         this.maxTeams=maxTeams;
         this.currentTeams=currentTeams;
         this.maxTeamMembers=maxTeamMembers;

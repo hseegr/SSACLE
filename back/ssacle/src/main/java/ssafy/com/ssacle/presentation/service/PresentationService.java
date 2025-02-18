@@ -5,13 +5,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.diary.repository.DiaryRepository;
 import ssafy.com.ssacle.team.domain.Team;
+import ssafy.com.ssacle.team.dto.TeamWithMembersDTO;
+import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.todo.repository.TodoRepository;
+import ssafy.com.ssacle.user.domain.User;
+import ssafy.com.ssacle.user.dto.UserResponseDTO;
+import ssafy.com.ssacle.user.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PresentationService {
     private final TodoRepository todoRepository;
     private final DiaryRepository diaryRepository;
+    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
 
     private static final double TODO_WEIGHT = 25.0;
     private static final double DIARY_WEIGHT = 25.0;
@@ -47,5 +59,37 @@ public class PresentationService {
         }
 
         return ((double) writtenDiaries / totalDiaries) * DIARY_WEIGHT;
+    }
+
+    @Transactional(readOnly = true)
+    public List<TeamWithMembersDTO> getPresentationParticipants(Long sprintId) {
+        // Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(SprintNotExistException::new);
+        List<Team> teams = teamRepository.findTeamsBySprintOrSsaldCup(sprintId);
+        List<Long> userIds = teams.stream()
+                .flatMap(team -> team.getUserTeams().stream())
+                .map(userTeam -> userTeam.getUser().getId())
+                .distinct()
+                .collect(Collectors.toList());
+        List<User> users = userRepository.findByIdIn(userIds);
+        List<TeamWithMembersDTO> list = new ArrayList<>();
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+
+        for(Team team : teams){
+            List<UserResponseDTO> userDTOs = team.getUserTeams().stream()
+                    .map(userTeam -> {
+                        User user = userMap.get(userTeam.getUser().getId());
+                        return UserResponseDTO.of(user, null); // 카테고리는 임시 값
+                    })
+                    .collect(Collectors.toList());
+
+            list.add(TeamWithMembersDTO.builder()
+                    .id(team.getId())
+                    .name(team.getName())
+                    .point(team.getPoint())
+                    .users(userDTOs)
+                    .build());
+        }
+        return list;
     }
 }

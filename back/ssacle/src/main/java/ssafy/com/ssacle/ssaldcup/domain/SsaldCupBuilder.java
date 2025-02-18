@@ -1,10 +1,13 @@
 package ssafy.com.ssacle.ssaldcup.domain;
 
+import jakarta.persistence.Column;
+
 import java.time.LocalDateTime;
 
 public class SsaldCupBuilder {
     private String name;
-    private String description;
+    private String basicDescription;
+    private String detailDescription;
     private Integer maxTeams;
     private Integer maxTeamMembers;
     private LocalDateTime startAt;
@@ -17,8 +20,12 @@ public class SsaldCupBuilder {
         this.name=name;
         return this;
     }
-    public SsaldCupBuilder description(String description){
-        this.description=description;
+    public SsaldCupBuilder basicDescription(String basicDescription){
+        this.basicDescription=basicDescription;
+        return this;
+    }
+    public SsaldCupBuilder detailDescription(String detailDescription){
+        this.detailDescription=detailDescription;
         return this;
     }
     public SsaldCupBuilder maxTeams(Integer maxTeams){
@@ -40,7 +47,7 @@ public class SsaldCupBuilder {
     }
 
     public SsaldCup build(){
-        SsaldCup ssaldCup = new SsaldCup(name,description,maxTeams,0,maxTeamMembers,0, true,startAt,endAt,LocalDateTime.now());
+        SsaldCup ssaldCup = new SsaldCup(name,basicDescription,detailDescription,maxTeams,0,maxTeamMembers,0, true,startAt,endAt,LocalDateTime.now());
         return ssaldCup;
     }
 }

@@ -13,10 +13,7 @@ import ssafy.com.ssacle.sprint.domain.SprintBuilder;
 import ssafy.com.ssacle.sprint.repository.SprintRepository;
 import ssafy.com.ssacle.ssaldcup.domain.SsaldCup;
 import ssafy.com.ssacle.ssaldcup.domain.SsaldCupBuilder;
-import ssafy.com.ssacle.ssaldcup.dto.SingleSsaldCupResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupAndCategoriesResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateRequestDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateResponseDTO;
+import ssafy.com.ssacle.ssaldcup.dto.*;
 import ssafy.com.ssacle.ssaldcup.exception.SsaldCupAlreadyParticipateException;
 import ssafy.com.ssacle.ssaldcup.exception.SsaldCupMaxTeamReachException;
 import ssafy.com.ssacle.ssaldcup.exception.SsaldCupNotExistException;
@@ -29,7 +26,10 @@ import ssafy.com.ssacle.team.repository.TeamRepository;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -44,18 +44,19 @@ public class SsaldCupService {
     private final SsaldCupCategoryRepository ssaldCupCategoryRepository;
     private final SprintRepository sprintRepository;
 
+    private final Map<Long, List<List<String>>> leagueSchedules = new HashMap<>();
     @Transactional
     public SsaldCupCreateResponseDTO createSsaldCup(SsaldCupCreateRequestDTO ssaldCupCreateRequestDTO){
         SsaldCup ssaldCup = SsaldCupBuilder.builder()
                 .name(ssaldCupCreateRequestDTO.getName())
-                .description(ssaldCupCreateRequestDTO.getDescription())
+                .basicDescription(ssaldCupCreateRequestDTO.getBasicDescription())
+                .detailDescription(ssaldCupCreateRequestDTO.getDetailDescription())
                 .maxTeams(ssaldCupCreateRequestDTO.getMaxTeams())
                 .maxTeamMembers(ssaldCupCreateRequestDTO.getMaxTeamMembers())
                 .startAt(ssaldCupCreateRequestDTO.getStartAt())
                 .endAt(ssaldCupCreateRequestDTO.getEndAt())
                 .build();
         ssaldCupRepository.save(ssaldCup);
-        log.info("SSALD CUP ID : {}",ssaldCup.getId());
         if(ssaldCupCreateRequestDTO.getCategoryIds()!=null && !ssaldCupCreateRequestDTO.getCategoryIds().isEmpty()){
             List<Category> categoryList = categoryRepository.findAllById(ssaldCupCreateRequestDTO.getCategoryIds());
             categoryList.forEach(category -> {
@@ -132,15 +133,57 @@ public class SsaldCupService {
     }
 
     @Transactional
-    public Page<SsaldCupAndCategoriesResponseDTO> getSsalCupsByStatus(Integer status, Pageable pageable) {
+    public Page<SsaldCupAndCategoriesResponseDTO> getSsaldCupsByStatus(Integer status, Pageable pageable) {
         return ssaldCupRepository.findBySsaldCupsByStatus(status, pageable)
                 .map(SsaldCupAndCategoriesResponseDTO::from);
     }
 
     @Transactional
-    public Page<SsaldCupAndCategoriesResponseDTO> getSsalCupsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
+    public Page<SsaldCupAndCategoriesResponseDTO> getSsaldCupsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
         return ssaldCupRepository.findSsaldCupsByCategoryAndStatus(categoryId, status, pageable)
                 .map(SsaldCupAndCategoriesResponseDTO::from);
+    }
+
+    public void createLeage(Long ssaldCupId){
+        SsaldCup ssaldCup = ssaldCupRepository.findById(ssaldCupId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 싸드컵이 존재하지 않습니다."));
+        List<Team> teams = teamRepository.findBySsaldCupId(ssaldCupId);
+        if (teams.size() < 2) {
+            throw new IllegalStateException("리그를 생성하려면 최소 2개 이상의 팀이 필요합니다.");
+        }
+        int n = teams.size();
+        boolean hasDummy = false;
+        if (n % 2 != 0) {
+            Team dummy = new Team("Dummy", 0);
+            teams.add(dummy);
+            n++;
+            hasDummy = true;
+        }
+        List<List<String>> schedule = new ArrayList<>();
+        int rounds = n - 1; // 총 라운드 수
+        int matchesPerRound = n / 2;
+        for(int round=0; round < rounds; round++){
+            List<String> roundMatches = new ArrayList<>();
+            for(int match=0; match<matchesPerRound; match++){
+                int home = (round + match) % (n - 1);
+                int away = (n - 1 - match + round) % (n - 1);
+                if (match == 0) {
+                    away = n - 1;
+                }
+
+                // ✅ 더미 팀이 포함된 매치는 제외
+                if (!(hasDummy && (teams.get(home).getName().equals("Dummy") || teams.get(away).getName().equals("Dummy")))) {
+                    roundMatches.add(teams.get(home).getName() + " vs " + teams.get(away).getName());
+                }
+            }
+            schedule.add(roundMatches);
+        }
+        for (int i = 0; i < schedule.size(); i++) {
+            System.out.println("Week " + (i + 1) + ": " + schedule.get(i));
+        }
+        leagueSchedules.put(ssaldCupId, schedule);
+
+        System.out.println("✅ 리그전 일정이 성공적으로 생성되었습니다.");
     }
 
 
@@ -149,4 +192,20 @@ public class SsaldCupService {
                 .flatMap(team -> team.getUserTeams().stream())
                 .anyMatch(userTeam -> userTeam.getUser().getId().equals(user.getId()));
     }
+
+    public LeagueScheduleDTO getLeagueSchedule(Long ssaldCupId, int week) {
+        List<List<String>> schedule = leagueSchedules.get(ssaldCupId);
+
+        if (schedule == null) {
+            throw new IllegalArgumentException("해당 싸드컵의 리그 일정이 존재하지 않습니다.");
+        }
+
+        if (week < 1 || week > schedule.size()) {
+            throw new IllegalArgumentException("잘못된 주차 요청: 해당 싸드컵은 총 " + schedule.size() + "주차까지 존재합니다.");
+        }
+
+        String matchInfo = String.join(", ", schedule.get(week - 1));
+        return new LeagueScheduleDTO(week, matchInfo);
+    }
+
 }

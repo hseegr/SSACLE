@@ -12,6 +12,7 @@ import ssafy.com.ssacle.presentation.dto.PresentationRequestDTO;
 import ssafy.com.ssacle.presentation.dto.PresentationStatusUpdateResponseDTO;
 import ssafy.com.ssacle.team.domain.Team;
 import ssafy.com.ssacle.team.dto.TeamWinnerResponseDTO;
+import ssafy.com.ssacle.team.dto.TeamWithMembersDTO;
 import ssafy.com.ssacle.user.dto.UserResponseDTO;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public interface PresentationSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
     })
     @GetMapping("/ssaprint/{sprintId}/presentation-participants")
-    ResponseEntity<List<UserResponseDTO>> getPresentationParticipants(
+    ResponseEntity<List<TeamWithMembersDTO>> getPresentationParticipants(
             @Parameter(description = "발표 참가자 목록을 조회할 Sprint ID", example = "1")
             @PathVariable Long sprintId
     );

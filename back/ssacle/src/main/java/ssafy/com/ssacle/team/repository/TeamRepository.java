@@ -39,6 +39,9 @@ public interface TeamRepository extends JpaRepository<Team, Long>, TeamRepositor
     @Query("SELECT t FROM Team t JOIN FETCH t.userTeams WHERE t.sprint.id = :sprintId")
     List<Team> findBySprintIdWithUserTeams(@Param("sprintId") Long sprintId);
 
+    @Query("SELECT t FROM Team t LEFT JOIN Sprint s ON s.ssaldCup.id = t.ssaldCup.id WHERE t.sprint.id = :sprintId OR (t.sprint.id IS NULL AND s.id = :sprintId)")
+    List<Team> findTeamsBySprintOrSsaldCup(@Param("sprintId") Long sprintId);
+
     boolean existsByName(String name);
 
     @Query("SELECT t FROM Team t JOIN FETCH t.userTeams ut JOIN FETCH ut.user WHERE t.id = :teamId")

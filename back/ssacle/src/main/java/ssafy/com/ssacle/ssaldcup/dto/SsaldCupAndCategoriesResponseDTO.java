@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 public class SsaldCupAndCategoriesResponseDTO {
     private Long id;
     private String name;
-    private String description;
+    private String basicDescription;
+    private String detailDescription;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private Integer maxTeams;
@@ -25,7 +26,8 @@ public class SsaldCupAndCategoriesResponseDTO {
     public SsaldCupAndCategoriesResponseDTO(SsaldCup ssaldCup,List<CategoryNameLevelImageResponseDTO> categories){
         this.id=ssaldCup.getId();
         this.name=ssaldCup.getName();
-        this.description=ssaldCup.getDescription();
+        this.basicDescription=ssaldCup.getBasicDescription();
+        this.detailDescription=ssaldCup.getDetailDescription();
         this.startAt=ssaldCup.getStartAt();
         this.endAt=ssaldCup.getEndAt();
         this.maxTeams=ssaldCup.getMaxTeams();

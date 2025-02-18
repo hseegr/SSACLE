@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.ssaldcup.dto;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.ssaldcupcategory.domain.SsaldCupCategory;
@@ -11,7 +12,8 @@ import java.util.List;
 @Getter
 public class SsaldCupCreateRequestDTO {
     private String name;
-    private String description;
+    private String basicDescription;
+    private String detailDescription;
     private Integer maxTeams;
     private Integer maxTeamMembers;
     private LocalDateTime startAt;

@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ssafy.com.ssacle.ssaldcup.dto.SingleSsaldCupResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupAndCategoriesResponseDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateRequestDTO;
-import ssafy.com.ssacle.ssaldcup.dto.SsaldCupCreateResponseDTO;
+import ssafy.com.ssacle.ssaldcup.dto.*;
 import ssafy.com.ssacle.ssaldcup.service.SsaldCupService;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.service.UserService;
@@ -42,10 +39,21 @@ public class SsaldCupController implements SsaldCupSwaggerController{
     public ResponseEntity<Page<SsaldCupAndCategoriesResponseDTO>> getSsaldCupsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
         Page<SsaldCupAndCategoriesResponseDTO> ssaldCupResponses;
         if(categoryId==null){
-            ssaldCupResponses = ssaldCupService.getSsalCupsByStatus(status, pageable);
+            ssaldCupResponses = ssaldCupService.getSsaldCupsByStatus(status, pageable);
         }else{
-            ssaldCupResponses = ssaldCupService.getSsalCupsByCategoryAndStatus(categoryId, status, pageable);
+            ssaldCupResponses = ssaldCupService.getSsaldCupsByCategoryAndStatus(categoryId, status, pageable);
         }
         return ResponseEntity.ok().body(ssaldCupResponses);
+    }
+
+    @Override
+    public ResponseEntity<Void> createLeague(Long ssaldCupId) {
+        ssaldCupService.createLeage(ssaldCupId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<LeagueScheduleDTO> getLeagueSchedule(Long ssaldCupId, int week) {
+        return ResponseEntity.ok().body(ssaldCupService.getLeagueSchedule(ssaldCupId, week));
     }
 }

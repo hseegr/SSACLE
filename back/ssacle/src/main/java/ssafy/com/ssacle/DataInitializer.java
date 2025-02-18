@@ -95,13 +95,15 @@ public class DataInitializer {
             initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
             initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
+            initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
         };
     }
 
     @Transactional
     public void initializeUsers(UserRepository userRepository) {
         if (userRepository.count() == 0) { // 기존 데이터가 없을 경우에만 추가
-            User admin = User.createAdmin("admin1@example.com", "admin1234", "AdminUser1");
+            User admin = User.createAdmin("admin@example.com", "admin1234", "Admin");
+            User admin1 = User.createAdmin("admin1@example.com", "admin1234", "AdminUser1");
             User admin2 = User.createAdmin("admin2@example.com", "admin1234", "AdminUser2");
             User admin3 = User.createAdmin("admin3@example.com", "admin1234", "AdminUser3");
             User admin4 = User.createAdmin("admin4@example.com", "admin1234", "AdminUser4");
@@ -109,9 +111,23 @@ public class DataInitializer {
             User admin6 = User.createAdmin("admin6@example.com", "admin1234", "AdminUser6");
             User admin7 = User.createAdmin("admin7@example.com", "admin1234", "AdminUser7");
             User admin8 = User.createAdmin("admin8@example.com", "admin1234", "AdminUser8");
+            User admin9 = User.createAdmin("admin9@example.com", "admin1234", "AdminUser9");
+            User admin10 = User.createAdmin("admin10@example.com", "admin1234", "Admin10");
+            User admin11 = User.createAdmin("admin11@example.com", "admin1234", "Admin11");
+            User admin12 = User.createAdmin("admin12@example.com", "admin1234", "Admin12");
+            User admin13 = User.createAdmin("admin13@example.com", "admin1234", "Admin13");
+            User admin14 = User.createAdmin("admin14@example.com", "admin1234", "Admin14");
+            User admin15 = User.createAdmin("admin15@example.com", "admin1234", "Admin15");
+            User admin16 = User.createAdmin("admin16@example.com", "admin1234", "Admin16");
+            User admin17 = User.createAdmin("admin17@example.com", "admin1234", "Admin17");
+            User admin18 = User.createAdmin("admin18@example.com", "admin1234", "Admin18");
+            User admin19 = User.createAdmin("admin19@example.com", "admin1234", "Admin19");
+            User admin20 = User.createAdmin("admin20@example.com", "admin1234", "Admin20");
 
-            User user = User.createStudent("user@example.com", "user123", "John Doe", "1234567", "johndoe");
+            User user = User.createStudent("user@example.com", "user1234", "SSAFY", "1234000", "ssafy");
+            User user1 = User.createStudent("user1@example.com", "user1234", "John Doe", "1234567", "johndoe");
             userRepository.save(admin);
+            userRepository.save(admin1);
             userRepository.save(admin2);
             userRepository.save(admin3);
             userRepository.save(admin4);
@@ -119,7 +135,20 @@ public class DataInitializer {
             userRepository.save(admin6);
             userRepository.save(admin7);
             userRepository.save(admin8);
+            userRepository.save(admin9);
+            userRepository.save(admin10);
+            userRepository.save(admin11);
+            userRepository.save(admin12);
+            userRepository.save(admin13);
+            userRepository.save(admin14);
+            userRepository.save(admin15);
+            userRepository.save(admin16);
+            userRepository.save(admin17);
+            userRepository.save(admin18);
+            userRepository.save(admin19);
+            userRepository.save(admin20);
             userRepository.save(user);
+            userRepository.save(user1);
             System.out.println("default data added");
         } else {
             System.out.println("default data already exists");
@@ -718,7 +747,7 @@ public class DataInitializer {
             // 기존 댓글 중 일부를 부모로 하여 대댓글 추가 (깊이 제한 설정)
             for (Comment parentComment : allComments) {
                 if (random.nextBoolean()) { // 50% 확률로 대댓글 생성
-                    if (getDepth(parentComment) >= 3) { // 깊이가 3 이상이면 생성하지 않음
+                    if (getDepth(parentComment) >= 1) { // 깊이가 3 이상이면 생성하지 않음
                         continue;
                     }
 
@@ -809,7 +838,7 @@ public class DataInitializer {
                             .recommendedFor("이 주제에 관심 있는 개발자")
                             .startAt(startAt)
                             .endAt(endAt)
-                            .announceAt(now)
+                            .announceAt(now.plusMinutes(15))
                             .maxMembers(5 + random.nextInt(5))
                             .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
                             .build();
@@ -915,27 +944,31 @@ public class DataInitializer {
     }
 
     @Transactional
-    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository, SprintRepository sprintRepository,
+    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository,
+                                    SprintRepository sprintRepository,
                                     CategoryRepository categoryRepository,
-                                    SsaldCupCategoryRepository ssaldCupCategoryRepository, SprintCategoryRepository sprintCategoryRepository){
-        if(ssaldCupRepository.count()==0){
+                                    SsaldCupCategoryRepository ssaldCupCategoryRepository,
+                                    SprintCategoryRepository sprintCategoryRepository) {
+        if (ssaldCupRepository.count() == 0) {
             List<SsaldCup> ssaldCups = new ArrayList<>();
             List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now();
             Random random = new Random();
             List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
             List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-            for(Category category : midLevelCategories){
+
+            for (Category category : midLevelCategories) {
                 List<Long> categoryIds = new ArrayList<>();
                 categoryIds.add(category.getId());
                 Category parent = category.getParent();
-                if(parent!=null){
+                if (parent != null) {
                     categoryIds.add(parent.getId());
                 }
 
-                for(int i=0; i<3; i++){
+                for (int i = 0; i < 3; i++) {
                     LocalDateTime startAt;
                     LocalDateTime endAt;
+
                     if (i == 0) { // 시작 전 (status = 0)
                         startAt = now.plusDays(random.nextInt(10) + 5);
                         endAt = startAt.plusDays(random.nextInt(10) + 5);
@@ -946,55 +979,135 @@ public class DataInitializer {
                         startAt = now.minusDays(random.nextInt(20) + 20);
                         endAt = startAt.plusDays(random.nextInt(10) + 5);
                     }
+
+                    // ✅ 1번 싸드컵은 9주 동안 진행되도록 설정
+                    if (ssaldCups.isEmpty()) {
+                        startAt = now;
+                        endAt = startAt.plusWeeks(9);
+                    }
+
                     SsaldCup ssaldCup = SsaldCupBuilder.builder()
-                            .name(category.getCategoryName()+" SsaldCup "+(i+1))
-                            .description("학습 내용: "+category.getCategoryName())
-                            .maxTeams(2 + random.nextInt(3))
-                            .maxTeamMembers(3+random.nextInt(2))
+                            .name(category.getCategoryName() + " SsaldCup " + (i + 1))
+                            .basicDescription("학습 내용: " + category.getCategoryName())
+                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                            .maxTeams(10) // ✅ 10팀 설정
+                            .maxTeamMembers(2)
                             .startAt(startAt)
                             .endAt(endAt)
                             .build();
+
                     ssaldCupRepository.save(ssaldCup);
-                    categoryIds.forEach(categoryId ->{
+                    categoryIds.forEach(categoryId -> {
                         Category ssaldCupCategory = categoryRepository.findById(categoryId)
                                 .orElseThrow(CategoryNotExistException::new);
                         ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
                     });
+
                     ssaldCups.add(ssaldCup);
+
                     List<Category> relatedLowestCategories = lowestLevelCategories.stream()
                             .filter(lowestCategory -> lowestCategory.getParent() != null &&
                                     lowestCategory.getParent().getId().equals(category.getId()))
                             .collect(Collectors.toList());
-                    int sprintCount = 2 + random.nextInt(3);
 
-                    for(int j=0; j<sprintCount; j++){
-                        LocalDateTime sprintStart = startAt.plusDays(random.nextInt(3));
-                        LocalDateTime sprintEnd = sprintStart.plusDays(random.nextInt(5) + 2);
-                        LocalDateTime announceAt = sprintEnd.minusDays(0);
-                        Category selectedLowestCategory = relatedLowestCategories.get(random.nextInt(relatedLowestCategories.size()));
+                    // ✅ 1번 싸드컵인 경우 9개의 스프린트 고정
+                    if (ssaldCups.size() == 1) {
+                        for (int j = 0; j < 9; j++) {  // ✅ 9주차
+                            LocalDateTime sprintStart = startAt.plusWeeks(j);
+                            LocalDateTime sprintEnd = sprintStart.plusWeeks(1);
+                            LocalDateTime announceAt = sprintEnd.minusDays(0);
+                            Category selectedLowestCategory = relatedLowestCategories.get(random.nextInt(relatedLowestCategories.size()));
 
-                        Sprint sprint = SprintBuilder.builder()
-                                .name(ssaldCup.getName()+"_Sprint_"+(j+1))
-                                .basicDescription("학습 내용: " + category.getCategoryName())
-                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-                                .recommendedFor("이 주제에 관심 있는 개발자")
-                                .startAt(sprintStart)
-                                .endAt(sprintEnd)
-                                .announceAt(announceAt)
-                                .maxMembers(5 + random.nextInt(5))
-                                .sequence(j+1)
-                                .ssaldCup(ssaldCup)
-                                .build();
-                        sprintRepository.save(sprint);
-                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+                            Sprint sprint = SprintBuilder.builder()
+                                    .name(ssaldCup.getName() + "_Sprint_" + (j + 1))
+                                    .basicDescription("학습 내용: " + category.getCategoryName())
+                                    .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                                    .recommendedFor("이 주제에 관심 있는 개발자")
+                                    .startAt(sprintStart)
+                                    .endAt(sprintEnd)
+                                    .announceAt(announceAt)
+                                    .maxMembers(2) // ✅ 2명씩 참여
+                                    .sequence(j + 1)
+                                    .ssaldCup(ssaldCup)
+                                    .build();
+                            sprintRepository.save(sprint);
+                            sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+                        }
+                    } else {
+                        int sprintCount = 2 + random.nextInt(3); // 2~4개 랜덤 개수
+
+                        for (int j = 0; j < sprintCount; j++) {
+                            LocalDateTime sprintStart = startAt.plusDays(random.nextInt(3));
+                            LocalDateTime sprintEnd = sprintStart.plusDays(random.nextInt(5) + 2);
+                            LocalDateTime announceAt = sprintEnd.minusDays(0);
+                            Category selectedLowestCategory = relatedLowestCategories.get(random.nextInt(relatedLowestCategories.size()));
+
+                            Sprint sprint = SprintBuilder.builder()
+                                    .name(ssaldCup.getName() + "_Sprint_" + (j + 1))
+                                    .basicDescription("학습 내용: " + category.getCategoryName())
+                                    .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
+                                    .recommendedFor("이 주제에 관심 있는 개발자")
+                                    .startAt(sprintStart)
+                                    .endAt(sprintEnd)
+                                    .announceAt(announceAt)
+                                    .maxMembers(5 + random.nextInt(5))
+                                    .sequence(j + 1)
+                                    .ssaldCup(ssaldCup)
+                                    .build();
+                            sprintRepository.save(sprint);
+                            sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
+                        }
                     }
                 }
             }
-            System.out.println("싸드컵 더미 데이터 추가 성공");
-        }else{
-            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
+
+            System.out.println("✅ 1번 싸드컵 하위에 9개의 스프린트가 추가되었습니다.");
+        } else {
+            System.out.println("✅ 싸드컵 더미 데이터가 이미 존재합니다.");
         }
     }
+
+
+
+    @Transactional
+    public void initializeSsaldCupParticipation(SsaldCupRepository ssaldCupRepository,
+                                                UserRepository userRepository,
+                                                TeamRepository teamRepository) {
+
+        // ✅ 1번 싸드컵 조회
+        SsaldCup ssaldCup = ssaldCupRepository.findById(1L)
+                .orElseThrow(() -> new IllegalStateException("1번 싸드컵이 존재하지 않습니다."));
+
+        // ✅ ID=1~20인 사용자 조회
+        List<User> temp = userRepository.findAllWithUserTeams();
+        List<User> users = new ArrayList<>();
+        for (User user : temp) {
+            if (user.getId() >= 1 && user.getId() <= 20) {
+                users.add(user);
+            }
+        }
+
+        if (users.size() < 20) {
+            throw new IllegalStateException("ID=1~20인 사용자가 20명 존재해야 합니다.");
+        }
+
+        List<Team> teams = new ArrayList<>();
+
+        // ✅ 2명씩 10팀 구성
+        for (int i = 0; i < 10; i++) {
+            Team team = new Team("Team" + (i + 1), 0);
+            team.addUser(users.get(i * 2));
+            team.addUser(users.get(i * 2 + 1));
+            team.setCurrentMembers(2);
+            team.setSsaldCup(ssaldCup);
+            teams.add(team);
+        }
+
+        teamRepository.saveAll(teams);
+
+        System.out.println("✅ 1번 싸드컵에 10개 팀이 생성되었습니다.");
+    }
+
 
 }
 
