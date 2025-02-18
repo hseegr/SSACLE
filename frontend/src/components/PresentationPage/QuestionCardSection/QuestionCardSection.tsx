@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import QuestionCardList from '@/components/PresentationPage/QuestionCardList/QuestionCardList'
 import { useShallow } from 'zustand/shallow'
 import { usePresentationStore } from '@/store/usePresentationStore'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QuestionCardSection = () => {
   const {
@@ -24,12 +24,9 @@ const QuestionCardSection = () => {
     }))
   )
 
-  const { data: questionCards, isSuccess } = useQuery({
-    queryKey: ['questionCards'],
-    queryFn: () => {
-      // return fetchQuestionCardData()
-    },
-  })
+  const queryClient = useQueryClient()
+
+  const questionCards = queryClient.getQueryData(['question-card-list'])
 
   // Todo : 여기서 fetch 해야함
   const initialQuestionCardData = [
@@ -38,11 +35,6 @@ const QuestionCardSection = () => {
     { id: 3, content: '질문내용3' },
     { id: 4, content: '질문내용4' },
     { id: 5, content: '질문내용5' },
-    { id: 6, content: '질문내용6' },
-    { id: 7, content: '질문내용7' },
-    { id: 8, content: '질문내용8' },
-    { id: 9, content: '질문내용9' },
-    { id: 10, content: '질문내용10' },
   ]
 
   // Todo : 여기서 fetch 한 내용을 넣어줌

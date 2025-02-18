@@ -42,19 +42,12 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
     (state) => state.roomConnectionData[roomId as string]
   )
 
-  useEffect(() => {
-    setQuestionStep(
-      roomConnectionData?.map(({ userId, connectionId }) => ({
-        userId,
-        connectionId,
-      })) ?? []
-    )
-  }, [roomConnectionData])
-
-  // 질문 답변 횟수 관리 (userId 배열)
-  // 최신화가 될까?
+  // 답변자 소개 신호 전송 여부
+  const hasSentAnswerIntro = useRef(false)
 
   useEffect(() => {
+    console.log('✨상태 변경✨', presentationStatus)
+
     switch (presentationStatus) {
       // Todo 발표 시작 상태일 때 5초 후 발표자 소개 신호 전송
       case PRESENTATION_STATUS_KEYS.START:
@@ -89,8 +82,11 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
       // Todo : 질문 준비 신호 전송
       // 답변자 정하기,
       case PRESENTATION_STATUS_KEYS.QUESTION_ANSWERER_INTRO:
-        console.log('질문 준비 신호 전송')
-        if (questionStep.length > 0) {
+        // signal이 이미 전송되었다면 넘어가기
+        if (hasSentAnswerIntro.current) return
+        hasSentAnswerIntro.current = true
+
+        if (questionStep.length !== roomConnectionData.length) {
           // 발표자 랜덤 선택
           const randomPresenter = Math.floor(
             Math.random() * (questionStep.length ?? 0)
@@ -106,6 +102,7 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
             session?.streamManagers[randomPresenter].stream.connection
               .data as string
           )
+          console.log('✨발표자 선택함요✨', questionStep, roomConnectionData)
 
           setTimeout(() => {
             session?.signal({
@@ -116,18 +113,27 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
               }),
               type: 'presentationStatus',
             })
-
-            // 발표자 이름 배열에서 제거
-            setQuestionStep((prev) =>
-              prev.filter((step) => step.connectionId !== presenterConnectionId)
-            )
+            // 발표자 이름 배열에 추가
+            setQuestionStep((prev) => [
+              ...prev,
+              {
+                userId: presenterConnectionId as string,
+                connectionId: presenterConnectionId as string,
+              },
+            ])
 
             // 마지막 답변자였을 경우
-            if (questionStep.length === 0) {
-              setIsQuestionCompleted(true)
+            if (questionStep.length - 1 === roomConnectionData.length) {
+              console.log('마지막 답변자')
+              setIsQuestionCompleted(true) // 질문 완료 상태 변경
             }
-          }, 3000)
+            console.log('질문 전송 완료')
+          }, 1000)
+          setTimeout(() => {
+            hasSentAnswerIntro.current = false
+          }, 1500)
         } else {
+          console.log('질문 끝남')
           setTimeout(() => {
             session?.signal({
               data: JSON.stringify({

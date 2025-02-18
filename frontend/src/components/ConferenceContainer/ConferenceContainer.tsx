@@ -8,10 +8,13 @@ import SsadcupVideoLayout from '@/components/layout/SsadcupVideoLayout'
 import { useShallow } from 'zustand/shallow'
 import QuestionInfo from '@/components/PresentationPage/QuestionInfo/QuestionInfo'
 
+import type { FC } from 'react'
+
 interface ConferenceContainerProps {
   token: string
 }
-const ConferenceContainer = ({ token }: ConferenceContainerProps) => {
+
+const ConferenceContainer: FC<ConferenceContainerProps> = ({ token }) => {
   const { cameraPublisher, subscribers, session } = useOpenviduStateStore(
     useShallow((state) => ({
       cameraPublisher: state.cameraPublisher,

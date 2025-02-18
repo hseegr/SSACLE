@@ -3,12 +3,29 @@ import PresentationPageWrapper from '@/components/PresentationPage/PresentationP
 import SessionInitializer from '@/components/PresentationPage/SessionInitializer/SessionInitializer'
 import StepContainer from '@/components/PresentationPage/StepConainer/StepContainer'
 import { ModalSteps } from '@/constants/modalStep'
+import { fetchPresentationAvailability } from '@/services/presentationService'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
+import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/react/shallow'
 
 const PresentationPage = () => {
+  const { roomId } = useParams()
+  const navigate = useNavigate()
+  // 발표 참가 여부 확인
+  const { data: presentationAvailability, isSuccess } = useQuery({
+    queryKey: ['presentation-availability'],
+    queryFn: () => fetchPresentationAvailability(roomId ?? 'test-session-id'),
+  })
+
+  if (!presentationAvailability) {
+    alert('발표 참가 불가능합니다.')
+    navigate(-1)
+    return
+  }
+
   // 모달 열기 상태
   const { isModalOpen, modalStep } = usePresentationModalStateStore(
     useShallow((state) => ({

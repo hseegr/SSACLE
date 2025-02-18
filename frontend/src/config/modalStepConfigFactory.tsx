@@ -1,7 +1,7 @@
 import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
+import SsaprintVoteContainer from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteContainer'
 import { ModalSteps } from '@/constants/modalStep'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
-import { CameraIcon, Mic2Icon, MicIcon } from 'lucide-react'
 import { Session } from 'openvidu-browser'
 import { ReactNode } from 'react'
 
@@ -288,8 +288,9 @@ export const createModalStepConfig = ({
             // 질문 섹션 시작 시그널 보내기
             setModalStep(ModalSteps.INITIAL.WAITING) // 질문 준비 모달로 이동
             setTimeout(() => {
+              // 신호 전달 후 모달 close and 다음 상태로 변경
               sendStatusSignal(PRESENTATION_STATUS.QUESTION_READY)
-            }, 3000)
+            }, 1000)
           },
           style: '',
         },
@@ -322,6 +323,7 @@ export const createModalStepConfig = ({
         {
           text: '준비 완료',
           onClick: () => {
+            // 질문 카드를 선택한 경우
             if (isQuestionSelected) {
               session?.signal({
                 data: JSON.stringify({
@@ -333,6 +335,7 @@ export const createModalStepConfig = ({
               })
               closeModal()
             } else {
+              // 질문 카드를 선택하지 않은 경우
               alert('질문 카드를 선택해주세요.')
             }
           },
@@ -450,10 +453,10 @@ export const createModalStepConfig = ({
       title: ['🥇 평가가 시작됩니다. 🥇'],
       description: (
         <>
-          <span>잠시후 싸프린트 투표를 진행합니다.</span>
+          <span>잠시후 싸프린트 평가를 진행합니다.</span>
           <span>발표, 질문 답변, 태도 등 종합적으로 평가를 진행합니다.</span>
           <span className="italic font-bold text-ssacle-blue/80">
-            총 ⏱️ 평가 시간은 3분입니다.
+            ⏱️ 평가 시간은 최대 5분입니다.
           </span>
         </>
       ),
@@ -471,22 +474,25 @@ export const createModalStepConfig = ({
 
     // ! 투표 시작 모달
     [ModalSteps.VOTE.START]: {
-      title: ['✨ 싸프린트 평가 시작 ✨'],
+      title: ['✨ 싸프린트 평가 ✨'],
       description: (
         <>
-          <span>여기에 투표 내용이 들어갈 컴포넌트 넣기</span>
+          <SsaprintVoteContainer
+            sendStatusSignal={sendStatusSignal}
+            closeModal={closeModal}
+          />
         </>
       ),
       buttons: [
-        {
-          text: '평가 완료',
-          onClick: () => {
-            // 투표 완료 시그널 보내기
-            sendStatusSignal(PRESENTATION_STATUS.VOTE_END)
-            closeModal()
-          },
-          style: '',
-        },
+        // {
+        //   text: '평가 완료',
+        //   onClick: () => {
+        //     // 투표 완료 시그널 보내기
+        //     sendStatusSignal(PRESENTATION_STATUS.VOTE_END)
+        //     closeModal()
+        //   },
+        //   style: '',
+        // },
       ],
     },
 
@@ -528,6 +534,7 @@ export const createModalStepConfig = ({
           text: '결과 확인하기',
           onClick: () => {
             navigate('/presentation/result') // 결과 페이지로 이동
+            leaveSession()
             closeModal()
           },
           style: '',
@@ -555,6 +562,8 @@ export const createModalStepConfig = ({
             // 결과 확인 시그널 보내기
             // 투표 종료 시그널 보내기
             // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+            // 여기서 다른 곳으로 이동하기
+            leaveSession()
             closeModal()
           },
           style: '',
@@ -580,6 +589,7 @@ export const createModalStepConfig = ({
           onClick: () => {
             // 결과 확인 시그널 보내기
             // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
+            leaveSession()
             closeModal()
           },
           style: '',
@@ -601,6 +611,21 @@ export const createModalStepConfig = ({
           onClick: closeModal,
           style: 'bg-ssacle-blue hover:bg-ssacle-blue/70',
           variant: '',
+        },
+      ],
+    },
+
+    [ModalSteps.WARNING.EFFECT_WARNING]: {
+      title: ['⚠️ 아직 준비중입니다 ⚠️'],
+      description: (
+        <>
+          <span>빠른 실내에 제공될 수 있도록 준비중입니다.</span>
+        </>
+      ),
+      buttons: [
+        {
+          text: '확인',
+          onClick: closeModal,
         },
       ],
     },

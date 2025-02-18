@@ -173,3 +173,26 @@ export const NOTION_END_POINT = {
 }
 
 // 아래는 예시
+// 발표 관련 -> presentationService
+export const PRESENTATION_END_POINT = {
+  // 질문 카드 목록 조회
+  QUESTION_CARDS: (sprintId) => `/sprints/${sprintId}/question-cards`,
+  // 특정 질문 카드 조회
+
+  QUESTION_CARD: (sprintId, questionCardId) =>
+    `/sprints/${sprintId}/question-cards/${questionCardId}`,
+
+  // 발표 최종 점수 계산
+  CALCULATE_SCORE: '/calculate',
+  // 발표 상태 업데이트
+  PRESENTATION_STATUS: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-status`,
+
+  // 발표 참가자 목록 조회
+  PRESENTATION_PARTICIPANTS: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-participants`,
+
+  // 발표 참가 가능 여부 확인인
+  PRESENTATION_AVAILABILITY: (sprintId) =>
+    `/ssaprint/${sprintId}/presentation-availability`,
+}

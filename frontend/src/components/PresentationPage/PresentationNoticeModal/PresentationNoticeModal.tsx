@@ -53,13 +53,13 @@ const PresentationNoticeModal = () => {
             </div>
           </DialogTitle>
           <DialogDescription className="">
-            <div className="flex flex-col w-full max-w-full gap-2 overflow-hidden text-base text-center ">
+            <span className="flex flex-col w-full max-w-full gap-2 overflow-hidden text-base text-center ">
               {typeof Description === 'string' ? (
                 <div>{Description}</div>
               ) : (
                 Description
               )}
-            </div>
+            </span>
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center justify-center w-full gap-4">

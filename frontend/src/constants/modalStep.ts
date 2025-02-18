@@ -46,6 +46,11 @@ export const ModalSteps = {
     END_COMPLETE: 'end_complete',
     WAITING_END: 'waiting_end',
   },
+
+  // 경고 모달
+  WARNING: {
+    EFFECT_WARNING: 'effect_warning',
+  },
 }
 
 const {
@@ -79,7 +84,5 @@ export type ModalStep = keyof typeof ModalSteps
 export type ModalStepValue = (typeof ModalSteps)[keyof typeof ModalSteps]
 
 export const getModalStep = (status: PresentationStatus) => {
-  console.log('찾아야하는 발표 상태', status)
-  console.log('찾은 모달', PRESENTATION_MODAL_STATUS[status])
   return PRESENTATION_MODAL_STATUS[status]
 }

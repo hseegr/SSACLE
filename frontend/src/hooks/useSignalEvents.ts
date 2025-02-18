@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useRef, useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import {
   getNextPresentationStatus,
@@ -46,37 +46,28 @@ export const useSignalEvents = ({
     }))
   )
 
-  /**
-   * 시그널 이벤트 처리
-   * 1️⃣ 현재 받은 신호 - 이것에 대한 모달을 띄움
-   * 2️⃣ 다음 발표 상태- 이것으로 발표 상태 업데이트
-   * 3️⃣ 다음 모달 - 이것으로 모달 업데이트
-   */
-  const debouncedAllHandleSignal = useMemo(
-    () =>
-      debounce((signalType: PresentationStatus) => {
-        const nextStatus = getNextPresentationStatus(signalType) // key 값 반환
-        const nextModalStep = getModalStep(signalType as PresentationStatus) // 다음 발표 상태의 key 값을 전달하면 해당 다음 모달을 반환
+  // debounced 함수를 ref로 관리 → 컴포넌트 라이프사이클내에 한 번만 생성되도록 보장
+  const debouncedAllHandleSignal = useRef(
+    debounce((signalType: PresentationStatus) => {
+      const nextStatus = getNextPresentationStatus(signalType)
+      const nextModalStep = getModalStep(signalType as PresentationStatus)
 
-        if (nextModalStep) {
-          setIsModalOpen(true)
-          setModalStep(nextModalStep) // 다음 모달이 있으면 모달 업데이트
-        } else {
-          setPresentationStatus(nextStatus as PresentationStatus)
-          setIsModalOpen(false)
-        }
-
-        // setPresentationStatus(signalType as PresentationStatus)
-
-        // console.log('1️⃣ 현재 받은 신호 - 이것에 대한 모달을 띄움', signalType)
-        // console.log(
-        //   '2️⃣ 다음 발표 상태- 이것으로 발표 상태 업데이트',
-        //   nextStatus
-        // )
-        // console.log('3️⃣ 다음 모달 - 이것으로 모달 업데이트', nextModalStep)
-      }, 300),
-    [setIsModalOpen, setModalStep, setPresentationStatus]
+      if (nextModalStep) {
+        setIsModalOpen(true)
+        setModalStep(nextModalStep)
+      } else {
+        setPresentationStatus(nextStatus as PresentationStatus)
+        setIsModalOpen(false)
+      }
+    }, 3000)
   )
+
+  // 컴포넌트 언마운트시 pending된 debounce 호출 취소
+  useEffect(() => {
+    return () => {
+      debouncedAllHandleSignal.current.cancel()
+    }
+  }, [])
 
   const readySignalHandler = useCallback(
     (event: SignalEvent) => {
@@ -93,7 +84,12 @@ export const useSignalEvents = ({
       }
       setIsModalOpen(false)
     },
-    [setIsModalOpen]
+    [
+      setIsModalOpen,
+      setPresentationStatus,
+      setIsQuestionSelected,
+      setSelectedQuestion,
+    ]
   )
 
   const endSignalHandler = useCallback(
@@ -102,7 +98,7 @@ export const useSignalEvents = ({
 
       setIsModalOpen(true)
       // 발표 종료 모달
-      signalType === PRESENTATION_STATUS.PENDING_END &&
+      if (signalType === PRESENTATION_STATUS.PENDING_END)
         setModalStep(ModalSteps.PRESENTATION.PRESENTATION_END)
 
       // 질문 중간 종료 모달
@@ -112,10 +108,10 @@ export const useSignalEvents = ({
       }
 
       // 질문 종료 모달
-      signalType === PRESENTATION_STATUS.QUESTION_END &&
+      if (signalType === PRESENTATION_STATUS.QUESTION_END)
         setModalStep(ModalSteps.QUESTION.ANSWER_END)
     },
-    [setIsModalOpen, setModalStep]
+    [setIsModalOpen, setModalStep, setIsQuestionSelected]
   )
 
   type SignalTarget = 'all' | 'individual' | 'presenter' | 'questioner'
@@ -130,7 +126,8 @@ export const useSignalEvents = ({
             signalStates[signalType as SignalStateKeys].size ===
             targetConnectionCount - 1
           ) {
-            debouncedAllHandleSignal(signalType)
+            // ref를 통해 debounce 함수를 호출합니다.
+            debouncedAllHandleSignal.current(signalType)
           }
           break
         case 'individual':
@@ -163,7 +160,13 @@ export const useSignalEvents = ({
           break
       }
     },
-    [signalStates, targetConnectionCount, debouncedAllHandleSignal]
+    [
+      signalStates,
+      targetConnectionCount,
+      myConnectionId,
+      setIsModalOpen,
+      setModalStep,
+    ]
   )
 
   return {

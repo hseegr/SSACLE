@@ -25,6 +25,16 @@ interface PresentationStore {
     connectionId: string
   }) => void
 
+  // 질문 답변자 정보
+  questionAnswererInfo: {
+    name: string
+    connectionId: string
+  }
+  setQuestionAnswererInfo: (questionAnswererInfo: {
+    name: string
+    connectionId: string
+  }) => void
+
   // 질문 카드 선택 여부
   isQuestionSelected: boolean // 현재 질문 카드 선택 여부
   selectedQuestion: QuestionCard | null // 현재 선택된 질문 카드
@@ -62,6 +72,14 @@ export const usePresentationStore = create<PresentationStore>((set) => ({
     connectionId: '',
   },
   setPresenterInfo: (presenterInfo) => set({ presenterInfo }),
+
+  // 질문 답변자 정보 설정
+  questionAnswererInfo: {
+    name: '',
+    connectionId: '',
+  },
+  setQuestionAnswererInfo: (questionAnswererInfo) =>
+    set({ questionAnswererInfo }),
 
   // 질문 카드 선택 여부 설정
   isQuestionSelected: false,

@@ -21,8 +21,12 @@ import { ModalSteps } from '@/constants/modalStep'
 import { useConnect } from '@/hooks/useConnect'
 import { useShallow } from 'zustand/shallow'
 import useRoomStateStore from '@/store/useRoomStateStore'
+import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 
 export const usePresentationControls = () => {
+  const presentationStatus = usePresentationSignalStore(
+    (state) => state.presentationStatus
+  )
   const { cameraPublisher, screenPublisher, session, subscribers } =
     useOpenviduStateStore(
       useShallow((state) => ({
@@ -40,8 +44,7 @@ export const usePresentationControls = () => {
       isFullScreen: state.isFullScreen,
     }))
   )
-  const { openModal, setModalStep } = useModal()
-  const { leaveSession } = useConnect()
+  const { openModal, setModalStep, setIsModalOpen } = useModal()
   const { startScreenShare, stopScreenShare } = useScreenShare()
   const { roomConnectionData, roomId } = useRoomStateStore(
     useShallow((state) => ({
@@ -50,9 +53,6 @@ export const usePresentationControls = () => {
     }))
   )
 
-  const connectionUserData = roomConnectionData[roomId]
-  console.log(connectionUserData)
-
   const leftControl = [
     {
       id: 'effects',
@@ -60,19 +60,13 @@ export const usePresentationControls = () => {
       title: '효과',
       style: 'text-yellow-500',
       activeFunction: () => {
+        // 효과 띄우기
+        setModalStep(ModalSteps.WARNING.EFFECT_WARNING)
+        setIsModalOpen(true)
         console.log('session', session)
-        console.log('subscribers', subscribers)
-        console.log('cameraPublisher', cameraPublisher)
-        console.log('screenPublisher', screenPublisher)
-
-        console.log(
-          'cameraPublisher',
-          cameraPublisher?.stream.connection.connectionId
-        )
-        console.log(
-          'screenPublisher',
-          screenPublisher?.stream.connection.connectionId
-        )
+        console.log('roomConnectionData', roomConnectionData[roomId])
+        console.log('session', session)
+        console.log('presentationStatus', presentationStatus)
       },
     },
     {

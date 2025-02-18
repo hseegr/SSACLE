@@ -69,7 +69,7 @@ const router = createBrowserRouter([
           {
             path: '/user',
             children: [
-              { path: 'profile', element: <h1>Profile</h1> },
+              { path: 'profile', element: <MyPage /> },
               { path: 'help/inquiry', element: <h1>inquiry</h1> },
             ],
           },
