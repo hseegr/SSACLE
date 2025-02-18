@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,106 +10,153 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { CreditCard } from 'lucide-react'
+import httpCommon from '@/services/http-common'
+import { useQueryClient } from '@tanstack/react-query'
 
-const NotePayModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  note,
-  requiredPickles = 5,
-  currentPickle,
-  purchaseSuccess,
-  notionUrl,
-}) => {
-  const hasEnoughPickles = currentPickle >= requiredPickles
+const NotePayModal = ({ isOpen, onClose, post, currentPickle }) => {
+  const [loading, setLoading] = useState(false)
+  const [purchaseCompleted, setPurchaseCompleted] = useState(false)
+  const [notionUrl, setNotionUrl] = useState('')
+  const [error, setError] = useState('')
 
-  // 하드코딩된 일기 목록
-  const diaryList = [
-    '1주차 - prop 공부하기',
-    '2주차 - 컴포넌트 설계하기',
-    '3주차 - 상태관리 학습하기',
-    '4주차 - API 연동하기',
-    '5주차 - 일기장 만들기',
-  ]
+  const queryClient = useQueryClient()
+  const requiredPickles = 5
 
-  if (purchaseSuccess) {
-    return (
-      <AlertDialog open={isOpen} onOpenChange={onClose}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>구매가 완료되었어요! 🎉</AlertDialogTitle>
-            <AlertDialogDescription>
-              <p className="mb-4">노트 구매가 완료되었습니다.</p>
-              <a
-                href={notionUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                노션 페이지로 이동하기
-              </a>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={onClose}>확인</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    )
+  const handlePurchase = async () => {
+    if (loading) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      // 구매 API 호출
+      const response = await httpCommon.post(`/teams/${post.id}/purchase`)
+
+      if (response.status === 200) {
+        setNotionUrl(response.data)
+        setPurchaseCompleted(true)
+
+        // 전역 유저 정보 즉시 갱신
+        await queryClient.invalidateQueries(['userInfo'])
+        await queryClient.refetchQueries(['userInfo'])
+
+        // localStorage에서도 피클 정보 업데이트
+        const userInfo = await httpCommon.get('/user/summary')
+        if (userInfo.data) {
+          localStorage.setItem('userPickles', userInfo.data.pickles.toString())
+        }
+      }
+    } catch (error) {
+      console.error('노트 구매 실패:', error)
+      setError(
+        error.response?.data?.message ||
+          '노트 구매에 실패했습니다. 다시 시도해주세요.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleModalClose = async () => {
+    if (!loading) {
+      // 모달이 닫힐 때도 한번 더 갱신
+      await queryClient.invalidateQueries(['userInfo'])
+      await queryClient.refetchQueries(['userInfo'])
+
+      setPurchaseCompleted(false)
+      setNotionUrl('')
+      setError('')
+      onClose()
+    }
   }
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog open={isOpen} onOpenChange={handleModalClose}>
       <AlertDialogContent className="max-w-[440px]">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-ssacle-blue" />
-            <span>노트 구매하기</span>
+            <span>{purchaseCompleted ? '구매 완료' : '노트 구매'}</span>
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-4">
-            <p className="font-medium text-lg">{note?.sprintName}</p>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm font-medium mb-2">학습 일기 목록</p>
-              <ul className="space-y-1">
-                {diaryList.map((diary, index) => (
-                  <li key={index} className="text-sm text-gray-600">
-                    {diary}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">현재 보유 피클</p>
-              <p className="text-lg font-bold text-ssacle-blue flex items-center gap-1">
-                {currentPickle} 🥒
-              </p>
-            </div>
-
-            {!hasEnoughPickles && (
-              <div className="text-sm text-red-500">
-                피클이 부족합니다. 더 많은 활동을 통해 피클을 모아보세요!
+            {purchaseCompleted ? (
+              <div className="space-y-4">
+                <p>노트 구매가 완료되었습니다!</p>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-2">
+                    아래 링크에서 노트를 확인하세요.
+                  </p>
+                  <a
+                    href={notionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-ssacle-blue hover:text-blue-700 underline"
+                  >
+                    Notion에서 보기
+                  </a>
+                </div>
               </div>
+            ) : (
+              <>
+                <p>
+                  <strong>{post?.writerInfo}</strong>의 노트를 구매하려면{' '}
+                  {requiredPickles}피클이 필요합니다.
+                </p>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600">현재 보유 피클</p>
+                  <p className="text-lg font-bold text-ssacle-blue flex items-center gap-1">
+                    {currentPickle} 🥒
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600">노트 학습 내용</p>
+                  <ul className="text-gray-700 text-sm list-disc list-inside">
+                    {post?.diaries && post.diaries.length > 0 ? (
+                      post.diaries.map((diary, index) => (
+                        <li key={index}>{diary}</li>
+                      ))
+                    ) : (
+                      <li>등록된 학습 내용이 없습니다.</li>
+                    )}
+                  </ul>
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
+              </>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel className="border-gray-200 hover:bg-gray-100 hover:text-gray-900">
-            취소
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            disabled={!hasEnoughPickles}
-            className={`${
-              hasEnoughPickles
-                ? 'bg-ssacle-blue hover:bg-blue-600'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
-          >
-            {requiredPickles}피클로 구매하기
-          </AlertDialogAction>
+          {purchaseCompleted ? (
+            <AlertDialogAction
+              onClick={handleModalClose}
+              className="bg-ssacle-blue hover:bg-blue-600"
+            >
+              닫기
+            </AlertDialogAction>
+          ) : (
+            <>
+              <AlertDialogCancel className="border-gray-200 hover:bg-gray-100 hover:text-gray-900">
+                취소
+              </AlertDialogCancel>
+              <button
+                onClick={handlePurchase}
+                disabled={loading}
+                className={`px-4 py-2 rounded-md ${
+                  loading
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-ssacle-blue hover:bg-blue-600 text-white'
+                }`}
+              >
+                {loading ? '구매 중...' : '구매하기'}
+              </button>
+            </>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

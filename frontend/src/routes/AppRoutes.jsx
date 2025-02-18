@@ -29,6 +29,7 @@ import AdminSsaprintDetail from '@/pages/Admin/SsaprintManagement/SsaprintDetail
 import AdminRoute from '@/components/common/AdminRoute'
 import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
+import NoteBoardPage from '@/pages/Board/NoteBoardPage'
 import MyPage from '@/pages/MyPage/MyPage'
 
 const router = createBrowserRouter([
@@ -98,7 +99,7 @@ const router = createBrowserRouter([
             ],
           },
 
-          // 게시판 페이지 (학습 게시판, 자유 게시판)
+          // 게시판 페이지 (학습 게시판, 노트 게시판)
           {
             path: '/board',
             children: [
@@ -112,14 +113,11 @@ const router = createBrowserRouter([
                   { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
                 ],
               },
-              // 자유 게시판
+              // 노트 게시판
               {
-                path: 'free',
+                path: 'note',
                 children: [
-                  { index: true, element: <FreeBoardPage /> }, // 자유 게시판 메인
-                  { path: ':boardId', element: <BoardDetailPage /> }, // 게시글 상세 페이지
-                  { path: 'write', element: <BoardFormPage /> }, // 새 게시글 작성
-                  { path: ':boardId/edit', element: <BoardFormPage /> }, // 기존 게시글 수정
+                  { index: true, element: <NoteBoardPage /> }, // 노트 게시판 메인
                 ],
               },
             ],

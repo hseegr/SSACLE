@@ -58,7 +58,8 @@ const SsabapVote = () => {
           <img
             src={menu1.imageUrl}
             alt={menu1.menuName}
-            className="w-50 h-40 object-cover rounded-lg mb-3"
+            className="w-full h-40 object-cover rounded-lg mb-3"
+            style={{ objectFit: 'cover' }} // 이미지가 컨테이너에 맞게 잘리면서 비율 유지
           />
           <button
             // 아직 투표하지 않았다면 요청
@@ -73,10 +74,11 @@ const SsabapVote = () => {
             }`}
             // 투표율이 있으면 버튼 비활성화
             disabled={menu1.votePercentage !== undefined}
+            style={{ cursor: 'pointer' }} // 마우스 올리면 클릭 표시
           >
             {/* 만약 투표율이 있다면 투표율*100 표기, 없다면 ? 표기 */}
             {menu1.votePercentage !== undefined
-              ? `${menu1.votePercentage * 100}%`
+              ? `${Math.round(menu1.votePercentage * 100)}%`
               : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">
@@ -94,7 +96,8 @@ const SsabapVote = () => {
           <img
             src={menu2.imageUrl}
             alt={menu2.menuName}
-            className="w-50 h-40 object-cover rounded-lg mb-3"
+            className="w-full h-40 object-cover rounded-lg mb-3"
+            style={{ objectFit: 'cover' }} // 이미지가 컨테이너에 맞게 잘리면서 비율 유지
           />
           <button
             onClick={() => !hasVoted && voteMutate(2)}
@@ -106,9 +109,10 @@ const SsabapVote = () => {
                 : 'bg-blue-500 text-white hover:bg-blue-600'
             }`}
             disabled={menu2.votePercentage !== undefined}
+            style={{ cursor: 'pointer' }} // 마우스 올리면 클릭 표시
           >
             {menu2.votePercentage !== undefined
-              ? `${menu2.votePercentage * 100}%`
+              ? `${Math.round(menu2.votePercentage * 100)}%`
               : '?'}
           </button>
           <p className="text-ssacle-black text-center mt-2 font-medium text-sm">

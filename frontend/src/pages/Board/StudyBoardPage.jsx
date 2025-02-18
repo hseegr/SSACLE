@@ -140,9 +140,9 @@ const StudyBoardPage = () => {
   if (error) return <div>에러가 발생했습니다: {error.message}</div>
 
   return (
-    <main className="min-w-max my-20">
+    <main className="min-w-max">
       {/* 탭 메뉴 */}
-      <section className="my-10">
+      <section className="mb-5">
         <BoardTab
           tabs={studyTabs}
           activeTab={activeTab}

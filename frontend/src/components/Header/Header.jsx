@@ -52,8 +52,8 @@ const Header = () => {
         <Link to="/board/edu" className="hover:underline">
           학습게시판
         </Link>
-        <Link to="/board/free" className="hover:underline">
-          자유게시판
+        <Link to="/board/note" className="hover:underline">
+          노트 구매
         </Link>
       </nav>
 
