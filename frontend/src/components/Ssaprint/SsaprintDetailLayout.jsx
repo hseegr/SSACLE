@@ -57,16 +57,16 @@ const SsaprintDetailLayout = ({ sprintData }) => {
 
   return (
     <div className="mt-16 flex flex-col gap-4">
-      <h2 className="text-lg font-semibold flex items-center gap-2 pb-2 border-b-4 border-gray-200 w-full">
+      <h2 className="text-lg font-semibold flex items-center gap-2 pb-2 border-b-4 border-gray-200 min-w-[1000px] max-w-full flex-shrink-0">
         싸프린트 Info 💡
       </h2>
 
-      <div className="flex justify-between items-stretch gap-4 h-auto">
-        <div className="flex-1 h-auto">
+      <div className="flex gap-4 md:flex-row">
+        <div className="w-full md:flex-1 min-w-[42rem] min-h-[16rem]">
           <SprintBasicInfo sprint={sprint} categories={categories} />
         </div>
 
-        <div className="w-[18rem] flex-shrink-0 h-auto flex">
+        <div className="flex-shrink-0 min-w-[30%]">
           <SprintSummary
             recommendedFor={sprint.recommendedFor}
             benefits={benefits}
@@ -81,7 +81,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
           <SprintDetail sprint={sprint} benefits={benefits} todos={todos} />
         </div>
 
-        <div className="w-[17rem] flex-shrink-0">
+        <div className="min-w-[20rem] flex-shrink-0">
           {isJoined ? (
             <Button
               className="w-full bg-green-600 hover:bg-green-700"

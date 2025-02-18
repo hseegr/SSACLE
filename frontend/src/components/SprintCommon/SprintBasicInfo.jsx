@@ -53,13 +53,13 @@ const SprintBasicInfo = ({ sprint, categories }) => {
   const thumbnail = categories.find((category) => category.image)?.image
 
   return (
-    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white relative min-h-[7rem] w-[47rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
+    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white min-h-[10rem] min-w-[42rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 제목 및 설명 */}
       <div className="flex flex-col gap-0.5">
-        <h3 className="text-base font-bold">
+        <h3 className="text-lg font-bold mt-2">
           {sprint.name || '스프린트 이름 없음'}
         </h3>
-        <p className="text-xs text-gray-600">
+        <p className="text-md text-gray-600 mb-5">
           {sprint.basicDescription || '설명 없음'}
         </p>
       </div>
@@ -67,7 +67,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
       {/* 진행 기간 및 모집 정보 */}
       <div className="flex flex-col gap-1">
         {/* 진행 기간 */}
-        <div className="flex items-center gap-1 text-xs font-medium text-gray-700">
+        <div className="flex items-center gap-1 text-xs font-medium text-gray-700 mt-1">
           📅 <span className="font-semibold">진행 기간</span>
           <span>
             {formatDate(sprint.startAt)} ~ {formatDate(sprint.endAt)}
@@ -78,7 +78,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
         </div>
 
         {/* 모집 정보 */}
-        <div className="flex items-center gap-1 text-xs font-medium text-gray-700">
+        <div className="flex items-center gap-1 text-xs font-medium text-gray-700 mt-1">
           {recruitStatus.emoji} <span className="font-semibold">모집 인원</span>
           <span>
             {sprint.currentMembers ?? '0'}명 / {sprint.maxMembers ?? '0'}명
@@ -92,7 +92,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
       </div>
 
       {/* 태그 표시 (categories 적용) */}
-      <div className="flex flex-wrap gap-1.5 mt-2">
+      <div className="flex flex-wrap gap-1.5 mt-5">
         {categoryNames.map((category, index) => (
           <span
             key={index}
