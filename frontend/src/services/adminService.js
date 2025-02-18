@@ -95,17 +95,44 @@ export const fetchSearchSsaprint = async ({
 }
 
 // 싸프린트 상세 조회
-export const fetchSsaprintDetail = async (sprintId) => {
+export const fetchAdminSsaprintDetail = async (sprintId) => {
   if (!sprintId) {
     console.error('fetchSsaprintDetail: sprintId가 없습니다.')
     return null
   }
 
   try {
-    const response = await axios.get(ADMIN_END_POINT.SSAPRINT.DETAIL(sprintId)) // ✅ 동적 URL 적용
+    const response = await axios.get(ADMIN_END_POINT.SSAPRINT.DETAIL(sprintId))
     return response.data // ✅ API 응답 데이터 반환
   } catch (error) {
     console.error('❌ 싸프린트 상세 정보를 가져오는 중 오류 발생:', error)
     throw error
   }
+}
+
+// 싸프린트 상세 조회 속 유저 정보
+// export const fetchAdminSsaprintUser = async (sprintId) => {
+//   const response = await axios.get(ADMIN_END_POINT.SSAPRINT.USER(sprintId))
+//   return response.data
+// }
+
+export const fetchAdminSsaprintUser = async (sprintId) => {
+  if (!sprintId) {
+    console.error('fetchSsaprintUser: sprintId가 없습니다.')
+    return []
+  }
+
+  try {
+    const response = await axios.get(ADMIN_END_POINT.SSAPRINT.USER(sprintId)) // ✅ 동적 URL 적용
+    return response.data
+  } catch (error) {
+    console.error('❌ 싸프린트 유저 정보를 가져오는 중 오류 발생:', error)
+    return []
+  }
+}
+
+// 싸프린트 상세 조회 카드 조회
+export const fetchAdminQuestionCards = async (sprintId) => {
+  const response = await axios.get(ADMIN_END_POINT.SSAPRINT.CARD(sprintId))
+  return response.data
 }

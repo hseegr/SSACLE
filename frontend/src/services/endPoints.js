@@ -121,6 +121,8 @@ export const ADMIN_END_POINT = {
   SSAPRINT: {
     LIST: '/search',
     DETAIL: (sprintId) => `/${sprintId}/details`,
+    USER: (sprintId) => `${sprintId}/users`,
+    CARD: (sprintId) => `${sprintId}/users`,
     CREATE: {
       CATEGORY_ALL: '/category/all', // 전체 카테고리 조회
       GPT_TODOS: '/gpt/todos', // gpt 상세 내용 생성

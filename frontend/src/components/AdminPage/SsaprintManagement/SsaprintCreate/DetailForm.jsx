@@ -88,6 +88,12 @@ const DetailsForm = () => {
   return (
     <div className="w-3/5 py-8">
       <h2 className="text-ssacle-black text-lg font-bold">세부 정보 입력</h2>
+      <p className="text-ssacle-blue text-sm">
+        싸프린트 이름과 인원 수를 제외한 내용은 AI가 채워줘요 😊
+      </p>
+      <p className="text-ssacle-gray text-sm">
+          AI가 채워준 내용은 직접 수정할 수 있어요. 자유롭게 수정한 후 등록해주세요!
+        </p>
       <div className="mt-4">
         {/* 싸프린트 이름 입력 */}
         <div>

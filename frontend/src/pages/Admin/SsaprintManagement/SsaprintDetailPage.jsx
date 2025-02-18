@@ -7,10 +7,12 @@ import { useParams } from 'react-router-dom'
 import { fetchSsaprintDetail } from '@/services/ssaprintService'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/components/AdminPage/SsaprintManagement/SearchSsaprint'
+import { fetchAdminSsaprintUser } from '@/services/adminService'
 
 const SsaprintDetail = () => {
   const { id: sprintId } = useParams()
   const [sprintData, setSprintData] = useState(null)
+  const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -23,6 +25,7 @@ const SsaprintDetail = () => {
           return
         }
         const data = await fetchSsaprintDetail(sprintId)
+        const sprintUsers = await fetchAdminSsaprintUser(sprintId)
         setSprintData(data)
       } catch (err) {
         setError('데이터를 불러오는 중 오류가 발생했습니다.')
@@ -36,22 +39,22 @@ const SsaprintDetail = () => {
   if (loading) return <p className="text-center">데이터 로딩 중...</p>
   if (error) return <p className="text-center text-red-500">{error}</p>
 
-  const mockMembers = [
-    { id: 1, nickname: '미셸', imageUrl: '' },
-    { id: 2, nickname: '쥬니', imageUrl: '' },
-    { id: 3, nickname: '펠릭', imageUrl: '' },
-    { id: 4, nickname: '시베리아', imageUrl: '' },
-  ]
+  // const mockMembers = [
+  //   { id: 1, nickname: '미셸', imageUrl: '' },
+  //   { id: 2, nickname: '쥬니', imageUrl: '' },
+  //   { id: 3, nickname: '펠릭', imageUrl: '' },
+  //   { id: 4, nickname: '시베리아', imageUrl: '' },
+  // ]
 
   return (
     <div className="max-w-full min-w-max flex flex-col justify-center items-center p-6 gap-6">
       <h1 className="text-2xl font-bold text-center">싸프린트 상세 조회</h1>
-      <p>ID: {sprintId}</p>
+      {/* <p>ID: {sprintId}</p> */}
       {/* 스프린트 기본 정보 */}
       <SsaprintInfo
         title={sprintData.sprint.name}
         topic={
-          sprintData.categories?.map((cat) => cat.categoryName).join(' < ') ||
+          sprintData.categories?.map((cat) => cat.categoryName).join('  |  ') ||
           'N/A'
         }
         period={`${formatDate(sprintData?.sprint?.startAt)} ~ ${formatDate(sprintData?.sprint?.endAt)}`}
@@ -63,16 +66,16 @@ const SsaprintDetail = () => {
         <h2 className="text-ssacle-blue text-lg font-semibold text-center">
           스프린트 멤버
         </h2>
-        <div className="flex justify-center gap-4">
-          {(sprintData?.members?.length ? sprintData.members : mockMembers).map(
-            (member) => (
-              <UserProfile
-                key={member.id}
-                imageUrl={member.imageUrl}
-                nickname={member.nickname}
-              />
-            )
-          )}
+        <div className="flex justify-center gap-4 text-sm m-4">
+          {members.length > 0
+            ? members.map((member) => (
+                <UserProfile
+                  key={member.id}
+                  imageUrl={member.imageUrl}
+                  nickname={member.nickname}
+                />
+              ))
+            : '참여 멤버가 없습니다.'}
         </div>
       </div>
 

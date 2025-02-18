@@ -14,14 +14,15 @@ const UserList = () => {
   }, []);
 
   return (
-    <div>
-      <h1>유저 목록</h1>
-      <UserTable users={users} />
+    <div className="flex flex-col justify-center items-center p-6 gap-12 w-full min-w-max ">
+      <h1 className="text-2xl font-bold text-center">유저 관리</h1>
+      <p className="text-xl text-ssacle-gray">⚠️ 페이지 준비 중입니다!</p>
+      {/* <UserTable users={users} />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-      />
+      /> */}
     </div>
   );
 };

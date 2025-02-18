@@ -89,7 +89,7 @@ const SsaprintListPage = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center p-6 gap-1 max-w-full min-w-max ">
+    <div className="flex flex-col justify-center p-6 gap-1 w-full min-w-max ">
       <h1 className="text-2xl font-bold text-center">싸프린트 관리</h1>
       {/* 삭제 버튼 & 생성하기 버튼 영역 */}
       <div className="flex justify-between items-center m-2">

@@ -1,29 +1,57 @@
-import CommonTable from "../../CommonTable";
-import { useState } from "react";
+import { fetchAdminQuestionCards } from '@/services/adminService'
+import CommonTable from '../../CommonTable'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 const SsaprintQuestionTable = () => {
-  const [selectedRows, setSelectedRows] = useState([]);
+  const { id: sprintId } = useParams()
+  const [questionData, setQuestionData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedRows, setSelectedRows] = useState([])
 
-  // 질문카드 데이터 (예제)
-  const questionData = [
-    {
-      id: "ABC1234",
-      description: "useState는 무엇을 위한 React Hook인가요?",
-      createdAt: "2025-01-27",
-      userId: "user123",
-      userNickname: "나는미셸",
-    },
-    // 추가 데이터 삽입 가능
-  ];
+  useEffect(() => {
+    const fetchQuestionCards = async () => {
+      try {
+        if (!sprintId) {
+          throw new Error('스프린트 ID가 없습니다.')
+        }
+
+        const data = await fetchAdminQuestionCards(sprintId)
+        setQuestionData(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuestionCards()
+  }, [sprintId])
+
+  // 테이블에 기본 5개의 빈 행 추가
+  const displayData =
+    questionData.length > 0
+      ? questionData
+      : Array.from({ length: 5 }, (_, index) => ({
+          id: ` `,
+          description: ` `,
+          createdAt: ` `,
+          teamId: ` `,
+          opened: ` `,
+        }))
 
   // 테이블 컬럼 정의
   const columns = [
-    { key: "id", label: "질문카드 ID", width: "15%" },
-    { key: "description", label: "질문 내용", width: "40%" },
-    { key: "createdAt", label: "작성일", width: "20%" },
-    { key: "userId", label: "user ID", width: "15%" },
-    { key: "userNickname", label: "닉네임", width: "10%" },
-  ];
+    { key: 'id', label: '질문카드 ID', width: '15%' },
+    { key: 'description', label: '질문 내용', width: '40%' },
+    { key: 'createdAt', label: '작성일', width: '20%' },
+    { key: 'teamId', label: '팀 ID', width: '15%' },
+    { key: 'opened', label: '공개 여부', width: '10%' },
+  ]
+
+  if (loading) return <p className="text-center">데이터 로딩 중...⏳</p>
+  if (error) return <p className="text-center text-red-500">{error}</p>
 
   return (
     <div>
@@ -32,13 +60,13 @@ const SsaprintQuestionTable = () => {
       </h2>
       <CommonTable
         columns={columns}
-        data={questionData}
+        data={displayData}
         selectable={true}
         onSelect={setSelectedRows}
         perPage={5}
       />
     </div>
-  );
-};
+  )
+}
 
-export default SsaprintQuestionTable;
+export default SsaprintQuestionTable
