@@ -1,4 +1,37 @@
 // @ts-nocheck
+import { useNavigate } from 'react-router-dom'
+
+const stackLogos = {
+  Angular: '/src/assets/logo/Angular.png',
+  AWS: '/src/assets/logo/AWS.png',
+  Azure: '/src/assets/logo/Azure.png',
+  'C#': '/src/assets/logo/C#.png',
+  'C++': '/src/assets/logo/C++.png',
+  CSS3: '/src/assets/logo/CSS3.png',
+  default: '/src/assets/logo/default.png',
+  Django: '/src/assets/logo/Django.png',
+  Docker: '/src/assets/logo/Docker.png',
+  'Google Cloud': '/src/assets/logo/Google Cloud.png',
+  HTML5: '/src/assets/logo/HTML5.png',
+  Java: '/src/assets/logo/Java.png',
+  JavaScript: '/src/assets/logo/JavaScript.png',
+  Kubernetes: '/src/assets/logo/Kubernetes.png',
+  MariaDB: '/src/assets/logo/MariaDB.png',
+  MongoDB: '/src/assets/logo/MongoDB.png',
+  MySQL: '/src/assets/logo/MySQL.png',
+  NestJS: '/src/assets/logo/NestJS.png',
+  'Node.js': '/src/assets/logo/Node.js.png',
+  Oracle: '/src/assets/logo/Oracle.png',
+  PostgreSQL: '/src/assets/logo/PostgreSQL.png',
+  Python: '/src/assets/logo/Python.png',
+  React: '/src/assets/logo/React.png',
+  Redis: '/src/assets/logo/Redis.png',
+  'Ruby on Rails': '/src/assets/logo/Ruby on Rails.png',
+  Spring: '/src/assets/logo/Spring.png',
+  Svelte: '/src/assets/logo/svelte.png',
+  'Vue.js': '/src/assets/logo/Vue.js.png',
+}
+
 const SprintBasicInfo = ({ sprint, categories }) => {
   if (!sprint) {
     return <p className="text-gray-500">데이터를 불러오는 중...</p>
@@ -46,20 +79,26 @@ const SprintBasicInfo = ({ sprint, categories }) => {
     sprint.maxMembers
   )
 
-  // 카테고리명 목록 추출
-  const categoryNames = categories.map((category) => category.categoryName)
+  // 카테고리명 목록 (최대 2개까지만)
+  const categoryNames = categories
+    .map((category) => category.categoryName)
+    .slice(0, 2) // 최대 2개까지만 선택
 
-  // 첫 번째 이미지가 있는 카테고리의 image를 썸네일로 사용
-  const thumbnail = categories.find((category) => category.image)?.image
+  // 썸네일 선택 로직
+  const categoryWithImage = categories.find((category) => category.image)
+  const stackImage =
+    stackLogos[categoryNames[0]] || stackLogos[categoryNames[1]]
+
+  const thumbnail = categoryWithImage?.image || stackImage || stackLogos.default
 
   return (
-    <div className="p-5 border rounded-xl shadow-md flex flex-col bg-white min-h-[10rem] min-w-[42rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
+    <div className="relative p-5 border rounded-xl shadow-md flex flex-col bg-white min-h-[10rem] min-w-[42rem] flex-grow-0 flex-shrink-0 gap-2.5 h-full">
       {/* 스프린트 제목 및 설명 */}
       <div className="flex flex-col gap-0.5">
         <h3 className="text-lg font-bold mt-2">
           {sprint.name || '스프린트 이름 없음'}
         </h3>
-        <p className="text-md text-gray-600 mb-5">
+        <p className="text-sm text-gray-600 mb-5">
           {sprint.basicDescription || '설명 없음'}
         </p>
       </div>
@@ -92,7 +131,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
       </div>
 
       {/* 태그 표시 (categories 적용) */}
-      <div className="flex flex-wrap gap-1.5 mt-5">
+      <div className="flex flex-wrap gap-1.5 mt-9">
         {categoryNames.map((category, index) => (
           <span
             key={index}
@@ -108,7 +147,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
         <img
           src={thumbnail}
           alt="Sprint Thumbnail"
-          className="absolute bottom-3 right-3 w-10 h-10 opacity-80"
+          className="absolute bottom-8 right-6 w-14 h-14 opacity-90"
         />
       )}
     </div>

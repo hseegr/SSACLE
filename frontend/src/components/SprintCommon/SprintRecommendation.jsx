@@ -1,3 +1,4 @@
+// @ts-nocheck
 const SprintRecommendation = ({ recommendedFor }) => {
   // 추천 대상 목록을 쉼표로 분리하여 배열로 변환
   const recommendationList = recommendedFor
@@ -6,7 +7,7 @@ const SprintRecommendation = ({ recommendedFor }) => {
 
   return (
     <div className="p-4 bg-gray-50 rounded-lg">
-      <h2 className="text-sm font-semibold text-gray-800 mb-1">
+      <h2 className="text-lg font-semibold text-gray-800 mb-3">
         이런 분께 추천해요!
       </h2>
       <ul className="list-none space-y-1">

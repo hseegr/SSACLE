@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
 const JoinSprintInfo = ({ sprintData, isOpen, setIsOpen }) => {

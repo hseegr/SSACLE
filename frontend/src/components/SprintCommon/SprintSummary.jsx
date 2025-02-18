@@ -10,10 +10,10 @@ const SprintSummary = ({
     : []
 
   return (
-    <div className="p-3 rounded-lg bg-gray-50 shadow-md flex flex-col gap-1 min-w-[30%] shrink-0 h-full">
+    <div className="p-3 rounded-lg bg-gray-50 shadow-md flex flex-col gap-1 min-w-[20rem] max-h-[20rem] shrink-0 h-full">
       {/* 추천 대상 */}
-      <h3 className="text-md mt-2 font-bold">이런 분께 추천해요!</h3>
-      <ul className="flex flex-col gap-1 text-sm text-gray-700 flex-grow">
+      <h3 className="text-[14px] mt-2 font-bold">이런 분께 추천해요!</h3>
+      <ul className="flex flex-col gap-1 text-[12px] text-gray-700 flex-grow">
         {formattedRecommendedFor.length > 0 ? (
           formattedRecommendedFor.map((item, index) => (
             <li key={index} className="flex items-center gap-1">
@@ -26,8 +26,8 @@ const SprintSummary = ({
       </ul>
 
       {/* 수료 후 혜택 */}
-      <h3 className="text-md font-bold mt-2">수료 후 혜택</h3>
-      <ul className="flex flex-col gap-1 text-sm text-gray-700 flex-grow">
+      <h3 className="text-[14px] font-bold mt-2">수료 후 혜택</h3>
+      <ul className="flex flex-col gap-1 text-[11px] text-gray-700 flex-grow">
         {benefits.length > 0 ? (
           benefits.map((benefit, index) => (
             <li key={index} className="flex items-center gap-1">
@@ -40,7 +40,7 @@ const SprintSummary = ({
       </ul>
 
       {/* 모집 정보 */}
-      <h3 className="text-md font-bold flex items-center gap-1 mt-2 mb-3">
+      <h3 className="text-[14px] font-bold flex items-center gap-1 mt-2 mb-3">
         📌 현재 모집 완료 : {participation}명 / {recruit}명
       </h3>
     </div>

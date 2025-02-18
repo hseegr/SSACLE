@@ -61,12 +61,12 @@ const SsaprintDetailLayout = ({ sprintData }) => {
         싸프린트 Info 💡
       </h2>
 
-      <div className="flex gap-4 md:flex-row">
+      <div className="flex gap-4 md:flex-row h-[17rem]">
         <div className="w-full md:flex-1 min-w-[42rem] min-h-[16rem]">
           <SprintBasicInfo sprint={sprint} categories={categories} />
         </div>
 
-        <div className="flex-shrink-0 min-w-[30%]">
+        <div className="flex-shrink-0 w-[20rem]">
           <SprintSummary
             recommendedFor={sprint.recommendedFor}
             benefits={benefits}

@@ -37,13 +37,13 @@ const SprintProgress = () => {
     {
       icon: '🏆',
       highlight: '모든 과정이 끝나면',
-      text: ', 우수 발표자를 투표로 선정하고 포인트를 지급합니다.',
+      text: ', 우수 발표자를 투표로 선정하고, 최종 우수 활동자에게는 포인트를 지급합니다.',
     },
   ]
 
   return (
     <div className="p-4 bg-gray-50 rounded-lg">
-      <h2 className="text-sm font-semibold text-gray-800 mb-1">
+      <h2 className="text-lg font-semibold text-gray-800 mb-3">
         싸프린트 진행 방식
       </h2>
       <p className="text-sm text-gray-700">
@@ -51,7 +51,7 @@ const SprintProgress = () => {
         <span className="font-semibold">학습 → 발표 & 질문/답변 → 투표</span>의
         순서로 진행됩니다.
       </p>
-      <ul className="list-none space-y-1 mt-2">
+      <ul className="list-none space-y-1 mt-3">
         {progressSteps.map((step, index) => (
           <ProgressItem
             key={index}
@@ -61,6 +61,9 @@ const SprintProgress = () => {
           />
         ))}
       </ul>
+      <p className="text-sm text-gray-500 mt-3">
+        🌟 최종 평가는 학습 노트, ToDo, 발표 & 답변 등을 기반으로 진행됩니다. 🌟
+      </p>
     </div>
   )
 }
