@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useMemo } from 'react'
 import { FaPlus, FaTimes } from 'react-icons/fa'
 import {
@@ -81,7 +82,7 @@ const SprintToDoList = ({ todos, teamId, refreshTodos }) => {
     <div className="p-4 bg-white shadow-md rounded-lg w-full min-h-[42rem] flex flex-col justify-between">
       {/* 상단 - 제목 & 날짜 */}
       <div>
-        <h2 className="text-lg font-bold mb-4">To-Do List ✅</h2>
+        <h2 className="text-lg font-bold mt-2 mb-4">To-Do List ✅</h2>
         <h3 className="text-md font-semibold">{today}</h3>
 
         {/* 할 일 목록 */}
@@ -121,8 +122,8 @@ const SprintToDoList = ({ todos, teamId, refreshTodos }) => {
       </div>
 
       {/* 하단 - 입력창 & 추가 버튼 */}
-      <div className="mt-4">
-        <p className="text-blue-500 text-xs font-semibold mb-2">
+      <div className="mt-4 mb-6">
+        <p className="text-blue-500 text-sm font-semibold mb-2">
           ToDo를 추가할 수 있어요!
         </p>
         <div className="flex items-center gap-2">
@@ -132,7 +133,7 @@ const SprintToDoList = ({ todos, teamId, refreshTodos }) => {
             onChange={(e) => setNewTask(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="새로운 To-Do 입력"
-            className="flex-1 p-1.5 border rounded-md focus:outline-none text-xs"
+            className="flex-1 p-1.5 border rounded-md focus:outline-none text-sm"
           />
           <button
             onClick={handleAddTask}

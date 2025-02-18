@@ -36,13 +36,13 @@ const SprintPresentationSession = ({ sprint }) => {
       <h2 className="mt-2 mb-2 font-bold text-md">
         싸프린트 발표 & 질문/답변 세션
       </h2>
-      <p className="text-xs text-gray-600">
+      <p className="text-sm text-gray-600">
         {presentationDate.format('YYYY년 M월 D일 A h시 ~')}
       </p>
 
       {/* D-Day & 입장 버튼 */}
-      <div className="flex items-center justify-between mt-6">
-        <span className="font-bold text-blue-600 text-md">
+      <div className="mt-7 mb-1 flex items-center justify-between">
+        <span className="text-blue-600 text-md font-bold">
           {dDay === 0 ? 'D-DAY' : `D-DAY ${dDay}`}
         </span>
 

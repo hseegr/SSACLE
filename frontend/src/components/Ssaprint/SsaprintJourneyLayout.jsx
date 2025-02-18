@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useState } from 'react'
 import SprintProgressStatus from '@/components/SprintCommon/SprintProgressStatus'
 import JoinSprintInfo from '@/components/SprintCommon/JoinSprintInfo'
@@ -46,34 +47,41 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
   return (
     <div className="mt-16 flex flex-col gap-4 items-start w-full px-0">
       {/* 첫 번째 줄 - JoinSprintInfo + SprintProgressStatus */}
-      <div className="flex flex-col lg:flex-row w-full gap-6">
+      <div className="flex w-full gap-6">
         {/* 왼쪽 영역 - JoinSprintInfo + SprintDetail */}
-        <div className="flex-1 min-w-[60%]">
+        <div className="min-w-[42rem] w-full">
           <JoinSprintInfo
             sprintData={sprintData}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           />
-          {isOpen && (
+          {/* SprintDetail이 펼쳐질 때 높이를 조정하여 다른 컴포넌트와 겹치지 않도록 함 */}
+          <div
+            className={`transition-all duration-300 ${
+              isOpen
+                ? 'min-h-[300px] opacity-100'
+                : 'h-0 opacity-0 overflow-hidden'
+            }`}
+          >
             <SprintDetail
               sprint={sprint}
               benefits={benefits}
               todos={sprintData.todos || []}
             />
-          )}
+          </div>
         </div>
 
         {/* 오른쪽 영역 - SprintProgressStatus */}
-        <div className="w-full lg:w-[27%] flex flex-col">
-          <div className="mb-10">
+        <div className="min-w-[20rem] flex flex-col">
+          <div className="mb-11">
             {/* '내 노트 공개' 토글 컴포넌트 추가 예정 */}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-10">
             <SprintProgressStatus sprint={sprint} />
           </div>
 
-          <div className="mt-1">
+          <div className="mt-3 mb-1">
             {/* 노션 이동 버튼 */}
             <Button
               className="w-full"
@@ -87,17 +95,17 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
         </div>
       </div>
 
-      <div className="border-t-4 border-gray-200 w-full"></div>
+      <div className="border-t-4 border-gray-200 min-w-[63rem] w-full"></div>
 
       {/* 두 번째 줄 - 캘린더 + To-Do List */}
-      <div className="flex w-full gap-5 mb-10">
+      <div className="flex w-full gap-5 mt-4 mb-4">
         {/* 캘린더 */}
-        <div className="flex-1 bg-white shadow-md rounded-lg p-4">
+        <div className="flex-1 min-w-[42rem] bg-white shadow-md rounded-lg p-4">
           <SprintCalendar sprint={sprint} diaries={diaries} />
         </div>
 
         {/* To-Do 리스트 및 발표 세션 */}
-        <div className="lg:w-[26%]">
+        <div className="min-w-[20rem]">
           <div
             className={`relative ${isBeforeStart ? 'opacity-30 pointer-events-none cursor-not-allowed' : ''}`}
           >
@@ -118,6 +126,7 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
       {/* 질문카드 */}
       <div
         className={`flex w-full shadow-md rounded-lg p-4 mb-10 ${isBeforeStart ? 'opacity-30 pointer-events-none cursor-not-allowed' : ''}`}
+        style={{ minWidth: '1020px' }}
       >
         <SprintQuestionCards sprintId={sprint.id} teamId={team?.id} />
       </div>
