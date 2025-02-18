@@ -168,10 +168,10 @@ const ItemCard = ({ item, domain }) => {
               </span>
             </div>
 
-            <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
+            {/* <div className="flex items-center gap-1 text-[10px] font-medium text-gray-700">
               👤 <span className="font-semibold">팀 당 인원:</span>
               <span className="mx-1">{item.maxMembers}명</span>
-            </div>
+            </div> */}
           </>
         )}
       </div>

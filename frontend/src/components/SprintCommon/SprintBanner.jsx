@@ -1,6 +1,7 @@
+// @ts-nocheck
 const SprintBanner = ({ title, description, domain }) => {
   // 도메인별 배경색 설정
-  const bgColor = domain === 'ssaprint' ? 'bg-[#F0F7F3]' : 'bg-[#F1F0F7]'
+  const bgColor = domain === 'ssaprint' ? 'bg-[#E6F8EF]' : 'bg-[#F0EEFF]'
 
   return (
     <section
