@@ -35,7 +35,7 @@ const refreshAccessToken = async () => {
     }
   } catch (error) {
     console.error('❌ 토큰 갱신 실패:', error)
-    window.location.href = '/login'
+    window.location.href = '/account/login'
     throw error
   }
 }

@@ -1,6 +1,6 @@
 import { useSsaprint } from '@/contexts/SsaprintContext'
 
-const SelectDropdown = ({ label, type, options }) => {
+const SelectDropdown = ({ label, type, options, disabled }) => {
   const {
     selectedMain,
     setSelectedMain,
@@ -39,14 +39,12 @@ const SelectDropdown = ({ label, type, options }) => {
       <select
         className={`w-full bg-ssacle-gray-sm rounded-full p-3 appearance-none focus:outline-ssacle-blue pr-8 ${
           getValue() ? 'text-ssacle-blue' : 'text-ssacle-gray'
-        }`}
+        } ${disabled ? 'bg-gray-200 cursor-not-allowed' : ''}`}
         value={getValue()}
         onChange={handleChange}
-        disabled={options.length === 0} // 옵션 없을 때 비활성화
+        disabled={disabled || options.length === 0} // 옵션 없을 때& 상세 정보를 만들었을 때 비활성화
       >
-        <option value="">
-          선택하세요
-        </option>
+        <option value="">선택하세요</option>
         {options.map((option, index) => (
           <option key={index} value={option.value}>
             {option.label}

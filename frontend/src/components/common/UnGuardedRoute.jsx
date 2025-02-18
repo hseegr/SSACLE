@@ -3,6 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import httpCommon from '@/services/http-common'
 
 const UnGuardedRoute = () => {
+
+
+  
   const { data, isLoading } = useQuery({
     queryKey: ['checkAuth'],
     queryFn: async () => {

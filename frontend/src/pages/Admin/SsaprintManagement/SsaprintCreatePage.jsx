@@ -24,7 +24,6 @@ const SsaprintCreate = () => {
     transformSsaprintData,
     getTomorrowDate,
   } = useSsaprint()
-
   const [showDetails, setShowDetails] = useState(
     localStorage.getItem('showDetails') === 'true'
   )
@@ -38,7 +37,7 @@ const SsaprintCreate = () => {
     onSuccess: (data) => {
       alert(`싸프린트 생성 완료! ID: ${data.ssaprintId}`)
       clearLocalStorage()
-      navigate('/admin/user')
+      navigate('/admin/ssaprint')
     },
     onError: (error) => {
       alert(
@@ -69,7 +68,7 @@ const SsaprintCreate = () => {
     if (showDetails) {
       localStorage.removeItem('showDetails')
       clearLocalStorage()
-      navigate('/admin/user')
+      navigate('/admin/ssaprint')
     } else {
       if (
         !startDate ||
@@ -114,7 +113,7 @@ const SsaprintCreate = () => {
         </p>
         <div className="border-t-4 border-ssacle-gray-sm my-4"></div>
 
-        <CategorySelect />
+        <CategorySelect disabled={showDetails} />
 
         {/* + 버튼 추가 */}
         <div className="flex justify-center mt-4">
@@ -133,6 +132,7 @@ const SsaprintCreate = () => {
             value={startDate}
             setValue={setStartDate}
             min={getTomorrowDate()}
+            disabled={showDetails}
           />
           <DateInput
             label="종료일"
@@ -160,7 +160,7 @@ const SsaprintCreate = () => {
                     .split('T')[0]
                 : ''
             } // 시작일 +6일 설정
-            disabled={!startDate}
+            disabled={showDetails || !startDate}
           />
         </div>
       </div>

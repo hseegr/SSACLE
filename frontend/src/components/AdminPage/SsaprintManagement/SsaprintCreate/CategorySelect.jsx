@@ -2,7 +2,7 @@ import SelectDropdown from '@/components/AdminPage/SsaprintManagement/SsaprintCr
 import { useSsaprint } from '@/contexts/SsaprintContext'
 import useCategories from '@/hooks/useCategories'
 
-const CategorySelect = () => {
+const CategorySelect = ({ disabled }) => {
   const { selectedMain, selectedMid } = useSsaprint()
   const { categories, isLoading, isError } = useCategories()
 
@@ -39,9 +39,24 @@ const CategorySelect = () => {
 
   return (
     <div className="flex flex-wrap justify-between">
-      <SelectDropdown label="대주제" type="main" options={mainCategories} />
-      <SelectDropdown label="중주제" type="mid" options={midCategories} />
-      <SelectDropdown label="소주제" type="sub" options={subCategories} />
+      <SelectDropdown
+        label="대주제"
+        type="main"
+        options={mainCategories}
+        disabled={disabled}
+      />
+      <SelectDropdown
+        label="중주제"
+        type="mid"
+        options={midCategories}
+        disabled={disabled}
+      />
+      <SelectDropdown
+        label="소주제"
+        type="sub"
+        options={subCategories}
+        disabled={disabled}
+      />
     </div>
   )
 }

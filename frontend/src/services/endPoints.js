@@ -14,6 +14,8 @@ export const AUTH_END_POINT = {
   CHECK_INTERESTS: (interests) =>
     `/auth/check-interest?${interests.map((i) => `interests=${i}`).join('&')}`,
 
+  SEARCH_CATEGORY: '/category/all',
+
   // 회원가입 & 로그인 기능
   SIGNUP: '/join', // 회원가입
   LOGIN: '/login', // 로그인

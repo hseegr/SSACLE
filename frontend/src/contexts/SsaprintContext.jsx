@@ -76,7 +76,7 @@ export const SsaprintProvider = ({ children }) => {
   const transformSsaprintData = () => {
     // console.log('❤️ 변환 전 todos 데이터:', description.todos)
 
-    let todosArray = [];
+    let todosArray = []
 
     if (
       typeof description.todos === 'string' &&
@@ -155,7 +155,7 @@ export const SsaprintProvider = ({ children }) => {
     setRawStartDate('')
     setRawEndDate('')
     setSprintName('')
-    setMaxParticipants(1)
+    setMaxParticipants(2)
     setDescription({
       // description 초기화 추가
       basicDescription: '',

@@ -24,6 +24,12 @@ export const fetchSaveInterest = (userId, interests) =>
     interestCategoryNames: interests,
   })
 
+// 카테고리 조회 (GET)
+export const fetchSignupLoadCategory = async () => {
+  const response = await axios.get(AUTH_END_POINT.SEARCH_CATEGORY)
+  return response.data
+}
+
 // 7. 회원가입 (POST)
 
 export const fetchSignup = async (userData) => {

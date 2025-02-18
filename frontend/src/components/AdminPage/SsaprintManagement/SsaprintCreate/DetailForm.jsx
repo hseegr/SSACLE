@@ -2,6 +2,7 @@ import { useSsaprint } from '@/contexts/SsaprintContext'
 import { useGptTodos } from '@/hooks/useGptTodos'
 import { RingLoader } from 'react-spinners'
 import { useState, useEffect } from 'react'
+import { data } from 'react-router-dom'
 
 const DetailsForm = () => {
   const {
@@ -14,12 +15,10 @@ const DetailsForm = () => {
   } = useSsaprint()
   const { data: gptData, isPending, isError } = useGptTodos()
   const [isDataUpdated, setIsDataUpdated] = useState(false)
-
   // GPT 데이터를 description 상태에 저장
   useEffect(() => {
     // 데이터가 존재하고, API 로딩이 끝난 상태에서만 실행
     if (gptData && !isPending && !isDataUpdated) {
-      console.log('🔥 GPT 응답 데이터 (useEffect 내부):', gptData)
       setDescription((prev) => {
         const newDescription = {
           basicDescription:
@@ -33,10 +32,10 @@ const DetailsForm = () => {
                 .join('\n')
             : prev.todos || '',
         }
-        console.log(
-          '🔥 컨텍스트 업데이트 실행 (setDescription):',
-          newDescription
-        )
+        // console.log(
+        //   '🔥 컨텍스트 업데이트 실행 (setDescription):',
+        //   newDescription
+        // )
         return newDescription
       })
       setIsDataUpdated(true) // 한 번만 실행되도록 설정
@@ -92,17 +91,19 @@ const DetailsForm = () => {
         싸프린트 이름과 인원 수를 제외한 내용은 AI가 채워줘요 😊
       </p>
       <p className="text-ssacle-gray text-sm">
-          AI가 채워준 내용은 직접 수정할 수 있어요. 자유롭게 수정한 후 등록해주세요!
-        </p>
+        AI가 채워준 내용은 직접 수정할 수 있어요. 자유롭게 수정한 후
+        등록해주세요!
+      </p>
       <div className="mt-4">
         {/* 싸프린트 이름 입력 */}
         <div>
           <label className="text-ssacle-black text-sm font-bold">
-            싸프린트 이름
+            싸프린트 이름{' '}
+            <span className="text-ssacle-gray text-xs">(20자 이내)</span>
           </label>
           <input
             type="text"
-            maxLength={100}
+            maxLength={20}
             className="w-full p-3 border border-ssacle-gray-sm focus:outline-ssacle-blue rounded-md resize-none overflow-y-auto text-ssacle-black text-sm"
             value={sprintName}
             onChange={(e) => setSprintName(e.target.value)}

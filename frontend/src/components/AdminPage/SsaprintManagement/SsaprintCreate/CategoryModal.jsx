@@ -122,56 +122,55 @@ const CategoryModal = ({ onClose }) => {
 
   // 카테고리 생성 요청
   const handleCreateCategory = () => {
-    if (!selectedMain) return alert('최상위 카테고리를 입력해야 합니다.');
-  
-    const mainCategoryName = selectedMainCategory?.categoryName || selectedMain;
+    if (!selectedMain) return alert('최상위 카테고리를 입력해야 합니다.')
+
+    const mainCategoryName = selectedMainCategory?.categoryName || selectedMain
     if (!mainCategoryName)
-      return alert('선택한 최상위 카테고리가 존재하지 않습니다.');
-  
-    let midCategoryName = selectedMid || null;
-    let subCategoryName = selectedSub || null;
-  
+      return alert('선택한 최상위 카테고리가 존재하지 않습니다.')
+
+    let midCategoryName = selectedMid || null
+    let subCategoryName = selectedSub || null
+
     // 중주제를 직접 입력할 경우, 이미지 필수 체크
     if (customInput.mid && !uploadedImage) {
-      return alert('중주제를 생성할 때는 이미지가 필수입니다!');
+      return alert('중주제를 생성할 때는 이미지가 필수입니다!')
     }
-  
+
     // 중주제가 기존에 존재하는 경우와 새로 생성하는 경우 구분
     if (!customInput.mid && selectedMid) {
       const existingMidCategory = selectedMainCategory?.subCategories?.find(
         (sub) => String(sub.id) === selectedMid
-      );
-  
+      )
+
       if (!existingMidCategory) {
-        return alert('선택한 중주제가 존재하지 않습니다.');
+        return alert('선택한 중주제가 존재하지 않습니다.')
       }
-      midCategoryName = existingMidCategory.categoryName;
+      midCategoryName = existingMidCategory.categoryName
     }
-  
+
     // 소주제가 기존에 존재하는 경우 확인 후 차단
     if (!customInput.sub && selectedSub) {
       const existingSubCategory = selectedMidCategory?.subCategories?.find(
         (sub) => String(sub.id) === selectedSub
-      );
-  
+      )
+
       if (existingSubCategory) {
-        return alert('이미 존재하는 카테고리입니다.');
+        return alert('이미 존재하는 카테고리입니다.')
       }
-  
-      subCategoryName = existingSubCategory?.categoryName || selectedSub;
+
+      subCategoryName = existingSubCategory?.categoryName || selectedSub
     }
-  
+
     const categoryData = {
       param1: mainCategoryName,
       param2: midCategoryName || null,
       param3: subCategoryName || null,
       image: uploadedImage || null,
-    };
-  
+    }
+
     // console.log('🚀 API 요청 전송:', categoryData);
-    createCategory(categoryData);
-  };
-  
+    createCategory(categoryData)
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -242,13 +241,18 @@ const CategoryModal = ({ onClose }) => {
               <option value="custom">직접 입력</option>
             </select>
           ) : (
-            <input
-              type="text"
-              className="w-full p-3 border rounded-md"
-              placeholder="중주제 입력"
-              value={selectedMid}
-              onChange={(e) => setSelectedMid(e.target.value)}
-            />
+            <div className="w-full">
+              <input
+                type="text"
+                className="w-full p-3 border rounded-md"
+                placeholder="중주제 입력"
+                value={selectedMid}
+                onChange={(e) => setSelectedMid(e.target.value)}
+              />
+              <p className="text-gray-600 text-xs mt-2 ml-2">
+                중주제의 로고 이미지를 넣어주세요!
+              </p>
+            </div>
           )}
           {customInput.mid && (
             <label className="ml-3 cursor-pointer">
@@ -264,6 +268,7 @@ const CategoryModal = ({ onClose }) => {
               )}
             </label>
           )}
+
         </div>
 
         {/* 소주제 선택 (직접 입력 가능) */}
