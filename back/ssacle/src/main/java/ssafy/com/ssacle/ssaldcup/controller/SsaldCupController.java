@@ -6,10 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ssafy.com.ssacle.match.domain.Game;
+import ssafy.com.ssacle.match.service.GameService;
 import ssafy.com.ssacle.ssaldcup.dto.*;
 import ssafy.com.ssacle.ssaldcup.service.SsaldCupService;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -17,6 +21,7 @@ import ssafy.com.ssacle.user.service.UserService;
 public class SsaldCupController implements SsaldCupSwaggerController{
     private final SsaldCupService ssaldCupService;
     private final UserService userService;
+    private final GameService gameService;
     @Override
     public ResponseEntity<SsaldCupCreateResponseDTO> createSsaldCup(SsaldCupCreateRequestDTO ssaldCupCreateRequestDTO) {
         SsaldCupCreateResponseDTO response = ssaldCupService.createSsaldCup(ssaldCupCreateRequestDTO);
@@ -48,12 +53,12 @@ public class SsaldCupController implements SsaldCupSwaggerController{
 
     @Override
     public ResponseEntity<Void> createLeague(Long ssaldCupId) {
-        ssaldCupService.createLeage(ssaldCupId);
+        gameService.createLeague(ssaldCupId);
         return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<LeagueScheduleDTO> getLeagueSchedule(Long ssaldCupId, int week) {
-        return ResponseEntity.ok().body(ssaldCupService.getLeagueSchedule(ssaldCupId, week));
+    public ResponseEntity<List<Game>> getLeagueSchedule(Long ssaldCupId, int week) {
+        return ResponseEntity.ok().body(gameService.getLeagueSchedule(ssaldCupId,week));
     }
 }

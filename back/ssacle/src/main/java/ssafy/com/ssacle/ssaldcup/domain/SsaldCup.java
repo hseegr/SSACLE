@@ -1,5 +1,6 @@
 package ssafy.com.ssacle.ssaldcup.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.global.exception.UtilErrorCode;
 import ssafy.com.ssacle.global.utill.ValidationUtils;
+import ssafy.com.ssacle.match.domain.Game;
 import ssafy.com.ssacle.sprint.domain.Sprint;
 import ssafy.com.ssacle.ssaldcupcategory.domain.SsaldCupCategory;
 import ssafy.com.ssacle.team.domain.Team;
@@ -68,6 +70,9 @@ public class SsaldCup {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "ssaldCup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Game> matches;
+
     protected  SsaldCup(String name, String basicDescription, String detailDescription, Integer maxTeams, Integer currentTeams, Integer maxTeamMembers, Integer status, Boolean isProcess, LocalDateTime startAt, LocalDateTime endAt,LocalDateTime createdAt){
         ValidationUtils.validationCount(status, UtilErrorCode.STATUS_VALIDATION_COUNT_FAILED);
         ValidationUtils.validationCount(maxTeams, UtilErrorCode.TEAM_VALIDATION_COUNT_FAILED);
@@ -86,6 +91,7 @@ public class SsaldCup {
         this.createdAt=createdAt;
         this.ssaldCupCategories = new ArrayList<>();
         this.teams = new ArrayList<>();
+        this.matches = new ArrayList<>();
     }
 
     public void addTeam(Team team){

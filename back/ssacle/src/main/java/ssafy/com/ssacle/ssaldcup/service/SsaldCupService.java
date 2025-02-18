@@ -1,11 +1,11 @@
 package ssafy.com.ssacle.ssaldcup.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.sprint.domain.Sprint;
@@ -127,85 +127,28 @@ public class SsaldCupService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
+    @Transactional(readOnly = true)
     public SingleSsaldCupResponseDTO getSsaldCupById(Long id) {
         SsaldCup ssaldCup = ssaldCupRepository.findById(id).orElseThrow(SsaldCupNotExistException::new);
         return SingleSsaldCupResponseDTO.from(ssaldCup);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<SsaldCupAndCategoriesResponseDTO> getSsaldCupsByStatus(Integer status, Pageable pageable) {
         return ssaldCupRepository.findBySsaldCupsByStatus(status, pageable)
                 .map(SsaldCupAndCategoriesResponseDTO::from);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<SsaldCupAndCategoriesResponseDTO> getSsaldCupsByCategoryAndStatus(Long categoryId, Integer status, Pageable pageable) {
         return ssaldCupRepository.findSsaldCupsByCategoryAndStatus(categoryId, status, pageable)
                 .map(SsaldCupAndCategoriesResponseDTO::from);
     }
 
-    public void createLeage(Long ssaldCupId){
-        SsaldCup ssaldCup = ssaldCupRepository.findById(ssaldCupId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 싸드컵이 존재하지 않습니다."));
-        List<Team> teams = teamRepository.findBySsaldCupId(ssaldCupId);
-        if (teams.size() < 2) {
-            throw new IllegalStateException("리그를 생성하려면 최소 2개 이상의 팀이 필요합니다.");
-        }
-        int n = teams.size();
-        boolean hasDummy = false;
-        if (n % 2 != 0) {
-            Team dummy = new Team("Dummy", 0);
-            teams.add(dummy);
-            n++;
-            hasDummy = true;
-        }
-        List<List<String>> schedule = new ArrayList<>();
-        int rounds = n - 1; // 총 라운드 수
-        int matchesPerRound = n / 2;
-        for(int round=0; round < rounds; round++){
-            List<String> roundMatches = new ArrayList<>();
-            for(int match=0; match<matchesPerRound; match++){
-                int home = (round + match) % (n - 1);
-                int away = (n - 1 - match + round) % (n - 1);
-                if (match == 0) {
-                    away = n - 1;
-                }
-
-                // ✅ 더미 팀이 포함된 매치는 제외
-                if (!(hasDummy && (teams.get(home).getName().equals("Dummy") || teams.get(away).getName().equals("Dummy")))) {
-                    roundMatches.add(teams.get(home).getName() + " vs " + teams.get(away).getName());
-                }
-            }
-            schedule.add(roundMatches);
-        }
-        for (int i = 0; i < schedule.size(); i++) {
-            System.out.println("Week " + (i + 1) + ": " + schedule.get(i));
-        }
-        leagueSchedules.put(ssaldCupId, schedule);
-
-        System.out.println("✅ 리그전 일정이 성공적으로 생성되었습니다.");
-    }
-
-
     private boolean userAlreadyJoined(SsaldCup ssaldCup, User user) {
         return ssaldCup.getTeams().stream()
                 .flatMap(team -> team.getUserTeams().stream())
                 .anyMatch(userTeam -> userTeam.getUser().getId().equals(user.getId()));
-    }
-
-    public LeagueScheduleDTO getLeagueSchedule(Long ssaldCupId, int week) {
-        List<List<String>> schedule = leagueSchedules.get(ssaldCupId);
-
-        if (schedule == null) {
-            throw new IllegalArgumentException("해당 싸드컵의 리그 일정이 존재하지 않습니다.");
-        }
-
-        if (week < 1 || week > schedule.size()) {
-            throw new IllegalArgumentException("잘못된 주차 요청: 해당 싸드컵은 총 " + schedule.size() + "주차까지 존재합니다.");
-        }
-
-        String matchInfo = String.join(", ", schedule.get(week - 1));
-        return new LeagueScheduleDTO(week, matchInfo);
     }
 
 }

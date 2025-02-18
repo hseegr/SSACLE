@@ -19,7 +19,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/video")
+@RequestMapping("/api/v1/video")
 @RequiredArgsConstructor
 @Slf4j
 public class VideoController {

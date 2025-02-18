@@ -11,11 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ssafy.com.ssacle.match.domain.Game;
 import ssafy.com.ssacle.sprint.dto.SingleSprintResponse;
 import ssafy.com.ssacle.sprint.dto.SprintAndCategoriesResponseDTO;
 import ssafy.com.ssacle.sprint.dto.SprintCreateRequest;
 import ssafy.com.ssacle.sprint.dto.SprintResponse;
 import ssafy.com.ssacle.ssaldcup.dto.*;
+
+import java.util.List;
 
 @Tag(name = "SsaldCup API", description = "SsaldCup 관련 API입니다.")
 public interface SsaldCupSwaggerController {
@@ -68,6 +71,8 @@ public interface SsaldCupSwaggerController {
             Pageable pageable
     );
 
+
+    // ✅ 리그전 일정 생성
     @Operation(summary = "리그전 생성", description = "참가한 팀들 간의 리그전 일정을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리그전 생성 성공"),
@@ -75,8 +80,9 @@ public interface SsaldCupSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
     @PostMapping("/ssaldcup/{ssaldCupId}/league")
-    ResponseEntity<Void> createLeague(@PathVariable Long ssaldCupId);
+    ResponseEntity<Void> createLeague(@Parameter(description = "싸드컵 ID", example = "1") @PathVariable Long ssaldCupId);
 
+    // ✅ 특정 주차 리그 일정 조회
     @Operation(summary = "특정 싸드컵의 N주차 리그 일정 조회",
             description = "해당 싸드컵의 특정 주차(N주차) 리그 일정을 반환합니다.")
     @ApiResponses(value = {
@@ -86,9 +92,6 @@ public interface SsaldCupSwaggerController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생")
     })
     @GetMapping("/ssaldcup/{ssaldCupId}/league/{week}")
-    ResponseEntity<LeagueScheduleDTO> getLeagueSchedule(
-            @Parameter(description = "싸드컵 ID", example = "1") @PathVariable Long ssaldCupId,
-            @Parameter(description = "조회할 주차 (1부터 시작)", example = "3") @PathVariable int week
-    );
+    ResponseEntity<List<Game>> getLeagueSchedule(@Parameter(description = "싸드컵 ID", example = "1") @PathVariable Long ssaldCupId, @Parameter(description = "조회할 주차 (1부터 시작)", example = "3") @PathVariable int week);
 
 }

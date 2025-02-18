@@ -35,9 +35,7 @@ public class SecurityConfig {
                                 "/api/*/join/**",
                                 "/api/*/login/**",
                                 "/api/*/refreshtoken",
-                                "/api/sessions/**",
-                                "/api/video/sessions/distribute",
-                                "/api/video/sessions/reset-all"
+                                "/api/*/video/**"
                         ).permitAll()
 //                                .requestMatchers(
 //                                        "/**"
