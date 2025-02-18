@@ -113,6 +113,8 @@ export const SSAPRINT_END_POINT = {
 // 싸드컵 -> ssadcupService
 export const SSADCUP_END_POINT = {
   LIST: '/ssaldcup/filter', // 전체 싸드컵 목록 조회
+  DETAIL: (id) => `/ssaldcup/${id}`, // 스프린트 상세 조회
+  JOIN: (ssaldcupId) => `/ssaldcup/${ssaldcupId}/join`, // 싸프린트 참가
   CATEGORY_ALL: '/category/all', // 싸드컵 내 카테고리 전체 조회
   CATEGORY_TOP: '/category/parents', // 최상위 카테고리 조회 (포지션 목록)
   CATEGORY_SUB: (parentId) => `/category/subcategories/${parentId}`, // 하위 카테고리 조회 (포지션별 기술 스택)

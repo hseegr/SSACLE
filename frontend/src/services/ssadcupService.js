@@ -86,3 +86,29 @@ export const fetchSsadcupListWithFilter = async (
     return null // 오류 발생 시 null 반환
   }
 }
+
+/**
+ * 싸드컵 상세 조회
+ */
+export const fetchSsadcupDetail = async (sprintId) => {
+  try {
+    const response = await httpCommon.get(SSADCUP_END_POINT.DETAIL(sprintId))
+    return response.data // API 응답 데이터를 반환
+  } catch (error) {
+    throw new Error('싸드컵 상세 정보를 불러오지 못했습니다.')
+  }
+}
+
+/**
+ * 싸드컵 참여 신청
+ */
+export const joinSsadcup = async (ssaldcupId, teamName) => {
+  const response = await httpCommon.post(
+    SSADCUP_END_POINT.JOIN(ssaldcupId),
+    null,
+    {
+      params: { teamName },
+    }
+  )
+  return response.data
+}

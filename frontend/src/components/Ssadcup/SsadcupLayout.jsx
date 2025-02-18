@@ -64,7 +64,7 @@ const SsadcupLayout = () => {
 
   return (
     <div className="relative min-h-full flex flex-col">
-      {/* 싸드컵컵 소개 배너 */}
+      {/* 싸드컵 소개 배너 */}
       <SprintBanner
         title="싸드컵"
         description="함께 도전하고 성장하는, 꾸준하고 깊이 있는 스프린트 학습 공간간입니다."
