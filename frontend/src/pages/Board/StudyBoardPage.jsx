@@ -43,30 +43,24 @@ const StudyBoardPage = () => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const response = await httpCommon.get('/board/paged', {
-          data: {
-            page: pagination.currentPage - 1,
-            size: pagination.pageSize,
-            sort: ['time,desc'],
+        const response = await httpCommon.get('/board/boardtype/paged', {
+          params: {
+            name: activeTab, // 🔥 현재 선택된 탭 (legend 또는 qna) 전달
+            page: pagination.currentPage - 1, // 0부터 시작하는 인덱스
+            size: pagination.pageSize, // 한 페이지당 게시글 수
+            sort: 'time,desc',
           },
         })
 
+        console.log('서버 응답 데이터:', response.data)
+
         if (response.data) {
-          // 현재 탭에 맞는 게시글만 필터링
-          const filteredContent = response.data.content.filter(
-            (post) =>
-              post.majorCategory === 'edu' && post.subCategory === activeTab
-          )
+          setPosts(response.data.content) // 🔥 서버에서 필터링된 데이터를 그대로 사용
 
-          setPosts(filteredContent)
-
-          // 필터링된 게시글 수에 맞게 전체 페이지 수 다시 계산
-          const totalFilteredPages = Math.ceil(
-            filteredContent.length / pagination.pageSize
-          )
           setPagination((prev) => ({
             ...prev,
-            totalPages: totalFilteredPages || 1,
+            totalPages: Math.max(response.data.totalPages, 1), // 최소 1 보장
+            currentPage: response.data.pageable.pageNumber + 1,
           }))
         }
       } catch (err) {

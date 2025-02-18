@@ -159,6 +159,12 @@ export const COMMENT_END_POINT = {
   },
 }
 
+// 노트 구매 관련
+export const NOTE_END_POINT = {
+  LIST: '/teams/diaries',
+  PURCHASE: (teamId) => `/teams/${teamId}/purchase`,
+}
+
 // 노션 관련 -> notionService
 export const NOTION_END_POINT = {
   PAGES: '/notion/pages',
