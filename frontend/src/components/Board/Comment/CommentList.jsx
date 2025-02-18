@@ -18,8 +18,9 @@ const CommentList = ({
     setEditingId(null)
   }
 
-  const handleEditClick = (commentId) => {
-    setEditingId(commentId)
+  const handleEditClick = (comment) => {
+    console.log('✅ 수정 버튼 클릭됨! - comment.id:', comment.id) // 디버깅 추가
+    setEditingId(comment.id)
     setActiveMenuId(null)
     setReplyingTo(null)
   }
@@ -33,26 +34,70 @@ const CommentList = ({
   }
 
   const handleEditSubmit = async (commentId, newContent) => {
+    console.log(
+      '✅ 댓글 수정 요청 - commentId:',
+      commentId,
+      'newContent:',
+      newContent
+    )
+
+    if (!commentId || isNaN(commentId)) {
+      console.error('❌ 잘못된 commentId:', commentId)
+      alert('댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
+    if (!newContent?.trim()) {
+      console.error('❌ 댓글 내용이 비어 있음!')
+      alert('댓글 내용을 입력하세요.')
+      return
+    }
+
     try {
       await onEdit(commentId, newContent)
       setEditingId(null)
     } catch (error) {
-      console.error('댓글 수정 중 오류 발생:', error)
+      console.error('댓글 수정 실패:', error)
       alert('댓글 수정에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
   const handleReplySubmit = async (parentId, content) => {
+    console.log('대댓글 요청 - parentId:', parentId, 'content:', content) // ✅ id와 내용 확인
+
+    if (!parentId || isNaN(parentId)) {
+      console.error('❌ 잘못된 parentId:', parentId)
+      alert('대댓글을 달 대상 댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
+    if (!content?.trim()) {
+      console.error('❌ 대댓글 내용이 비어 있음!')
+      alert('대댓글 내용을 입력하세요.')
+      return
+    }
+
     try {
       await onReply(parentId, content)
       setReplyingTo(null)
     } catch (error) {
-      console.error('답글 작성 중 오류 발생:', error)
-      alert('답글 작성에 실패했습니다. 다시 시도해주세요.')
+      console.error('대댓글 작성 실패:', error)
+      alert('대댓글 작성에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
-  const handleDeleteClick = async (commentId) => {
+  const handleDeleteClick = async (comment) => {
+    console.log('삭제 버튼 클릭 - comment:', comment) // comment 객체 전체 출력
+
+    const commentId = Number(comment?.id)
+    console.log('삭제 요청 - commentId:', commentId) // 변환된 commentId 확인
+
+    if (!commentId || isNaN(commentId)) {
+      console.error('❌ 잘못된 commentId:', commentId)
+      alert('삭제할 댓글 ID가 올바르지 않습니다.')
+      return
+    }
+
     if (window.confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
       try {
         await onDelete(commentId)
@@ -78,16 +123,16 @@ const CommentList = ({
   const renderComment = (comment, depth = 0) => {
     return (
       <div
-        key={comment.time} // time을 key로 사용 (고유한 값)
+        key={comment.id} // time을 key로 사용 (고유한 값)
         className={`border-b pb-4 last:border-b-0 ${
           depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''
         }`}
       >
-        {editingId === comment.time ? (
+        {editingId === comment.id ? (
           <CommentForm
             isEditing
             initialValue={comment.content}
-            onSubmit={(content) => handleEditSubmit(comment.time, content)}
+            onSubmit={(content) => handleEditSubmit(comment.id, content)}
             onCancel={handleEditCancel}
           />
         ) : (
@@ -105,7 +150,7 @@ const CommentList = ({
                   <button
                     onClick={() =>
                       setActiveMenuId(
-                        activeMenuId === comment.time ? null : comment.time
+                        activeMenuId === comment.id ? null : comment.id
                       )
                     }
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -122,16 +167,16 @@ const CommentList = ({
                     </svg>
                   </button>
 
-                  {activeMenuId === comment.time && (
+                  {activeMenuId === comment.id && (
                     <div className="absolute right-0 mt-1 w-24 bg-white border rounded-lg shadow-lg z-10">
                       <button
-                        onClick={() => handleEditClick(comment.time)}
+                        onClick={() => handleEditClick(comment)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors"
                       >
                         수정
                       </button>
                       <button
-                        onClick={() => handleDeleteClick(comment.time)}
+                        onClick={() => handleDeleteClick(comment)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 text-red-600 transition-colors"
                       >
                         삭제
@@ -149,7 +194,7 @@ const CommentList = ({
             {depth === 0 && (
               <div className="flex gap-2 mt-2">
                 <button
-                  onClick={() => handleReplyClick(comment.time)}
+                  onClick={() => handleReplyClick(comment.id)}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   답글달기
@@ -157,12 +202,10 @@ const CommentList = ({
               </div>
             )}
 
-            {replyingTo === comment.time && (
+            {replyingTo === comment.id && (
               <div className="mt-4">
                 <CommentForm
-                  onSubmit={(content) =>
-                    handleReplySubmit(comment.time, content)
-                  }
+                  onSubmit={(content) => handleReplySubmit(comment.id, content)}
                   onCancel={handleReplyCancel}
                   placeholder="답글을 입력하세요..."
                 />
