@@ -20,7 +20,7 @@ const NotePayModal = ({ isOpen, onClose, post, currentPickle }) => {
   const [error, setError] = useState('')
 
   const queryClient = useQueryClient()
-  const requiredPickles = 5
+  const requiredPickles = 7
 
   const handlePurchase = async () => {
     if (loading) return

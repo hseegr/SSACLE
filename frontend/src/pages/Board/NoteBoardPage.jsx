@@ -5,6 +5,7 @@ import httpCommon from '@/services/http-common'
 import { fetchUserInfo } from '@/services/mainService'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { CreditCard, BookmarkCheck, ExternalLink } from 'lucide-react'
 
 const NoteBoardPage = () => {
   const [posts, setPosts] = useState([])
@@ -28,18 +29,21 @@ const NoteBoardPage = () => {
   })
 
   // 서버에서 받은 데이터를 BoardList 형식에 맞게 변환
-  const formatPosts = (posts) => {
-    return posts.map((post) => ({
-      id: post.teamId,
-      title: post.sprintName,
-      writerInfo: post.teamName,
-      tags: post.categoryNames,
-      diaries: post.diaries,
-      time: new Date().toISOString(),
-      isPurchased: post.isPurchased || false, // 구매 여부 추가
-      notionUrl: post.notionUrl || '', // Notion URL 추가
-    }))
-  }
+  // const formatPosts = (posts) => {
+  //   console.log('Formatting posts:', posts) // 디버깅용 로그 추가
+
+  //   return posts.map((post) => ({
+  //     id: post.teamId,
+  //     title: post.sprintName,
+  //     writerInfo: post.teamName,
+  //     tags: post.categoryNames,
+  //     diaries: post.diaries,
+  //     time: new Date().toISOString(),
+  //     // isPurchased와 notionUrl을 API 응답에서 직접 가져옴
+  //     isPurchased: !!post.notionUrl,
+  //     notionUrl: post.notionUrl || '',
+  //   }))
+  // }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +58,19 @@ const NoteBoardPage = () => {
         })
 
         if (response.data) {
-          const formattedPosts = formatPosts(response.data.content)
+          const formattedPosts = response.data.content.map((post) => ({
+            id: post.teamId,
+            teamId: post.teamId, // 원본 teamId도 보존
+            title: post.sprintName,
+            writerInfo: post.teamName,
+            tags: post.categoryNames || [],
+            diaries: post.diaries || [],
+            time: post.startAt || new Date().toISOString(),
+            // 구매/참여 여부 확인을 위한 플래그들
+            isPurchased: !!post.notionUrl,
+            notionUrl: post.notionUrl || '',
+          }))
+
           setPosts(formattedPosts)
 
           setPagination((prev) => ({
@@ -78,19 +94,12 @@ const NoteBoardPage = () => {
     const clickedPost = posts.find((post) => post.id === postId)
     if (!clickedPost) return
 
-    if (clickedPost.isPurchased) {
-      // 이미 구매한 노트라면 바로 Notion URL 열기
-      if (clickedPost.notionUrl) {
-        window.open(clickedPost.notionUrl, '_blank')
-      }
-    } else {
-      // 구매되지 않은 노트라면 모달을 열고 구매 진행
-      setSelectedPost({
-        ...clickedPost,
-        diaries: clickedPost.diaries || [],
-      })
-      setShowPurchaseModal(true)
-    }
+    // 구매 상태를 명시적으로 전달
+    setSelectedPost({
+      ...clickedPost,
+      isPurchased: !!clickedPost.notionUrl,
+    })
+    setShowPurchaseModal(true)
   }
 
   const handleModalClose = () => {

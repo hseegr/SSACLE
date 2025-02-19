@@ -89,17 +89,14 @@ const StudyBoardPage = () => {
     },
   })
 
-  // 게시글 구매 뮤테이션
+  // 게시글 구매 뮤테이션 수정
   const purchaseBoardMutation = useMutation({
     mutationFn: (boardId) => fetchPurchaseBoard(boardId),
     onSuccess: (response) => {
       boardDetailMutation.mutate(selectPostId)
       setShowPayModal(false)
     },
-    onError: (error) => {
-      console.error('게시글 구매 실패:', error)
-      alert('게시글 구매에 실패했습니다.')
-    },
+    // onError 핸들러 제거 (handlePayConfirm에서 처리)
   })
 
   // filteredPosts는 이제 posts를 바로 사용
@@ -131,23 +128,23 @@ const StudyBoardPage = () => {
   }
 
   // 피클 결제 확인 후 게시글 상세 조회
-  const handlePayConfirm = () => {
-    const requiredPickles = 7 // 필요한 피클 수 7개로 수정
+  // handlePayConfirm 함수 수정
+  const handlePayConfirm = async () => {
+    const requiredPickles = 7
     if (userData?.pickles >= requiredPickles) {
-      purchaseBoardMutation.mutate(selectPostId, {
-        onSuccess: () => {
-          QueryClient.invalidateQueries(['userInfo']) // 유저 정보(피클 수) 갱신
-          QueryClient.refetchQueries(['userInfo'])
-        },
-        onError: (error) => {
-          console.error('결제 처리 중 오류 발생:', error)
-        },
-      })
+      try {
+        await purchaseBoardMutation.mutateAsync(selectPostId)
+        // 성공 시 처리는 mutation의 onSuccess에서 수행
+      } catch (error) {
+        console.error('결제 처리 중 오류 발생:', error)
+        alert('게시글 구매에 실패했습니다.')
+        setShowPayModal(false)
+      }
     } else {
       alert('피클이 부족합니다.')
+      setShowPayModal(false)
     }
   }
-
   // 탭 변경 시 페이지 초기화
   const handleTabChange = (tabId) => {
     setActiveTab(tabId)
