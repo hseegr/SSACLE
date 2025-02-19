@@ -1,38 +1,10 @@
 // @ts-nocheck
 import { useNavigate } from 'react-router-dom'
+import { useGetImage } from '@/hooks/useGetImage'
 
-const stackLogos = {
-  Angular: '/src/assets/logo/Angular.png',
-  AWS: '/src/assets/logo/AWS.png',
-  Azure: '/src/assets/logo/Azure.png',
-  'C#': '/src/assets/logo/C#.png',
-  'C++': '/src/assets/logo/C++.png',
-  CSS3: '/src/assets/logo/CSS3.png',
-  default: '/src/assets/logo/default.png',
-  Django: '/src/assets/logo/Django.png',
-  Docker: '/src/assets/logo/Docker.png',
-  'Google Cloud': '/src/assets/logo/Google Cloud.png',
-  HTML5: '/src/assets/logo/HTML5.png',
-  Java: '/src/assets/logo/Java.png',
-  JavaScript: '/src/assets/logo/JavaScript.png',
-  Kubernetes: '/src/assets/logo/Kubernetes.png',
-  MariaDB: '/src/assets/logo/MariaDB.png',
-  MongoDB: '/src/assets/logo/MongoDB.png',
-  MySQL: '/src/assets/logo/MySQL.png',
-  NestJS: '/src/assets/logo/NestJS.png',
-  'Node.js': '/src/assets/logo/Node.js.png',
-  Oracle: '/src/assets/logo/Oracle.png',
-  PostgreSQL: '/src/assets/logo/PostgreSQL.png',
-  Python: '/src/assets/logo/Python.png',
-  React: '/src/assets/logo/React.png',
-  Redis: '/src/assets/logo/Redis.png',
-  'Ruby on Rails': '/src/assets/logo/Ruby on Rails.png',
-  Spring: '/src/assets/logo/Spring.png',
-  Svelte: '/src/assets/logo/svelte.png',
-  'Vue.js': '/src/assets/logo/Vue.js.png',
-}
 
 const ItemCard = ({ item, domain }) => {
+  const imageList = useGetImage()
   const navigate = useNavigate()
 
   // 카드 클릭 시 상세 페이지 이동
@@ -92,7 +64,7 @@ const ItemCard = ({ item, domain }) => {
   // 진행 기간 계산
   const durationDays = Math.ceil(
     (new Date(item.endAt).getTime() - new Date(item.startAt).getTime()) /
-      (1000 * 60 * 60 * 24)
+    (1000 * 60 * 60 * 24)
   )
   const durationStatus = getDurationStatus(durationDays)
 
@@ -106,7 +78,7 @@ const ItemCard = ({ item, domain }) => {
   // 2. 이미지가 없으면, 기술 태그(오른쪽 태그)와 stackLogos 매칭
   if (!thumbnail && categoryTags.length > 0) {
     const firstTag = categoryTags[0].categoryName
-    thumbnail = stackLogos[firstTag] || stackLogos.default
+    thumbnail = imageList[firstTag] || imageList.default
   }
 
   return (

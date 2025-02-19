@@ -1,40 +1,11 @@
 // @ts-nocheck
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
-
-const stackLogos = {
-  Angular: '/src/assets/logo/Angular.png',
-  AWS: '/src/assets/logo/AWS.png',
-  Azure: '/src/assets/logo/Azure.png',
-  'C#': '/src/assets/logo/C#.png',
-  'C++': '/src/assets/logo/C++.png',
-  CSS3: '/src/assets/logo/CSS3.png',
-  default: '/src/assets/logo/default.png',
-  Django: '/src/assets/logo/Django.png',
-  Docker: '/src/assets/logo/Docker.png',
-  'Google Cloud': '/src/assets/logo/Google Cloud.png',
-  HTML5: '/src/assets/logo/HTML5.png',
-  Java: '/src/assets/logo/Java.png',
-  JavaScript: '/src/assets/logo/JavaScript.png',
-  Kubernetes: '/src/assets/logo/Kubernetes.png',
-  MariaDB: '/src/assets/logo/MariaDB.png',
-  MongoDB: '/src/assets/logo/MongoDB.png',
-  MySQL: '/src/assets/logo/MySQL.png',
-  NestJS: '/src/assets/logo/NestJS.png',
-  'Node.js': '/src/assets/logo/Node.js.png',
-  Oracle: '/src/assets/logo/Oracle.png',
-  PostgreSQL: '/src/assets/logo/PostgreSQL.png',
-  Python: '/src/assets/logo/Python.png',
-  React: '/src/assets/logo/React.png',
-  Redis: '/src/assets/logo/Redis.png',
-  'Ruby on Rails': '/src/assets/logo/Ruby on Rails.png',
-  Spring: '/src/assets/logo/Spring.png',
-  Svelte: '/src/assets/logo/svelte.png',
-  'Vue.js': '/src/assets/logo/Vue.js.png',
-}
+import { useGetImage } from '@/hooks/useGetImage'
 
 const JoinSprintInfo = ({ sprintData, isOpen, setIsOpen }) => {
   if (!sprintData || !sprintData.sprint) return null
 
+  const imageList = useGetImage()
   const { sprint, categories } = sprintData
 
   // 카테고리명 목록 (최대 2개까지만)
@@ -45,7 +16,7 @@ const JoinSprintInfo = ({ sprintData, isOpen, setIsOpen }) => {
   // 썸네일 선택 로직
   const categoryWithImage = categories.find((category) => category.image)
   const stackImage =
-    stackLogos[categoryNames[0]] || stackLogos[categoryNames[1]]
+    imageList[categoryNames[0]] || imageList[categoryNames[1]]
 
   const thumbnail = categoryWithImage?.image || stackImage || stackLogos.default
 
