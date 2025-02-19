@@ -69,3 +69,14 @@ export const fetchUpdateBoard = async (boardId, boardData) => {
     throw error
   }
 }
+
+// 명예의 전당 게시글 구매
+export const fetchPurchaseBoard = async (boardId) => {
+  try {
+    const response = await httpCommon.post(`/board/${boardId}/purchase`)
+    return response.data
+  } catch (error) {
+    console.error('게시글 구매 실패', error)
+    throw error
+  }
+}

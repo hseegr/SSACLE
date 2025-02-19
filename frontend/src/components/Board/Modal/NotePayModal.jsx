@@ -41,10 +41,10 @@ const NotePayModal = ({ isOpen, onClose, post, currentPickle }) => {
         await queryClient.refetchQueries(['userInfo'])
 
         // localStorage에서도 피클 정보 업데이트
-        const userInfo = await httpCommon.get('/user/summary')
-        if (userInfo.data) {
-          localStorage.setItem('userPickles', userInfo.data.pickles.toString())
-        }
+        // const userInfo = await httpCommon.get('/user/summary')
+        // if (userInfo.data) {
+        //   localStorage.setItem('userPickles', userInfo.data.pickles.toString())
+        // }
       }
     } catch (error) {
       console.error('노트 구매 실패:', error)

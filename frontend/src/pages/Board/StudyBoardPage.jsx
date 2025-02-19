@@ -4,8 +4,12 @@ import BoardTab from '@/components/Board/List/BoardTab'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PayModal from '@/components/Board/Modal/PayModal'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { fetchBoardDetail, fetchBoardList } from '@/services/boardService'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  fetchBoardDetail,
+  fetchBoardList,
+  fetchPurchaseBoard,
+} from '@/services/boardService'
 import { fetchUserInfo } from '@/services/mainService'
 import axios from 'axios'
 import httpCommon from '@/services/http-common'
@@ -85,6 +89,19 @@ const StudyBoardPage = () => {
     },
   })
 
+  // 게시글 구매 뮤테이션
+  const purchaseBoardMutation = useMutation({
+    mutationFn: (boardId) => fetchPurchaseBoard(boardId),
+    onSuccess: (response) => {
+      boardDetailMutation.mutate(selectPostId)
+      setShowPayModal(false)
+    },
+    onError: (error) => {
+      console.error('게시글 구매 실패:', error)
+      alert('게시글 구매에 실패했습니다.')
+    },
+  })
+
   // filteredPosts는 이제 posts를 바로 사용
   const filteredPosts = posts
 
@@ -115,9 +132,17 @@ const StudyBoardPage = () => {
 
   // 피클 결제 확인 후 게시글 상세 조회
   const handlePayConfirm = () => {
-    if (userData?.pickles >= 5) {
-      boardDetailMutation.mutate(selectPostId)
-      setShowPayModal(false)
+    const requiredPickles = 7 // 필요한 피클 수 7개로 수정
+    if (userData?.pickles >= requiredPickles) {
+      purchaseBoardMutation.mutate(selectPostId, {
+        onSuccess: () => {
+          QueryClient.invalidateQueries(['userInfo']) // 유저 정보(피클 수) 갱신
+          QueryClient.refetchQueries(['userInfo'])
+        },
+        onError: (error) => {
+          console.error('결제 처리 중 오류 발생:', error)
+        },
+      })
     } else {
       alert('피클이 부족합니다.')
     }
@@ -183,14 +208,15 @@ const StudyBoardPage = () => {
       {/* 글 작성 버튼 */}
       <div className="flex flex-row justify-between">
         <section>
-          <button
-            onClick={handleWrite}
-            className="px-4 py-1 text-white rounded bg-ssacle-blue text-sm"
-          >
-            글 작성하기
-          </button>
+          {activeTab !== 'legend' && (
+            <button
+              onClick={handleWrite}
+              className="px-4 py-1 text-white rounded bg-ssacle-blue text-sm"
+            >
+              글 작성하기
+            </button>
+          )}
         </section>
-        <section>분류 및 검색창</section>
       </div>
 
       <div className="border-b my-3"></div>

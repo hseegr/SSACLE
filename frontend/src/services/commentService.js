@@ -5,7 +5,6 @@ import { COMMENT_END_POINT } from './endPoints'
 export const fetchBoardComments = async (boardId) => {
   try {
     const response = await httpCommon.get(COMMENT_END_POINT.LIST(boardId))
-    console.log('데이터 확인', response.data)
     return response.data
   } catch (error) {
     console.error('댓글 목록 조회 실패:', error)
@@ -28,7 +27,6 @@ export const fetchCreateComment = async (boardId, content) => {
 
 export const fetchUpdateComment = async (commentId, content) => {
   const validCommentId = Number(commentId)
-  console.log('PATCH 요청 - commentId:', validCommentId, 'content:', content) // 디버깅 추가
 
   if (!validCommentId || isNaN(validCommentId)) {
     console.error('❌ 유효하지 않은 commentId:', validCommentId)
