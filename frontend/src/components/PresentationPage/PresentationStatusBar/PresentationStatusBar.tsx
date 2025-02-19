@@ -104,6 +104,7 @@ const PresentationStatusBar: FC<PresentationStatusBarProps> = ({}) => {
           )}
         </section>
       )}
+      {/* 발표 완료 버튼 */}
       {(isPresentationStep || isQuestionStep) && isMyStatus && (
         <button
           onClick={handleEndStep}

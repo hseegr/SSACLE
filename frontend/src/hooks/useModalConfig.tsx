@@ -7,6 +7,7 @@ import { createModalStepConfig } from '@/config/modalStepConfigFactory'
 import { Session } from 'openvidu-browser'
 import { usePresentationStore } from '@/store/usePresentationStore'
 import useScreenShare from '@/hooks/useScreenShare'
+import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 
 const useModalConfig = () => {
   const { setModalStep, closeModal } = usePresentationModalActions(
@@ -15,12 +16,16 @@ const useModalConfig = () => {
       closeModal: state.closeModal,
     }))
   )
+  const presentationStatus = usePresentationSignalStore(
+    useShallow((state) => state.presentationStatus)
+  )
   const {
     presenterInfo,
     isQuestionCompleted,
     isQuestionSelected,
     setIsQuestionSelected,
     selectedQuestion,
+    setPresenterInfo,
   } = usePresentationStore(
     useShallow((state) => ({
       presenterInfo: state.presenterInfo,
@@ -28,6 +33,7 @@ const useModalConfig = () => {
       isQuestionSelected: state.isQuestionSelected,
       setIsQuestionSelected: state.setIsQuestionSelected,
       selectedQuestion: state.selectedQuestion,
+      setPresenterInfo: state.setPresenterInfo,
     }))
   )
   const navigate = useNavigate()
@@ -50,6 +56,8 @@ const useModalConfig = () => {
     setIsQuestionSelected,
     startScreenShare,
     stopScreenShare,
+    setPresenterInfo,
+    presentationStatus,
   })
 
   const getModalStepConfig = (step: string) => {

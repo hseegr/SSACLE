@@ -4,7 +4,7 @@ import axios from 'axios'
 const httpCommon = axios.create({
   baseURL: '/api/v1',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 50000,
+  timeout: 1000 * 10, // 10초
   withCredentials: true,
 })
 

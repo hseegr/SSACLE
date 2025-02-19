@@ -18,6 +18,10 @@ const PresentationPage = () => {
   const { data: presentationAvailability, isSuccess } = useQuery({
     queryKey: ['presentation-availability'],
     queryFn: () => fetchPresentationAvailability(roomId ?? 'test-session-id'),
+    staleTime: Infinity,
+    gcTime: 0,
+    enabled: !!roomId,
+    retry: 3,
   })
 
   // if (!presentationAvailability) {
@@ -27,42 +31,36 @@ const PresentationPage = () => {
   // }
 
   // 모달 열기 상태
-  const { isModalOpen, modalStep } = usePresentationModalStateStore(
-    useShallow((state) => ({
-      isModalOpen: state.isModalOpen,
-      modalStep: state.modalStep,
-    }))
+  const isModalOpen = usePresentationModalStateStore(
+    (state) => state.isModalOpen
   )
-
-  const { presentationStatus } = usePresentationSignalStore(
-    useShallow((state) => ({
-      presentationStatus: state.presentationStatus,
-    }))
+  const modalStep = usePresentationModalStateStore((state) => state.modalStep)
+  const presentationStatus = usePresentationSignalStore(
+    (state) => state.presentationStatus
   )
 
   // isSessionVisible 상태 - 한 번 true가 된 이후에는 계속 true 유지됩니다.
   const [isSessionVisible, setIsSessionVisible] = useState(false)
 
   useEffect(() => {
-    // 조건이 만족되고 아직 상태가 false라면 true로 설정합니다.
-    if (
-      !isSessionVisible &&
-      modalStep === ModalSteps.INITIAL.WELCOME &&
-      !isModalOpen &&
-      presentationStatus === 'INITIAL'
-    ) {
-      setIsSessionVisible(true)
+    if (!isSessionVisible) {
+      setIsSessionVisible(
+        (prev) =>
+          prev ||
+          (modalStep === ModalSteps.INITIAL.WELCOME &&
+            !isModalOpen &&
+            presentationStatus === 'INITIAL')
+      )
     }
-  }, [isSessionVisible, modalStep, isModalOpen, presentationStatus])
+  }, [modalStep, isModalOpen, presentationStatus])
 
   return (
     <>
       <PresentationPageWrapper>
         {isSessionVisible && <SessionInitializer />}
         {/* 공통 공지 모달 : 상태가 바뀔 때 마다 모달이 뜨도록 구성 */}
-        <StepContainer>
-          <PresentationNoticeModal />
-        </StepContainer>
+        <StepContainer />
+        <PresentationNoticeModal />
       </PresentationPageWrapper>
     </>
   )

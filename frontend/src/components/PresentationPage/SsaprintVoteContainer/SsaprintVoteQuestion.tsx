@@ -12,7 +12,11 @@ interface SsaprintVoteQuestionProps {
     second: string
     third: string
   }) => void
-  userList: string[]
+  userList: {
+    username: string
+    userId: string
+    connectionId: string
+  }[]
 }
 
 const SsaprintVoteQuestion: FC<SsaprintVoteQuestionProps> = ({

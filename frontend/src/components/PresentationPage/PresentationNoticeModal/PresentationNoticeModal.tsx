@@ -52,15 +52,14 @@ const PresentationNoticeModal = () => {
                 : Title}
             </div>
           </DialogTitle>
-          <DialogDescription className="">
-            <span className="flex flex-col w-full max-w-full gap-2 overflow-hidden text-base text-center ">
-              {typeof Description === 'string' ? (
-                <div>{Description}</div>
-              ) : (
-                Description
-              )}
-            </span>
-          </DialogDescription>
+          <DialogDescription className="" />
+          <div className="flex flex-col w-full max-w-full gap-2 overflow-hidden text-base text-center ">
+            {typeof Description === 'string' ? (
+              <div className="">{Description}</div>
+            ) : (
+              Description
+            )}
+          </div>
         </DialogHeader>
         <div className="flex items-center justify-center w-full gap-4">
           {Array.isArray(buttons)

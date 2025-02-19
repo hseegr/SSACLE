@@ -96,16 +96,21 @@ export function useConferenceEvents() {
       }))
     )
 
-  const { handleSignal, readySignalHandler, endSignalHandler } =
-    useSignalEvents({
-      myConnectionId,
-      setIsModalOpen,
-      setModalStep,
-      modalStep,
-      targetConnectionCount,
-      setIsQuestionSelected,
-      setSelectedQuestion,
-    })
+  const {
+    handleSignal,
+    readySignalHandler,
+    endSignalHandler,
+    voteSignalHandler,
+  } = useSignalEvents({
+    myConnectionId,
+    setIsModalOpen,
+    setModalStep,
+    modalStep,
+    targetConnectionCount,
+    setIsQuestionSelected,
+    setSelectedQuestion,
+    setPresenterInfo,
+  })
 
   // ref를 사용해 항상 최신 session을 참조
   const sessionRef = useRef(session)
@@ -202,6 +207,9 @@ export function useConferenceEvents() {
     sessionRef.current.on('signal:ready', readySignalHandler)
     // 발표 종료 시그널
     sessionRef.current.on('signal:end', endSignalHandler)
+
+    // 평가 내용 시그널
+    sessionRef.current.on('signal:vote', voteSignalHandler)
     // 클린업 함수
     return () => {
       if (sessionRef.current) {
@@ -213,7 +221,7 @@ export function useConferenceEvents() {
         sessionRef.current.off('signal:end', endSignalHandler)
       }
     }
-  }, [sessionRef.current, allConnectionSignalHandler])
+  }, [sessionRef.current, allConnectionSignalHandler, voteSignalHandler])
 
   // ✅ 스트림 생성 핸들러 : 새로운 사용자의 카메라 스트림 및 화면 공유 스트림 구독
   const handleStreamCreated = (event: SessionEventMap['streamCreated']) => {
@@ -284,6 +292,9 @@ export function useConferenceEvents() {
       // setConnectionCount()
       const remoteConnectionCount = sessionRef.current?.remoteConnections.size
 
+      console.log('remoteConnectionCount', remoteConnectionCount)
+      console.log('targetConnectionCount', targetConnectionCount)
+
       // 시작 전, 모든 참여자가 접속 완료 시, 발표 시작 신호 전송
       const isAllConnection =
         presentationStatus === 'INITIAL' &&
@@ -306,7 +317,7 @@ export function useConferenceEvents() {
         connectionId: event.connection.connectionId as string,
       })
     },
-    []
+    [presentationStatus, targetConnectionCount]
   )
 
   // ✅ 연결 해제 이벤트 처리 (connectionDestroyed)

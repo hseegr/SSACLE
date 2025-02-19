@@ -32,6 +32,7 @@ import SsadcupList from '@/pages/Admin/SsadcupManagement/SsadcupListPage'
 import AdminBoardList from '@/pages/Admin/BoardManagement/BoardListPage'
 import NoteBoardPage from '@/pages/Board/NoteBoardPage'
 import MyPage from '@/pages/MyPage/MyPage'
+import SsaprintResultPage from '@/pages/Ssaprint/SsaprintResultPage'
 
 const router = createBrowserRouter([
   // 시작 페이지 (로그인 전)
@@ -84,6 +85,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <SsaprintPage /> },
               { path: ':sprintId', element: <SsaprintDetailPage /> },
+              { path: ':sprintId/result', element: <SsaprintResultPage /> },
             ],
           },
           {

@@ -54,8 +54,11 @@ const QuestionCardSection = () => {
 
   const queryClient = useQueryClient()
 
-  const questionCards: QuestionCard[] =
-    queryClient.getQueryData(['question-card-list']) || initialQuestionCardData
+  const questionCards: QuestionCard[] = queryClient.getQueryData([
+    'question-card-list',
+  ])?.length
+    ? queryClient.getQueryData(['question-card-list'])
+    : initialQuestionCardData
 
   // const { questionCardData } = usePresentation()
 

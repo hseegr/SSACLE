@@ -21,6 +21,10 @@ interface UseSignalEventsProps {
   targetConnectionCount: number // 목표 참가자 수
   setIsQuestionSelected: (isQuestionSelected: boolean) => void
   setSelectedQuestion: (selectedQuestion: Question) => void
+  setPresenterInfo: (presenterInfo: {
+    connectionId: string
+    username: string
+  }) => void
 }
 
 export const useSignalEvents = ({
@@ -30,6 +34,7 @@ export const useSignalEvents = ({
   targetConnectionCount,
   setIsQuestionSelected,
   setSelectedQuestion,
+  setPresenterInfo,
 }: UseSignalEventsProps) => {
   // Zustand 스토어에서 필요한 메서드들을 가져옵니다
   const {
@@ -46,11 +51,47 @@ export const useSignalEvents = ({
     }))
   )
 
+  type UserScore = {
+    userId: string
+    score: number
+  }
+
+  // 평가 내용 시그널 처리
+  const voteSignalHandler = useCallback((event: SignalEvent) => {
+    const { data } = JSON.parse(event.data as string)
+    const userScoreList: UserScore[] = data
+
+    console.log('✨ userScoreList', userScoreList)
+
+    // 다른 사람이 보낸 점수 중 자신의 점수만 출력
+    const myScore = userScoreList.find((user) => user.userId === myConnectionId)
+
+    // 모든 사람이 평가를 완료했는지 확인
+
+    // 모든 사람이 평가를 완료했으면 서버에 채점 결과 요청
+
+    // 채점 결과 받아오기
+
+    // 채점 결과 모달 띄우기
+
+    console.log('✨ myScore', myScore)
+
+    setIsModalOpen(true)
+    setModalStep(ModalSteps.VOTE.END)
+  }, [])
+
   // debounced 함수를 ref로 관리 → 컴포넌트 라이프사이클내에 한 번만 생성되도록 보장
   const debouncedAllHandleSignal = useRef(
     debounce((signalType: PresentationStatus) => {
+      console.log('✨ signalType', signalType, '현재', presentationStatus)
       const nextStatus = getNextPresentationStatus(signalType)
       const nextModalStep = getModalStep(signalType as PresentationStatus)
+
+      if (signalType === PRESENTATION_STATUS.QUESTION_ANSWER_CONTINUE) {
+        if (presentationStatus === PRESENTATION_STATUS.INITIAL) {
+          return
+        }
+      }
 
       if (nextModalStep) {
         setIsModalOpen(true)
@@ -59,7 +100,7 @@ export const useSignalEvents = ({
         setPresentationStatus(nextStatus as PresentationStatus)
         setIsModalOpen(false)
       }
-    }, 3000)
+    }, 1000)
   )
 
   // 컴포넌트 언마운트시 pending된 debounce 호출 취소
@@ -79,7 +120,7 @@ export const useSignalEvents = ({
       setPresentationStatus(signalType)
       if (signalType === PRESENTATION_STATUS.QUESTION_ANSWER) {
         // 질문 모달을 띄우기 위한 상태 변환??
-        setIsQuestionSelected(true)
+        setIsQuestionSelected(true) // 질문 카드 선택 했음
         setSelectedQuestion(selectedQuestion)
       }
       setIsModalOpen(false)
@@ -98,8 +139,10 @@ export const useSignalEvents = ({
 
       setIsModalOpen(true)
       // 발표 종료 모달
-      if (signalType === PRESENTATION_STATUS.PENDING_END)
+      if (signalType === PRESENTATION_STATUS.PENDING_END) {
         setModalStep(ModalSteps.PRESENTATION.PRESENTATION_END)
+        setIsQuestionSelected(false)
+      }
 
       // 질문 중간 종료 모달
       if (signalType === PRESENTATION_STATUS.QUESTION_ANSWER_MIDDLE_END) {
@@ -174,5 +217,6 @@ export const useSignalEvents = ({
     addSignalConnection,
     readySignalHandler,
     endSignalHandler,
+    voteSignalHandler,
   }
 }

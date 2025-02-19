@@ -12,7 +12,11 @@ interface SsaprintVoteAttitudeProps {
     second: string
     third: string
   }) => void
-  userList: string[]
+  userList: {
+    username: string
+    userId: string
+    connectionId: string
+  }[]
 }
 
 const SsaprintVoteAttitude: FC<SsaprintVoteAttitudeProps> = ({

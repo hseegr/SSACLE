@@ -30,7 +30,6 @@ type CalculateFinalScoreRequest = [
 
 // 발표 최종 점수 계산
 export const fetchCalculateFinalScore = async (
-  sprintId: string,
   body: CalculateFinalScoreRequest
 ) => {
   const response = await axios.post(

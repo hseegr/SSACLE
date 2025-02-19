@@ -11,8 +11,8 @@ interface PresentationModalStateStore {
 export const usePresentationModalStateStore =
   create<PresentationModalStateStore>((set) => ({
     // 모달 상태
-    // modalStep: ModalSteps.INITIAL.WELCOME, // 초기 모달 상태
-    modalStep: ModalSteps.QUESTION.ANSWER_INTRODUCTION, // 테스트 모달
+    modalStep: ModalSteps.INITIAL.WELCOME, // 초기 모달 상태
+    // modalStep: ModalSteps.VOTE.START, // 테스트 모달
     isModalOpen: true,
 
     // 모달 상태 설정

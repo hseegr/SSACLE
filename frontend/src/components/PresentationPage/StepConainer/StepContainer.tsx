@@ -10,19 +10,11 @@ import { useShallow } from 'zustand/shallow'
 import { useParams } from 'react-router-dom'
 import { usePresentationStore } from '@/store/usePresentationStore'
 
-interface StepContainerProps {
-  children: React.ReactNode
-}
+interface StepContainerProps {}
 
-const StepContainer: FC<StepContainerProps> = ({ children }) => {
+const StepContainer: FC<StepContainerProps> = () => {
   const session = useOpenviduStateStore((state) => state.session)
   const { roomId } = useParams()
-  const [questionStep, setQuestionStep] = useState<
-    {
-      userId: string
-      connectionId: string
-    }[]
-  >([])
 
   // 발표 상태 관리
   const { presentationStatus } = usePresentationSignalStore(
@@ -31,9 +23,10 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
     }))
   )
 
-  const { setIsQuestionCompleted } = usePresentationStore(
+  const { setIsQuestionCompleted, presenterInfo } = usePresentationStore(
     useShallow((state) => ({
       setIsQuestionCompleted: state.setIsQuestionCompleted,
+      presenterInfo: state.presenterInfo,
     }))
   )
 
@@ -41,14 +34,105 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
   const roomConnectionData = useRoomStateStore(
     (state) => state.roomConnectionData[roomId as string]
   )
-
   // 답변자 소개 신호 전송 여부
-  const hasSentAnswerIntro = useRef(false)
+  const questionStep = useRef<
+    {
+      userId: string
+      connectionId: string
+      isAnswer: boolean
+    }[]
+  >([])
+
+  // roomConnectionData가 변경될 때마다 questionStep을 최신 데이터로 갱신
+  useEffect(() => {
+    if (roomConnectionData && roomConnectionData.length > 0) {
+      questionStep.current = roomConnectionData.map((item) => ({
+        userId: item.userId,
+        connectionId: item.connectionId,
+        isAnswer: false, // 발표 여부 초기값 false
+      }))
+    }
+  }, [roomConnectionData])
+
+  const answerCount = useRef(0)
 
   useEffect(() => {
-    console.log('✨상태 변경✨', presentationStatus)
-
     switch (presentationStatus) {
+      // Todo : 질문 준비 신호 전송
+      // 답변자 정하기,
+      case PRESENTATION_STATUS_KEYS.QUESTION_ANSWERER_INTRO:
+        // ! 발표자 정보가 이미 있을 경우 질문 준비 신호 전송 중단
+        if (presenterInfo.connectionId !== '') return
+
+        // 발표자 랜덤 선택: 이미 발표한 사람(isAnswer가 true인)을 제외한 후보 목록 생성
+        const availableCandidates = questionStep.current.filter(
+          (candidate) => !candidate.isAnswer
+        )
+
+        // session.streamManagers에 존재하는 후보만 필터링
+        const validCandidates = availableCandidates.filter((candidate) =>
+          session?.streamManagers.some(
+            (sm) => sm.stream.connection.connectionId === candidate.connectionId
+          )
+        )
+
+        if (validCandidates.length > 0) {
+          console.log('✨ 남은 사람있음', validCandidates)
+          const randomIndex = Math.floor(Math.random() * validCandidates.length)
+          const selectedCandidate = validCandidates[randomIndex]
+
+          // questionStep 내 해당 후보 표시
+          const candidateIndex = questionStep.current.findIndex(
+            (candidate) =>
+              candidate.connectionId === selectedCandidate.connectionId
+          )
+          questionStep.current[candidateIndex].isAnswer = true
+
+          // validCandidates이므로 streamManager가 존재함
+          const presenterStreamManager = session?.streamManagers.find(
+            (sm) =>
+              sm.stream.connection.connectionId ===
+              selectedCandidate.connectionId
+          )
+          if (presenterStreamManager) {
+            const presenterConnectionId =
+              presenterStreamManager.stream.connection.connectionId
+            const { username: presenterName } = JSON.parse(
+              presenterStreamManager.stream.connection.data as string
+            )
+
+            setTimeout(() => {
+              console.log('질문 준비 신호 전송⚠️🥇')
+              session?.signal({
+                data: JSON.stringify({
+                  data: PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO,
+                  presenterConnectionId,
+                  presenterName,
+                }),
+                type: 'presentationStatus',
+              })
+            }, 3000)
+
+            answerCount.current += 1
+            // 마지막 후보 처리
+            if (answerCount.current === questionStep.current.length) {
+              console.log('마지막 답변자')
+              setIsQuestionCompleted(true)
+            }
+            console.log('질문 전송 완료')
+          }
+        } else {
+          // 유효한 후보가 없으면 질문 종료 신호 전송
+          setTimeout(() => {
+            session?.signal({
+              data: JSON.stringify({
+                data: PRESENTATION_STATUS.QUESTION_END,
+              }),
+              type: 'end',
+            })
+          }, 1000)
+        }
+        break
       // Todo 발표 시작 상태일 때 5초 후 발표자 소개 신호 전송
       case PRESENTATION_STATUS_KEYS.START:
         // 발표자 랜덤 선택
@@ -79,81 +163,8 @@ const StepContainer: FC<StepContainerProps> = ({ children }) => {
           })
         }, 3000)
         break
-      // Todo : 질문 준비 신호 전송
-      // 답변자 정하기,
-      case PRESENTATION_STATUS_KEYS.QUESTION_ANSWERER_INTRO:
-        // signal이 이미 전송되었다면 넘어가기
-        if (hasSentAnswerIntro.current) return
-        hasSentAnswerIntro.current = true
-
-        if (questionStep.length < roomConnectionData.length + 1) {
-          // 발표자 랜덤 선택
-          const randomPresenter = Math.floor(
-            Math.random() * (questionStep.length ?? 0)
-          )
-
-          // 발표자 connection ID
-          const presenterConnectionId =
-            session?.streamManagers[randomPresenter].stream.connection
-              .connectionId
-
-          // 발표자 이름
-          const { username: presenterName } = JSON.parse(
-            session?.streamManagers[randomPresenter].stream.connection
-              .data as string
-          )
-          console.log('✨발표자 선택함요✨', questionStep, roomConnectionData)
-
-          setTimeout(() => {
-            session?.signal({
-              data: JSON.stringify({
-                data: PRESENTATION_STATUS.QUESTION_ANSWERER_INTRO,
-                presenterConnectionId,
-                presenterName,
-              }),
-              type: 'presentationStatus',
-            })
-            // 발표자 이름 배열에 추가
-            setQuestionStep((prev) => {
-              // 이미 존재하는 ID인지 확인
-              const exists = prev.some(
-                (item) => item.connectionId === presenterConnectionId
-              )
-              if (exists) return prev
-
-              return [
-                ...prev,
-                {
-                  userId: presenterConnectionId as string,
-                  connectionId: presenterConnectionId as string,
-                },
-              ]
-            })
-
-            // 마지막 답변자였을 경우
-            if (questionStep.length - 1 === roomConnectionData.length) {
-              console.log('마지막 답변자')
-              setIsQuestionCompleted(true) // 질문 완료 상태 변경
-            }
-            console.log('질문 전송 완료')
-          }, 1000)
-          setTimeout(() => {
-            hasSentAnswerIntro.current = false
-          }, 1500)
-        } else {
-          console.log('질문 끝남')
-          setTimeout(() => {
-            session?.signal({
-              data: JSON.stringify({
-                data: PRESENTATION_STATUS.QUESTION_END,
-              }),
-              type: 'end',
-            })
-          }, 3000)
-        }
-        break
     }
   }, [presentationStatus])
-  return <div>{children}</div>
+  return <div></div>
 }
 export default StepContainer

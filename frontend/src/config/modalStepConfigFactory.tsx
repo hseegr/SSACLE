@@ -1,9 +1,11 @@
+import PresenterBen from '@/components/PresentationPage/PresenterBen/PresenterBen'
 import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
 import SsaprintVoteContainer from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteContainer'
 import { ModalSteps } from '@/constants/modalStep'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { Session } from 'openvidu-browser'
 import { ReactNode } from 'react'
+import { useParams } from 'react-router-dom'
 
 export interface ModalButton {
   text: string
@@ -37,6 +39,11 @@ export interface CreateModalStepConfigProps {
   setIsQuestionSelected: (isQuestionSelected: boolean) => void
   startScreenShare: () => Promise<void>
   stopScreenShare: () => Promise<void>
+  setPresenterInfo: (presenterInfo: {
+    connectionId: string
+    username: string
+  }) => void
+  presentationStatus: string
 }
 
 export const createModalStepConfig = ({
@@ -52,7 +59,10 @@ export const createModalStepConfig = ({
   stopScreenShare,
   selectedQuestion,
   setIsQuestionSelected,
+  setPresenterInfo,
+  presentationStatus,
 }: CreateModalStepConfigProps): Record<string, ModalStepConfig> => {
+  const { presentationType, roomId } = useParams()
   const leavePresentation = async () => {
     try {
       await leaveSession()
@@ -65,13 +75,14 @@ export const createModalStepConfig = ({
     }
   }
 
-  const sendStatusSignal = (data: string) => {
+  const sendStatusSignal = (data: string, option?: unknown) => {
     session?.signal({
-      data: JSON.stringify({ data }),
+      data: JSON.stringify({ data, option }),
       type: 'presentationStatus',
     })
   }
 
+  // 준비 완료 시그널 보내기 - 발표자 전용
   const sendReadySignal = (data: string) => {
     session?.signal({
       data: JSON.stringify({ data }),
@@ -101,7 +112,11 @@ export const createModalStepConfig = ({
     },
     EXIT: {
       text: '나가기',
-      onClick: leavePresentation,
+      onClick: async () => {
+        await leaveSession()
+        navigate('/main')
+        closeModal()
+      },
       style: '',
       variant: 'destructive',
     },
@@ -131,14 +146,20 @@ export const createModalStepConfig = ({
             준비가 완료되면 아래 <span className="font-bold">[시작하기]</span>
             버튼을 눌러주세요.
           </span>
-          <span>모든 참가자가 준비가 완료되면 싸프린트가 시작됩니다.</span>
+          <span>
+            모든 참가자가 준비가 완료되면{' '}
+            {presentationType === 'ssaprint' ? '싸프린트가' : '싸드컵이'}
+            시작됩니다.
+          </span>
         </>
       ),
       buttons: [
         {
           text: '시작하기',
           onClick: () => {
-            sendStatusSignal(PRESENTATION_STATUS.READY)
+            presentationType === 'ssaprint'
+              ? sendStatusSignal(PRESENTATION_STATUS.READY)
+              : sendStatusSignal(PRESENTATION_STATUS.READY_SSADCUP)
             setModalStep(ModalSteps.INITIAL.WAITING)
           },
           style: '',
@@ -160,8 +181,12 @@ export const createModalStepConfig = ({
     },
     // ? 발표자 벤 (싸드컵) ❌
     [ModalSteps.PRESENTATION.PRESENTER_BEN]: {
-      title: ['발표자 벤 뽑기'],
-      description: ['상태팀에서 발표를 금지할 참가자를 뽑습니다.'],
+      title: ['🚫 상대팀 발표자 벤 🚫'],
+      description: (
+        <>
+          <PresenterBen />
+        </>
+      ),
       buttons: [],
     },
     // ? 발표자 소개 모달 (발표자 전용) ✅
@@ -174,7 +199,9 @@ export const createModalStepConfig = ({
             </span>
             이 발표자가 되었습니다.
           </span>
-          <span>발표시간은 총 ⏱️ 10분 입니다.</span>
+          <span className="text-ssacle-blue">
+            발표시간은 총 ⏱️ 10분 입니다.
+          </span>
         </>
       ),
       description: (
@@ -201,7 +228,9 @@ export const createModalStepConfig = ({
         <>
           <span>발표자는 "{presenterInfo.name}"님 입니다.</span>
           <span>발표자가 준비하는 시간을 조금만 기다려주세요.</span>
-          <span>발표시간은 총 ⏱️ 10분 입니다.</span>
+          <span className="font-bold text-ssacle-blue">
+            발표시간은 총 ⏱️ 10분 입니다.
+          </span>
           <span className="italic">
             발표를 집중해서 들어주시면 감사하겠습니다 :)
           </span>
@@ -258,6 +287,11 @@ export const createModalStepConfig = ({
             sendStatusSignal(PRESENTATION_STATUS.QUESTION_INIT)
             stopScreenShare()
             closeModal()
+            // 발표 종료 모달 띄우면 발표자 정보 초기화
+            setPresenterInfo({
+              connectionId: '',
+              username: '',
+            })
           },
           style: '',
         },
@@ -296,7 +330,8 @@ export const createModalStepConfig = ({
         },
       ],
     },
-    //
+
+    // read -> intro -> stepComponent ->
 
     // * 질문 답변 소개 모달 (발표자 전용) ⚠️
     [ModalSteps.QUESTION.ANSWER_INTRODUCTION]: {
@@ -315,9 +350,9 @@ export const createModalStepConfig = ({
             <div className="font-bold">
               <QuestionCardSection />
             </div>
-            <span className="text-base">
+            <div className="text-base">
               질문 카드를 선택 후 [준비 완료] 버튼을 눌러주세요.
-            </span>
+            </div>
           </div>
         </>
       ),
@@ -411,12 +446,15 @@ export const createModalStepConfig = ({
           text: '확인',
           onClick: () => {
             // 모든 참여자가 완료 했을 경우, 질문 카드 종료 시그널 보내기
-            isQuestionCompleted
-              ? setTimeout(() => {
-                  sendEndSignal(PRESENTATION_STATUS.QUESTION_END)
-                }, 1000)
+            !isQuestionCompleted // ! 임시로 질문 한번만 보내기
+              ? sendEndSignal(PRESENTATION_STATUS.QUESTION_END)
               : sendStatusSignal(PRESENTATION_STATUS.QUESTION_ANSWER_CONTINUE)
             closeModal()
+            // 질문 중간 종료 모달 띄우면 발표자 정보 초기화
+            setPresenterInfo({
+              connectionId: '',
+              username: '',
+            })
             setIsQuestionSelected(false)
           },
         },
@@ -480,22 +518,13 @@ export const createModalStepConfig = ({
       description: (
         <>
           <SsaprintVoteContainer
+            session={session}
             sendStatusSignal={sendStatusSignal}
             closeModal={closeModal}
           />
         </>
       ),
-      buttons: [
-        // {
-        //   text: '평가 완료',
-        //   onClick: () => {
-        //     // 투표 완료 시그널 보내기
-        //     sendStatusSignal(PRESENTATION_STATUS.VOTE_END)
-        //     closeModal()
-        //   },
-        //   style: '',
-        // },
-      ],
+      buttons: [],
     },
 
     // ! 투표 종료 모달
@@ -534,9 +563,9 @@ export const createModalStepConfig = ({
       buttons: [
         {
           text: '결과 확인하기',
-          onClick: () => {
+          onClick: async () => {
+            await leaveSession()
             navigate('/presentation/result') // 결과 페이지로 이동
-            leaveSession()
             closeModal()
           },
           style: '',
@@ -560,12 +589,13 @@ export const createModalStepConfig = ({
       buttons: [
         {
           text: '결과 확인하기',
-          onClick: () => {
+          onClick: async () => {
             // 결과 확인 시그널 보내기
             // 투표 종료 시그널 보내기
             // sendSignal(PRESENTATION_STATUS.QUESTION_READY)
             // 여기서 다른 곳으로 이동하기
-            leaveSession()
+            await leaveSession()
+            navigate(`/ssaprint/${roomId}/result`) // 결과 페이지로 이동
             closeModal()
           },
           style: '',

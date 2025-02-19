@@ -10,7 +10,11 @@ import type { FC } from 'react'
 interface SsaprintVoteSelectorProps {
   rank: string
   setRank: (rank: string) => void
-  userList: string[]
+  userList: {
+    username: string
+    userId: string
+    connectionId: string
+  }[]
 }
 
 const SsaprintVoteSelector: FC<SsaprintVoteSelectorProps> = ({
@@ -24,9 +28,9 @@ const SsaprintVoteSelector: FC<SsaprintVoteSelectorProps> = ({
         <SelectValue placeholder="선택" />
       </SelectTrigger>
       <SelectContent>
-        {userList.map((user) => (
-          <SelectItem key={user} value={user}>
-            {user}
+        {userList.map(({ username, connectionId, userId }) => (
+          <SelectItem key={userId} value={userId}>
+            {username}
           </SelectItem>
         ))}
       </SelectContent>

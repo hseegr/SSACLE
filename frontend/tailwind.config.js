@@ -64,9 +64,42 @@ export default {
         KR: ['Noto Sans KR', 'sans-serif'],
         EN: ['Montserrat', 'sans-serif'],
       },
+      animation: {
+        'fade-in-down': 'fadeInDown 0.7s ease-out',
+        'slide-in-left': 'slideInLeft 0.7s ease-out',
+        'slide-in-right': 'slideInRight 0.7s ease-out',
+        'bounce-gentle': 'bounceGentle 2s infinite',
+        'bounce-gentle-delay': 'bounceGentle 2s infinite 0.3s',
+        'bounce-gentle-delay-more': 'bounceGentle 2s infinite 0.6s',
+        'score-pop': 'scorePop 0.5s ease-out',
+      },
+      keyframes: {
+        fadeInDown: {
+          '0%': { opacity: '0', transform: 'translateY(-20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideInLeft: {
+          '0%': { opacity: '0', transform: 'translateX(-100px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideInRight: {
+          '0%': { opacity: '0', transform: 'translateX(100px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        bounceGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        scorePop: {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.2)' },
+          '100%': { transform: 'scale(1)' },
+        },
+      },
+      scale: {
+        102: '1.02',
+      },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-  ],
+  plugins: [require('tailwindcss-animate')],
 }

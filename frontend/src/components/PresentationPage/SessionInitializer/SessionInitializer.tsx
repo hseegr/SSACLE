@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom'
 
 const SessionInitializer = () => {
   const { roomId } = useParams()
+  console.log('여기 렌더링✨✨')
 
   // 세션 초기화 시 타겟 연결 수 설정
   const setTargetConnectionCount = usePresentationStore(
@@ -31,37 +32,60 @@ const SessionInitializer = () => {
       // const serverToken = await fetchServerToken(roomId ?? 'test-session-id')
       // return serverToken // 실제 데이터만 반환
     },
-    staleTime: 0, // 토큰은 한번 받으면 변경되지 않으므로
-    gcTime: 0,
+    staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
+    gcTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
   })
+
+  type User = {
+    id: number
+    nickname: string
+    level: number
+    pickles: number
+    profile: string
+    categoryNames: string[]
+  }
+
+  type PresentationParticipants = {
+    id: number
+    name: string
+    point: number
+    users: User[]
+  }
 
   // 타겟 연결 수 설정
   const {
     data: presentationParticipants,
     isSuccess: isPresentationParticipantsSuccess,
-  } = useQuery({
+  } = useQuery<PresentationParticipants[]>({
     queryKey: ['presentation-participants'],
     queryFn: () => fetchPresentationParticipants(roomId ?? 'test-session-id'),
-    staleTime: 0, // 타겟 연결 수는 한번 받으면 변경되지 않으므로
+    staleTime: 1000 * 60 * 5, // 10분 동안 캐시 유지
+    refetchInterval: 1000 * 5, // 10초 동안 캐시 유지
     enabled: !!roomId,
   })
 
-  useEffect(() => {
-    if (isPresentationParticipantsSuccess) {
-      console.log('참가자 목록', presentationParticipants)
-      setTargetConnectionCount(presentationParticipants.length)
-    }
-  }, [])
-
   // 질문 카드 목록 요청
-  const { data: questionCardList, isSuccess: isQuestionCardListSuccess } =
-    useQuery({
-      queryKey: ['question-card-list'],
-      queryFn: () => fetchQuestionCards(roomId ?? 'test-session-id'),
-      staleTime: Infinity, // 질문 카드 목록은 한번 받으면 변경되지 않으므로
-      enabled: !!roomId,
-      gcTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
-    })
+  useQuery({
+    queryKey: ['question-card-list'],
+    queryFn: () => fetchQuestionCards(roomId ?? 'test-session-id'),
+    staleTime: Infinity, // 질문 카드 목록은 한번 받으면 변경되지 않으므로
+    enabled: !!roomId,
+    gcTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
+  })
+
+  useEffect(() => {
+    if (isPresentationParticipantsSuccess && presentationParticipants) {
+      console.log('참가자 목록', presentationParticipants)
+      let totalCount = 0
+      presentationParticipants.forEach((each) => {
+        totalCount += each.users.length
+      })
+      console.log('👍🏻totalCount - in SessionInitializer', totalCount)
+      totalCount !== 0
+        ? setTargetConnectionCount(totalCount)
+        : setTargetConnectionCount(2)
+    }
+  }, [isPresentationParticipantsSuccess, presentationParticipants])
 
   return (
     <div className="flex items-center justify-center w-full h-full">

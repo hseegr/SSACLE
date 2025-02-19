@@ -166,16 +166,16 @@ export const usePresentationControls = () => {
       },
       isDropdown: true,
     },
-    {
-      id: 'chat',
-      icon: MessageSquareIcon,
-      title: '채팅',
-      activeFunction: () => {
-        usePresentationStore.setState(({ isChatOpen }) => ({
-          isChatOpen: !isChatOpen,
-        }))
-      },
-    },
+    // {
+    //   id: 'chat',
+    //   icon: MessageSquareIcon,
+    //   title: '채팅',
+    //   activeFunction: () => {
+    //     usePresentationStore.setState(({ isChatOpen }) => ({
+    //       isChatOpen: !isChatOpen,
+    //     }))
+    //   },
+    // },
   ]
 
   const rightControl = {

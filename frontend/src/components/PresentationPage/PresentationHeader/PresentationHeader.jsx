@@ -7,7 +7,6 @@ const PresentationHeader = () => {
   const presentationStatus = usePresentationSignalStore(
     (state) => state.presentationStatus
   )
-
   return (
     <header className="">
       <div className="flex items-center justify-between px-24 py-4">
