@@ -34,11 +34,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           return (
             <button
               key={pageNumber}
-              className={`w-10 h-10 flex justify-center items-center rounded-lg shadow-sm ${
-                currentPage === pageNumber
-                  ? 'bg-blue-500 text-white'
+              className={`w-10 h-10 flex justify-center items-center rounded-lg shadow-sm ${currentPage === pageNumber
+                  ? 'bg-[#5195F7] text-white'
                   : 'bg-white border'
-              }`}
+                }`}
               onClick={() => onPageChange(pageNumber)}
             >
               {pageNumber}
