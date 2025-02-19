@@ -27,6 +27,8 @@ export const fetchSaveInterest = (userId, interests) =>
 // 카테고리 조회 (GET)
 export const fetchSignupLoadCategory = async () => {
   const response = await axios.get(AUTH_END_POINT.SEARCH_CATEGORY)
+  console.log('📢 카테고리 API 응답:', response)
+  console.log("📢 API 요청 URL:", AUTH_END_POINT.SEARCH_CATEGORY);
   return response.data
 }
 

@@ -418,10 +418,11 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowTermsTooltip(true)}
                 onMouseLeave={() => setShowTermsTooltip(false)}
+                onClick={() => setTermsChecked(termsChecked === false? true : false)}
               >
                 서비스 이용 약관
                 {showTermsTooltip && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                  <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
                     본 서비스 이용을 위해 필수적인 약관입니다.
                     <br />
                     서비스 제공, 보안 관리 등을 위해 사용됩니다.
@@ -442,10 +443,11 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowPrivacyTooltip(true)}
                 onMouseLeave={() => setShowPrivacyTooltip(false)}
+                onClick={() => setPrivacyChecked(privacyChecked === false? true : false)}
               >
                 개인정보 수집 / 이용 동의
                 {showPrivacyTooltip && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                  <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
                     회원가입 및 서비스 제공을 위해 최소한의 개인정보를 수집하며,
                     <br />
                     법령에 따라 안전하게 관리됩니다.

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   fetchSaveInterest,
   fetchSignupLoadCategory,
@@ -13,6 +13,12 @@ const InterestPage = () => {
   const userNickname = localStorage.getItem('userNickname')
   const userId = localStorage.getItem('userId')
 
+  const testCategories = useQuery({
+    queryKey: ['test'],
+    queryFn: fetchSignupLoadCategory,
+  })
+
+  console.log(testCategories)
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -133,7 +139,9 @@ const InterestPage = () => {
             className={`mt-10 mb-3 px-10 py-3 text-white text-xl font-bold font-noto-sans-kr rounded-full transition-all ${
               userId ? 'bg-ssacle-black' : 'bg-ssacle-gray cursor-not-allowed'
             }`}
-            onClick={() => {userId && saveInterestsMutation.mutate()}}
+            onClick={() => {
+              userId && saveInterestsMutation.mutate()
+            }}
             disabled={!userId}
           >
             {saveInterestsMutation.isLoading ? '저장 중...' : '저장하기'}
