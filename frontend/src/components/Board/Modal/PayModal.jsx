@@ -9,12 +9,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { CreditCard } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const PayModal = ({
   isOpen,
   onClose,
   onConfirm,
-  requiredPickles = 5,
+  requiredPickles = 7,
   currentPickle,
 }) => {
   const hasEnoughPickles = currentPickle >= requiredPickles

@@ -12,8 +12,12 @@ const CurruntSsaprint = ({ userData, recommendedSprints }) => {
           있어요! 💡
         </p>
         <div className="grid grid-cols-4 gap-y-5 gap-x-4">
-          {sliceRecommended.map((sprint) => (
-            <SsapCard key={`sprint-${sprint.id}`} sprintData={sprint} />
+          {sliceRecommended.map((sprint, idx) => (
+            <SsapCard
+              key={`sprint-${sprint.id}`}
+              idx={idx}
+              sprintData={sprint}
+            />
           ))}
         </div>
       </div>

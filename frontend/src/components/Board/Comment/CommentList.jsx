@@ -19,7 +19,6 @@ const CommentList = ({
   }
 
   const handleEditClick = (comment) => {
-    console.log('✅ 수정 버튼 클릭됨! - comment.id:', comment.id) // 디버깅 추가
     setEditingId(comment.id)
     setActiveMenuId(null)
     setReplyingTo(null)
@@ -34,21 +33,12 @@ const CommentList = ({
   }
 
   const handleEditSubmit = async (commentId, newContent) => {
-    console.log(
-      '✅ 댓글 수정 요청 - commentId:',
-      commentId,
-      'newContent:',
-      newContent
-    )
-
     if (!commentId || isNaN(commentId)) {
-      console.error('❌ 잘못된 commentId:', commentId)
       alert('댓글 ID가 올바르지 않습니다.')
       return
     }
 
     if (!newContent?.trim()) {
-      console.error('❌ 댓글 내용이 비어 있음!')
       alert('댓글 내용을 입력하세요.')
       return
     }
@@ -63,16 +53,12 @@ const CommentList = ({
   }
 
   const handleReplySubmit = async (parentId, content) => {
-    console.log('대댓글 요청 - parentId:', parentId, 'content:', content) // ✅ id와 내용 확인
-
     if (!parentId || isNaN(parentId)) {
-      console.error('❌ 잘못된 parentId:', parentId)
       alert('대댓글을 달 대상 댓글 ID가 올바르지 않습니다.')
       return
     }
 
     if (!content?.trim()) {
-      console.error('❌ 대댓글 내용이 비어 있음!')
       alert('대댓글 내용을 입력하세요.')
       return
     }
@@ -87,13 +73,9 @@ const CommentList = ({
   }
 
   const handleDeleteClick = async (comment) => {
-    console.log('삭제 버튼 클릭 - comment:', comment) // comment 객체 전체 출력
-
     const commentId = Number(comment?.id)
-    console.log('삭제 요청 - commentId:', commentId) // 변환된 commentId 확인
 
     if (!commentId || isNaN(commentId)) {
-      console.error('❌ 잘못된 commentId:', commentId)
       alert('삭제할 댓글 ID가 올바르지 않습니다.')
       return
     }
@@ -123,7 +105,7 @@ const CommentList = ({
   const renderComment = (comment, depth = 0) => {
     return (
       <div
-        key={comment.id} // time을 key로 사용 (고유한 값)
+        key={comment.id}
         className={`border-b pb-4 last:border-b-0 ${
           depth > 0 ? 'ml-8 mt-4 pl-4 border-l-2 border-gray-100' : ''
         }`}
@@ -231,9 +213,30 @@ const CommentList = ({
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold">댓글 {totalComments}개</h3>
-      <div className="space-y-6">
+      {/* 스크롤 가능한 댓글 영역 추가 */}
+      <div className="max-h-[600px] overflow-y-auto pr-4 space-y-6 scrollbar">
         {comments.map((comment) => renderComment(comment))}
       </div>
+      {/* 스크롤바 스타일링을 위한 CSS 클래스 */}
+      <style jsx>{`
+        .scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #cbd5e1 transparent;
+        }
+        .scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .scrollbar::-webkit-scrollbar-thumb {
+          background-color: #cbd5e1;
+          border-radius: 3px;
+        }
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+          background-color: #94a3b8;
+        }
+      `}</style>
     </div>
   )
 }

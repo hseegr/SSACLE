@@ -9,6 +9,10 @@ import {
 } from '@/services/boardService'
 
 const BoardFormPage = () => {
+  // 글자 수 제한 상수 추가
+  const TITLE_MAX_LENGTH = 50
+  const CONTENT_MAX_LENGTH = 300
+
   const navigate = useNavigate()
   const { boardId } = useParams()
   const location = useLocation()
@@ -116,6 +120,17 @@ const BoardFormPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+
+    // 제목 글자 수 제한
+    if (name === 'title' && value.length > TITLE_MAX_LENGTH) {
+      return
+    }
+
+    // 내용 글자 수 제한
+    if (name === 'content' && value.length > CONTENT_MAX_LENGTH) {
+      return
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -183,7 +198,8 @@ const BoardFormPage = () => {
             value={formData.title}
             onChange={handleChange}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-            placeholder="제목을 입력해주세요"
+            placeholder={`제목을 입력해주세요 (최대 ${TITLE_MAX_LENGTH}자)`}
+            maxLength={TITLE_MAX_LENGTH}
             required
           />
         </div>
@@ -223,12 +239,17 @@ const BoardFormPage = () => {
         {/* 내용 입력 */}
         <div>
           <label className="block mb-2">내용</label>
+          <span className="text-gray-500 text-sm">
+            {formData.content.length}/{CONTENT_MAX_LENGTH}
+          </span>
           <textarea
             name="content"
             value={formData.content}
             onChange={handleChange}
             rows="10"
             className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+            placeholder={`내용을 입력해주세요 (최대 ${CONTENT_MAX_LENGTH}자)`}
+            maxLength={CONTENT_MAX_LENGTH}
             required
           />
         </div>

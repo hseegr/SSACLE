@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +21,16 @@ const NotePayModal = ({ isOpen, onClose, post, currentPickle }) => {
 
   const queryClient = useQueryClient()
   const requiredPickles = 7
+
+  useEffect(() => {
+    // Sprint_403_6 코드를 확인했다면 이미 구매한 노트
+    if (isOpen && error?.response?.data?.code === 'Sprint_403_6') {
+      alert(
+        '이미 구매한 노트입니다. 싸프린트의 참여 종료 페이지를 확인해주세요!'
+      )
+      onClose()
+    }
+  }, [isOpen, error])
 
   const handlePurchase = async () => {
     if (loading) return
@@ -47,7 +57,15 @@ const NotePayModal = ({ isOpen, onClose, post, currentPickle }) => {
         // }
       }
     } catch (error) {
-      console.error('노트 구매 실패:', error)
+      // Sprint_403_6 에러 코드 확인
+      if (error.response?.data?.code === 'Sprint_403_6') {
+        alert(
+          '이미 구매한 노트입니다.\n싸프린트의 참여 종료 페이지를 확인해주세요!'
+        )
+        onClose()
+        return
+      }
+
       setError(
         error.response?.data?.message ||
           '노트 구매에 실패했습니다. 다시 시도해주세요.'

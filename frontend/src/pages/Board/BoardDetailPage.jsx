@@ -205,7 +205,7 @@ const BoardDetailPage = () => {
 
   const handlePayConfirm = async () => {
     try {
-      const requiredPickles = 5
+      const requiredPickles = 7
       if (userData?.pickles >= requiredPickles) {
         setShowPayModal(false)
         navigate(`/board/${boardType}/${selectedPostId}`)
@@ -244,7 +244,7 @@ const BoardDetailPage = () => {
     return <div>게시글을 불러오는 중 오류가 발생했습니다.</div>
 
   return (
-    <div className="min-w-max my-20 container mx-auto px-4 py-8 max-w-4xl">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 overflow-hidden">
       <h2 className="text-xl font-semibold text-ssacle-blue flex justify-center mb-6">
         {BOARD_TITLES[post.subCategory] || BOARD_TITLES[boardType] || '게시판'}
       </h2>
@@ -253,8 +253,7 @@ const BoardDetailPage = () => {
         <h1 className="text-2xl font-bold">{post?.title || '제목 없음'}</h1>
         <div className="text-gray-500 text-sm">
           {post?.writerInfo || '알 수 없음'} |{' '}
-          {post?.time?.split('T')[0] || '날짜 없음'} | 조회수{' '}
-          {post?.viewCount || 0}
+          {post?.time?.split('T')[0] || '날짜 없음'}
         </div>
         <div className="mt-2 flex gap-2">
           {post?.tags?.map((tag, index) => (
