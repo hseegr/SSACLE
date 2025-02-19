@@ -134,7 +134,7 @@ public class User {
                 name, // 관리자에게 닉네임은 이름으로 설정
                 1,
                 0,
-                0,
+                300,
                 false,
                 Role.ADMIN,
                 null,
@@ -161,7 +161,7 @@ public class User {
                 nickname, // 기본 닉네임을 이름으로 설정
                 1,
                 0,
-                0,
+                300,
                 false,
                 Role.STUDENT,
                 null,
@@ -188,7 +188,7 @@ public class User {
                 nickname, // 기본 닉네임을 이름으로 설정
                 1,
                 0,
-                0,
+                300,
                 true, // 졸업생이므로 true
                 Role.ALUMNI,
                 null,

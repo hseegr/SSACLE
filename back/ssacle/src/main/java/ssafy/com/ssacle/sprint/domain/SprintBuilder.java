@@ -85,7 +85,7 @@ public class SprintBuilder {
     }
 
     public Sprint build(){
-        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), sequence, maxMembers, 1, LocalDateTime.now());
+        Sprint sprint = new Sprint(name, basicDescription, detailDescription, recommendedFor, startAt, endAt, announceAt, calculateStatus(), sequence, maxMembers, 0, LocalDateTime.now());
 
         if(ssaldCup !=null)
             sprint.setSsaldCup(ssaldCup);

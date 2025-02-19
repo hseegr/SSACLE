@@ -12,10 +12,12 @@ import ssafy.com.ssacle.lunch.domain.Lunch;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LunchResponseDTO {
+    private Long id;
     protected String menuName;
 
     protected String imageUrl;
     public LunchResponseDTO(Lunch lunch){
+        this.id= lunch.getId();
         this.menuName=lunch.getMenuName();
         this.imageUrl=lunch.getImageUrl();
     }

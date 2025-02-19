@@ -44,7 +44,6 @@ public class SsaldCupService {
     private final SsaldCupCategoryRepository ssaldCupCategoryRepository;
     private final SprintRepository sprintRepository;
 
-    private final Map<Long, List<List<String>>> leagueSchedules = new HashMap<>();
     @Transactional
     public SsaldCupCreateResponseDTO createSsaldCup(SsaldCupCreateRequestDTO ssaldCupCreateRequestDTO){
         SsaldCup ssaldCup = SsaldCupBuilder.builder()

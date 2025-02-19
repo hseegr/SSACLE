@@ -140,8 +140,8 @@ public class SprintService {
         Team team = saveTeamAndTeamUser(user, sprint, teamName);
 
         // 팀 <-> 노션 연동
-//        String notionUrl = saveNotion(teamName, defaultTodos, categories);
-//        team.setNotionURL(notionUrl);
+        String notionUrl = saveNotion(teamName, defaultTodos, categories);
+        team.setNotionURL(notionUrl);
 
         // 팀 <-> 투두 연동
         saveTodo(team, defaultTodos);

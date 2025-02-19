@@ -31,10 +31,10 @@ public class Board {
     @JoinColumn(name = "boardtype_id", nullable = false)
     private BoardType boardType;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 150)
     private String title;
 
-    @Column(nullable = false, length = 512)
+    @Column(nullable = false, length = 1024)
     private String content;
 
     @Column(length = 1024)

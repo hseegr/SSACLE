@@ -11,11 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface SsaldCupRepository extends JpaRepository<SsaldCup, Long>, SsaldCupRepositoryCustom{
-//    @Query("SELECT s FROM SsaldCup s LEFT JOIN FETCH s.teams t LEFT JOIN FETCH t.userTeams ut LEFT JOIN FETCH ut.user WHERE s.id = :ssaldCupId")
-//    Optional<SsaldCup> findByIdWithTeams(Long ssaldCupId);
-
-
-    @Query("SELECT s FROM SsaldCup s WHERE s.id = :ssaldCupId")
-    Optional<SsaldCup> findByIdWithoutTeams(@Param("ssaldCupId") Long ssaldCupId);
 
 }
