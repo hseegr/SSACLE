@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { fetchSendVerification, fetchCheckCode } from '@/services/userService'
+import { EmblaCarousel } from '@/components/Signup/Carousel'
 
 const SignupStep1 = () => {
   const navigate = useNavigate()
@@ -73,65 +74,10 @@ const SignupStep1 = () => {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <div className="min-w-[75rem] flex flex-col md:flex-row items-center justify-center gap-10">
-        {/* 좌측 컨텐츠 */}
-        <div className="w-[25rem] bg-white p-12 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold text-ssacle-blue mb-4">
-            SSAFY인 인증하는 방법
-          </h2>
-          <p className="text-sm text-ssacle-black font-bold mb-2">{step}단계</p>
-          <div className="text-left">
-            {step === 1 ? (
-              <ol className="text-sm text-ssacle-black list-disc list-inside">
-                <li>싸피 MatterMost에서 원하는 서버를 클릭</li>
-                <li>인증 코드를 받을 Private 채널을 만든다</li>
-                <ol className="list-disc list-inside pl-4">
-                  <li>채널 하단 Add channels 클릭</li>
-                  <li>새로운 채널 생성</li>
-                  <li>이름 자유롭게 작성 후 Private Channel 클릭</li>
-                  <li>채널 만들기</li>
-                </ol>
-              </ol>
-            ) : (
-              <ol className="text-sm text-ssacle-black list-disc list-inside">
-                <li>
-                  채널을 만든 서버를 켠 상태에서 좌측 상단 MatterMost 로고 클릭
-                </li>
-                <li>‘통합’ 클릭</li>
-                <li>'전체 Incoming Webhook' 메뉴 클릭</li>
-                <li>'Incoming Webhook 추가하기' 버튼 클릭</li>
-                <li>
-                  ‘제목’ 자유롭게 입력 후 ‘채널’을 클릭하여 방금 만든 채널을
-                  선택 후 저장
-                </li>
-                <li>화면에 뜨는 URL 복사하여 우측 Webhook URL에 붙여넣기</li>
-                <li>
-                  MM 가입한 이메일을 입력 후 인증 코드 받기 버튼을 누르면
-                  만들어놓은 채널에 인증 코드가 전송됩니다!
-                </li>
-              </ol>
-            )}
-          </div>
-
-          {/* 화살표 네비게이션 */}
-          <div className="flex justify-center mt-4">
-            <button
-              className={`w-6 h-6 ${step === 1 ? 'text-ssacle-gray' : 'text-ssacle-blue'}`}
-              disabled={step === 1}
-              onClick={() => setStep(1)}
-            >
-              ◀️
-            </button>
-            <button
-              className={`w-6 h-6 ml-4 ${step === 2 ? 'text-ssacle-gray' : 'text-ssacle-blue'}`}
-              disabled={step === 2}
-              onClick={() => setStep(2)}
-            >
-              ▶️
-            </button>
-          </div>
-        </div>
+        {/* 좌측 컨텐츠 - 캐러셀 적용 */}
+        <EmblaCarousel />
 
         {/* 우측 회원가입 폼 */}
         <div className="min-w-[25rem] flex flex-col items-center">

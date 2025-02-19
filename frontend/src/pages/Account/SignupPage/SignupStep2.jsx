@@ -36,6 +36,9 @@ const SignupStep2 = () => {
   const [privacyChecked, setPrivacyChecked] = useState(false)
   const [termsError, setTermsError] = useState(false)
 
+  const [showTermsTooltip, setShowTermsTooltip] = useState(false)
+  const [showPrivacyTooltip, setShowPrivacyTooltip] = useState(false)
+
   // Step1에서 받아온 이메일
   const email = location.state?.email || ''
   // console.log('Step2에서 받은 이메일:', email) // 🔥 확인용 로그
@@ -108,15 +111,12 @@ const SignupStep2 = () => {
     //     confirmpassword,
     //   }),
     mutationFn: async (userData) => {
-      console.log('📤 회원가입 요청 데이터:', userData)
-
       const response = await fetchSignup(userData)
 
-      console.log('📥 회원가입 응답:', response)
-      return response // ✅ 정상적으로 응답을 반환함
+      return response
     },
     onSuccess: (response) => {
-      console.log('✅ 회원가입 성공:', response)
+
 
       const userId = response?.data?.userId
       // const nickname = nickname
@@ -247,7 +247,7 @@ const SignupStep2 = () => {
       confirmpassword,
     }
     localStorage.setItem('userNickname', nickname)
-    console.log('📤 회원가입 요청 데이터 확인:', userData)
+    // console.log('📤 회원가입 요청 데이터 확인:', userData)
 
     // 회원가입 API 실행
     signupMutation.mutate(userData)
@@ -407,28 +407,52 @@ const SignupStep2 = () => {
             <div className="border-b-2 border-ssacle-gray-sm my-6" />
 
             {/* 약관 동의 */}
-            <label className="flex items-center space-x-2 px-2">
+            <div className="relative flex items-center space-x-2 px-2">
               <input
                 type="checkbox"
                 checked={termsChecked}
                 onChange={() => setTermsChecked(!termsChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
-              <span className="text-ssacle-black text-base font-medium">
+              <span
+                className="text-ssacle-black text-base font-medium cursor-pointer relative"
+                onMouseEnter={() => setShowTermsTooltip(true)}
+                onMouseLeave={() => setShowTermsTooltip(false)}
+              >
                 서비스 이용 약관
+                {showTermsTooltip && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                    본 서비스 이용을 위해 필수적인 약관입니다.
+                    <br />
+                    서비스 제공, 보안 관리 등을 위해 사용됩니다.
+                    <br />
+                    자세한 내용은 공지사항을 확인해주세요.
+                  </div>
+                )}
               </span>
-            </label>
-            <label className="flex items-center space-x-2 mt-2 px-2">
+            </div>
+            <div className="relative flex items-center space-x-2 px-2 mt-2">
               <input
                 type="checkbox"
                 checked={privacyChecked}
                 onChange={() => setPrivacyChecked(!privacyChecked)}
                 className="w-5 h-5 text-ssacle-blue checked:bg-ssacle-blue checked:border-transparent"
               />
-              <span className="text-ssacle-black text-base font-medium">
+              <span
+                className="text-ssacle-black text-base font-medium cursor-pointer relative"
+                onMouseEnter={() => setShowPrivacyTooltip(true)}
+                onMouseLeave={() => setShowPrivacyTooltip(false)}
+              >
                 개인정보 수집 / 이용 동의
+                {showPrivacyTooltip && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-6 bg-ssacle-black text-white text-sm p-2 rounded-md shadow-md whitespace-nowrap">
+                    회원가입 및 서비스 제공을 위해 최소한의 개인정보를 수집하며,
+                    <br />
+                    법령에 따라 안전하게 관리됩니다.
+                  </div>
+                )}
               </span>
-            </label>
+              </div>
             {/* 필수 약관 미동의 시 경고 메세지 */}
             {termsError && (
               <p className="text-[#f03939] text-sm px-2 mt-2 mb-10 pl-9">
@@ -439,7 +463,7 @@ const SignupStep2 = () => {
             {/* 회원가입 버튼 */}
             <div className="grid grid-cols-6 gap-4 mb-12">
               <button
-                className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mb-4"
+                className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mt-6"
                 onClick={handleSignup}
                 disabled={signupMutation.isLoading}
               >

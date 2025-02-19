@@ -129,7 +129,7 @@ const EmailPage = () => {
   }
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <div className="flex flex-col gap-4 w-[30rem] shrink-0 px-4">
         <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-5">
           이메일 / 비밀번호 찾기
@@ -162,7 +162,7 @@ const EmailPage = () => {
         {activeTab === 'email' ? (
           <div className="flex flex-col gap-4">
             <input
-              placeholder="싸피 학번을 입력 해주세요"
+              placeholder="SSAFY 학번을 입력 해주세요"
               className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
                            text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
               value={studentNumber}
@@ -191,7 +191,7 @@ const EmailPage = () => {
           <div className="flex flex-col gap-4">
             <input
               ref={studentNumRef}
-              placeholder="싸피 학번을 입력 해주세요"
+              placeholder="SSAFY 학번을 입력 해주세요"
               className="w-full h-12 bg-ssacle-gray-sm rounded-full px-6
                            text-ssacle-blue text-base font-medium focus:outline-ssacle-blue"
               value={pwStudentNumber}
@@ -211,13 +211,13 @@ const EmailPage = () => {
               onClick={handleFindPassword}
               className="w-full h-12 bg-ssacle-blue rounded-full text-white text-xl font-bold"
             >
-              이메일 인증하기
+              임시 비밀번호 발급
             </button>
 
             {/* 비밀번호 찾기 결과 */}
             {pwResult ? (
               <div className="text-center text-ssacle-blue font-medium">
-                조회 결과: {pwResult}
+                임시 비밀번호: {pwResult}
               </div>
             ) : pwErrorMessage ? (
               <div className="text-center text-red-500 font-medium">
