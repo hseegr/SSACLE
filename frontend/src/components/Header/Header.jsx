@@ -46,9 +46,9 @@ const Header = () => {
         <Link to="/ssaprint" className="hover:underline">
           싸프린트
         </Link>
-        <Link to="/ssadcup" className="hover:underline">
+        {/* <Link to="/ssadcup" className="hover:underline">
           싸드컵
-        </Link>
+        </Link> */}
         <Link to="/board/edu" className="hover:underline">
           학습게시판
         </Link>
@@ -59,9 +59,9 @@ const Header = () => {
 
       {/* 아이콘 */}
       <div className="flex space-x-6">
-        <button className="flex items-center justify-center w-5 h-5">
+        {/* <button className="flex items-center justify-center w-5 h-5">
           <Search size={15} className="text-black" />
-        </button>
+        </button> */}
 
         {accessToken ? (
           <button

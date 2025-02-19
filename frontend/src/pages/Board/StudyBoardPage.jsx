@@ -269,7 +269,8 @@ const StudyBoardPage = () => {
                 작성 꿀팁, 면접 후기 등을 볼 수 있는 곳입니다.
               </p>
               <p className="text-ssacle-blue font-semibold text-sm">
-                * 명예의 전당 글을 열람하기 위해선 피클이 필요해요 🥒 !
+                * 명예의 전당 글을 열람하기 위해선 피클이 필요해요. 싸프린트를
+                수료하고 피클을 받아 사용해요 🥒 !
               </p>
             </div>
           ) : (
