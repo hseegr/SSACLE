@@ -56,7 +56,7 @@ const SsaprintDetailLayout = ({ sprintData }) => {
   }
 
   return (
-    <div className="mt-16 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold flex items-center gap-2 pb-2 border-b-4 border-gray-200 min-w-[1000px] max-w-full flex-shrink-0">
         싸프린트 Info 💡
       </h2>

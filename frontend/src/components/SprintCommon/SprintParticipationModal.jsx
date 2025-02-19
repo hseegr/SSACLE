@@ -15,6 +15,7 @@ const SprintParticipationModal = ({
   const [teamName, setTeamName] = useState('')
   const [buttonText, setButtonText] = useState('완료')
   const [isSubmitting, setIsSubmitting] = useState(false) // 버튼 중복 클릭 방지
+  const [errorMsg, setErrorMsg] = useState('') // 20자 초과 시 에러 메시지
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -46,8 +47,24 @@ const SprintParticipationModal = ({
         onClose()
       }
     },
-    onError: () => {
-      alert('참가 신청 중 오류가 발생했습니다.')
+    onError: (error) => {
+      if (
+        error?.response?.status === 403 &&
+        error?.response?.data?.code === 'Sprint_403_6'
+      ) {
+        alert('⚠️ 이미 해당 스프린트에 참여하고 있어 신청이 불가능합니다.')
+      } else if (error?.response?.status === 400) {
+        alert(
+          '⚠️ 이미 존재하는 노트 이름입니다. 다른 이름을 입력 후 다시 시도해주세요.'
+        )
+      } else if (
+        error?.response?.status === 404 &&
+        error?.response?.data?.code === 'Sprint_404_2'
+      ) {
+        alert('⚠️ 존재하지 않는 스프린트입니다.')
+      } else {
+        alert('참가 신청 중 오류가 발생했습니다.')
+      }
       setButtonText('완료')
       setIsSubmitting(false) // 오류 발생 시 버튼 다시 활성화
     },
@@ -66,9 +83,24 @@ const SprintParticipationModal = ({
       alert('나의 싸프린트 이름을 입력해주세요.')
       return
     }
+    if (teamName.length > 20) {
+      alert('노트 이름은 20자 이내로 입력해주세요.')
+      return
+    }
     setButtonText('신청 중...')
     setIsSubmitting(true) // 버튼 비활성화
     mutation.mutate()
+  }
+
+  // 입력값 변경 시 글자수 제한 체크
+  const handleTeamNameChange = (e) => {
+    const value = e.target.value
+    if (value.length > 20) {
+      setErrorMsg('노트 이름은 20자 이내로 입력해주세요.')
+    } else {
+      setErrorMsg('')
+    }
+    setTeamName(value.slice(0, 20)) // 최대 20글자까지만 입력 가능
   }
 
   const handleMoveToSprint = () => {
@@ -86,7 +118,7 @@ const SprintParticipationModal = ({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg shadow-lg p-8 w-[40rem] relative">
         <button
-          className="absolute top-5 right-5 text-gray-500 hover:text-gray-700 text-lg"
+          className="absolute top-5 right-7 text-gray-500 hover:text-gray-700 text-lg"
           onClick={onClose}
         >
           ✕
@@ -94,14 +126,14 @@ const SprintParticipationModal = ({
 
         {step === 1 ? (
           <>
-            <h2 className="text-xl font-semibold text-blue-600 text-center">
+            <h2 className="mt-4 text-xl font-semibold text-blue-600 text-center">
               싸프린트 참여 신청 확인
             </h2>
-            <p className="text-gray-800 mt-5 text-base text-center">
-              싸프린트 신청은 취소가 불가능합니다. 아래 내용을 확인하고 신중히
-              결정해주세요!
+            <p className="text-gray-800 mt-7 text-base text-center">
+              ⚠️ 싸프린트 신청은 취소가 불가능합니다. 아래 내용을 확인하고
+              신중히 결정해주세요!
             </p>
-            <ul className="mt-6 text-base text-gray-700 list-disc list-inside">
+            <ul className="mt-6 text-base text-gray-700 list-disc list-inside bg-[#E5F0FF] p-6 rounded-lg">
               <li>싸프린트 신청 후에는 취소 및 변경이 불가능합니다.</li>
               <li>싸프린트 기간 동안 적극적인 참여를 권장합니다.</li>
               <li>
@@ -109,7 +141,7 @@ const SprintParticipationModal = ({
                 있습니다.
               </li>
             </ul>
-            <div className="flex items-center mt-6">
+            <div className="flex items-center mt-8 ml-3">
               <input
                 type="checkbox"
                 id="agreement"
@@ -121,7 +153,7 @@ const SprintParticipationModal = ({
                 위 내용을 확인하였으며, 신청에 동의합니다.
               </label>
             </div>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-6 flex justify-center mb-2">
               <button
                 className={`w-full py-3 px-5 rounded-lg font-medium text-white text-lg transition-all ${
                   isChecked
@@ -137,23 +169,23 @@ const SprintParticipationModal = ({
           </>
         ) : (
           <>
-            <h2 className="text-xl font-semibold text-blue-600 text-center">
+            <h2 className="mt-4 text-xl font-semibold text-blue-600 text-center">
               나의 싸프린트 이름 설정하기
             </h2>
             <p className="text-gray-800 mt-5 text-base text-center">
               싸프린트 노트를 생성할 때, 노트의 이름을 설정할 수 있습니다.
             </p>
             <p className="text-gray-800 text-base text-center">
-              원하는 이름을 입력해주세요!
+              원하는 이름을 입력해주세요! (20자 이내)
             </p>
             <input
               type="text"
-              className="w-full mt-4 p-3 border rounded-lg text-gray-800"
+              className="w-full mt-6 p-3 border rounded-lg text-gray-800"
               placeholder="해당 싸프린트 노트명 입력"
               value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
+              onChange={handleTeamNameChange}
             />
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center mb-4">
               <button
                 className={`w-full py-3 px-5 rounded-lg font-medium text-white text-lg ${
                   isSubmitting || mutation.isLoading
