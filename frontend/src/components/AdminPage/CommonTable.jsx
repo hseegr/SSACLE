@@ -130,7 +130,8 @@ const CommonTable = ({
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`p-2 border ${col.align === 'center' ? 'text-center' : 'text-left'}`}
+                  className={`p-2 border ${col.align === 'center' ? 'text-center' : 'text-left'} overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]`}
+                  style={{ width: col.width || 'auto' }}
                 >
                   {col.render ? col.render(row) : row[col.key]}
                 </td>

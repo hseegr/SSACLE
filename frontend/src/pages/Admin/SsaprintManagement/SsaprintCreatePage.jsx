@@ -163,6 +163,9 @@ const SsaprintCreate = () => {
             disabled={showDetails || !startDate}
           />
         </div>
+        <p className="text-ssacle-gray text-sm pl-3">
+          날짜는 달력 버튼을 눌러 선택해주세요!
+        </p>
       </div>
 
       <div className="border-t-2 border-ssacle-gray-sm my-8 w-3/5"></div>

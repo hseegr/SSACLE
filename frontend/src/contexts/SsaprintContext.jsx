@@ -155,7 +155,7 @@ export const SsaprintProvider = ({ children }) => {
     setRawStartDate('')
     setRawEndDate('')
     setSprintName('')
-    setMaxParticipants(2)
+    setMaxParticipants('')
     setDescription({
       // description 초기화 추가
       basicDescription: '',

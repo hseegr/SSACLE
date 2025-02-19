@@ -16,6 +16,7 @@ const DateInput = ({ label, value, setValue, min, max, disabled }) => {
         min={min}
         max={max}
         disabled={disabled}
+        onKeyDown={(e) => e.preventDefault()}
       />
     </div>
   )

@@ -34,9 +34,6 @@ const AdminHeader = () => {
         <Link to="/admin/ssaprint" className="hover:underline">
           싸프린트
         </Link>
-        <Link to="/admin/ssadcup" className="hover:underline">
-          싸드컵
-        </Link>
         <Link to="/admin/board/" className="hover:underline">
           게시판 관리
         </Link>
