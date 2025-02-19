@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { useLocation } from 'react-router-dom'
 import Pagination from '@/components/common/Pagination'
 import FilterBar from '@/components/SprintCommon/FilterBar'
 import ItemList from '@/components/SprintCommon/ItemList'
@@ -19,6 +21,7 @@ const SsaprintLayout = () => {
     totalPages: 1,
     pageSize: 8,
   })
+  const location = useLocation() // 현재 경로 가져오기
 
   // 필터 변경 핸들러 (상태 변경 시 기존 목록 초기화)
   const handleFilterChange = (key, value) => {
@@ -37,6 +40,8 @@ const SsaprintLayout = () => {
 
   // API 호출하여 싸프린트 목록 가져오기
   useEffect(() => {
+    window.scrollTo(0, 0)
+
     let isMounted = true // 최신 요청만 반영하기 위한 플래그
 
     const fetchData = async () => {
@@ -79,7 +84,7 @@ const SsaprintLayout = () => {
     return () => {
       isMounted = false // 이전 요청 취소
     }
-  }, [filters, pagination.currentPage, pagination.pageSize])
+  }, [filters, pagination.currentPage, pagination.pageSize, location.pathname])
 
   return (
     <div className="relative min-h-full flex flex-col">
@@ -91,12 +96,12 @@ const SsaprintLayout = () => {
       />
 
       {/* 필터 UI */}
-      <div className="mt-4">
+      <div className="mt-6">
         <FilterBar onFilterChange={handleFilterChange} />
       </div>
 
       {/* 스프린트 목록 */}
-      <section className="mt-1 w-full">
+      <section className="mt-5 w-full min-h-[412px]">
         <ItemList
           items={
             filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
@@ -106,7 +111,7 @@ const SsaprintLayout = () => {
       </section>
 
       {/* 페이지네이션 추가 */}
-      <div className="mt-auto">
+      <div className="mt-5">
         <Pagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}

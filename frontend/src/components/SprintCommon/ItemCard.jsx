@@ -112,7 +112,7 @@ const ItemCard = ({ item, domain }) => {
   return (
     <div
       className={`p-5 pt-6 pb-4 border rounded-xl shadow-md flex flex-col relative
-        w-full min-w-[250px] min-h-[200px] cursor-pointer ${recruitStatus.cardBg} hover:shadow-lg hover:scale-[1.02]`}
+        w-full min-w-[250px] h-[200px] cursor-pointer ${recruitStatus.cardBg} hover:shadow-lg hover:scale-[1.02]`}
       onClick={handleCardClick}
     >
       {/* 제목 & 설명 */}

@@ -3,10 +3,10 @@ import ItemCard from '@/components/SprintCommon/ItemCard'
 
 const ItemList = ({ items, domain }) => {
   return (
-    <div className="flex flex-wrap justify-start gap-x-6 gap-y-3">
+    <div className="min-w-[500px] grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-6 min-h-[412px]">
       {items.length > 0 ? (
         items.map((item) => (
-          <div key={item.id} className="flex justify-center w-[240px]">
+          <div key={item.id} className="flex justify-center">
             <ItemCard item={item} domain={domain} />
           </div>
         ))

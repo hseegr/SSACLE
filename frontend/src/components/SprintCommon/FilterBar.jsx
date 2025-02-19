@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react'
 import {
   fetchCategories,
@@ -67,14 +68,14 @@ const FilterBar = ({ onFilterChange }) => {
         selectedStatus={selectedStatus}
         onStatusChange={handleStatusChange}
       />
-      <hr className="border-gray-200 min-w-[500px] w-full mx-auto" />
+      <hr className="mt-2 border-gray-200 min-w-[500px] w-full mx-auto mb-2" />
 
       {/* 필터 버튼 & 초기화 버튼 */}
       <div className="flex items-center">
         <button
           onClick={handleOpenModal}
           disabled={selectedStatus === 2} // 참여 완료일 때 비활성화
-          className={`flex items-center justify-center gap-1 px-3 py-1 text-xs font-medium rounded-md transition min-w-[80px] h-[28px] ml-1
+          className={`flex items-center justify-center gap-1 px-3 py-1 text-sm font-medium rounded-md transition min-w-[82px] h-[30px] ml-1
             ${
               selectedStatus === 2
                 ? 'border border-gray-200 text-gray-400 bg-white cursor-not-allowed'
@@ -105,7 +106,7 @@ const FilterBar = ({ onFilterChange }) => {
         />
       )}
 
-      <hr className="border-gray-200 min-w-[500px] w-full mx-auto" />
+      <hr className="mt-2 border-gray-200 min-w-[500px] w-full mx-auto" />
     </div>
   )
 }

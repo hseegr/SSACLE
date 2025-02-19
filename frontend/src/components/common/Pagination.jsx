@@ -1,3 +1,4 @@
+// @ts-nocheck
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages < 1) return null // 페이지가 없으면 숨김
 
@@ -7,7 +8,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const endPage = Math.min(startPage + maxVisiblePages - 1, totalPages) // 그룹의 마지막 페이지
 
   return (
-    <div className="flex justify-center items-center mt-4 mb-8 min-w-[400px]">
+    <div className="flex justify-center items-center mt-4 mb-8 gap-3 min-w-[400px]">
       {/* 처음으로 이동 */}
       <button
         className="w-10 h-10 flex justify-center items-center rounded-lg bg-white border shadow-sm disabled:opacity-50"
@@ -27,7 +28,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </button>
 
       {/* 숫자 페이지 버튼 */}
-      <div className="flex justify-center items-center gap-2 min-w-[250px]">
+      <div className="flex justify-center items-center gap-3 min-w-[300px]">
         {[...Array(endPage - startPage + 1)].map((_, index) => {
           const pageNumber = startPage + index
           return (

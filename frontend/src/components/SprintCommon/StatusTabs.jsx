@@ -1,6 +1,7 @@
+// @ts-nocheck
 const StatusTabs = ({ selectedStatus, onStatusChange }) => {
   return (
-    <div className="flex gap-1 text-sm font-medium">
+    <div className="flex gap-3 text-md font-medium">
       <button
         className={`relative pb-1 min-w-[80px] ml-1 ${selectedStatus === 0 ? 'text-black' : 'text-gray-400'}`}
         onClick={() => onStatusChange(0)}
