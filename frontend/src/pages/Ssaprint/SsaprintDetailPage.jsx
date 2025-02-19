@@ -18,7 +18,7 @@ const SsaprintDetailPage = () => {
   })
 
   if (isLoading) {
-    return <p className="text-center text-gray-500">로딩 중...</p>
+    // return <p className="text-center text-gray-500">로딩 중...</p>
   }
 
   if (isError || !sprintData) {

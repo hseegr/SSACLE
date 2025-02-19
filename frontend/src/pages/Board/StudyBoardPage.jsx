@@ -242,11 +242,11 @@ const StudyBoardPage = () => {
     })
   }
 
-  if (loading) return <div>로딩 중...</div>
+  if (loading) return <div></div>
   if (error) return <div>에러가 발생했습니다: {error.message}</div>
 
   return (
-    <main className="min-w-max">
+    <main className="min-w-max animate-in">
       {/* 탭 메뉴 */}
       <section className="mb-5">
         <BoardTab
@@ -258,27 +258,27 @@ const StudyBoardPage = () => {
 
       {/* 배너 */}
       <section>
-        <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
+        <div className="flex items-center justify-center w-full h-32 mb-4 rounded-lg bg-ssacle-sky">
           {activeTab === 'legend' ? (
             <div className="flex flex-col items-center gap-1">
-              <p className="text-ssacle-black font-semibold mb-2">
+              <p className="mb-2 font-semibold text-ssacle-black">
                 🏆 명예의 전당이란 ?
               </p>
-              <p className="text-ssacle-black font-normal text-sm">
+              <p className="text-sm font-normal text-ssacle-black">
                 명예의 전당은 싸피 교육생들의 다양한 기업 합격 후기, 자기소개서
                 작성 꿀팁, 면접 후기 등을 볼 수 있는 곳입니다.
               </p>
-              <p className="text-ssacle-blue font-semibold text-sm">
+              <p className="text-sm font-semibold text-ssacle-blue">
                 * 명예의 전당 글을 열람하기 위해선 피클이 필요해요. 싸프린트를
                 수료하고 피클을 받아 사용해요 🥒 !
               </p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-1">
-              <p className="text-ssacle-black font-semibold mb-2">
+              <p className="mb-2 font-semibold text-ssacle-black">
                 Q 질의응답이란 ?
               </p>
-              <p className="text-ssacle-black font-normal text-sm">
+              <p className="text-sm font-normal text-ssacle-black">
                 질의응답은 싸피 교육생들이 자기주도적 학습을 하며 궁금했던 내용,
                 구글링을 해도 나오지 않던 내용을 질의하고 답변하는 곳입니다.
               </p>
@@ -293,7 +293,7 @@ const StudyBoardPage = () => {
           {activeTab !== 'legend' && (
             <button
               onClick={handleWrite}
-              className="px-4 py-1 text-white rounded bg-ssacle-blue text-sm"
+              className="px-4 py-1 text-sm text-white rounded bg-ssacle-blue"
             >
               글 작성하기
             </button>
@@ -301,7 +301,7 @@ const StudyBoardPage = () => {
         </section>
       </div>
 
-      <div className="border-b my-3"></div>
+      <div className="my-3 border-b"></div>
 
       {/* 게시글 목록 */}
       <section>

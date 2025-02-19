@@ -1,90 +1,108 @@
 import { fetchLogout } from '@/services/userService'
-import { Search, Lock, User, LogOut, Cookie } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Search, Lock, User, LogOut } from 'lucide-react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 
 const Header = () => {
   const navigate = useNavigate()
-  const accessToken = localStorage.getItem('accessToken') // 로그인 여부 확인
+  const location = useLocation()
+  const accessToken = localStorage.getItem('accessToken')
 
-  // 리프레시 토큰 삭제 함수
-  // 기존 코드
-  // const deleteCookie = (name) => {
-  //   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
-  // }
-  // const handleLogout = () => {
-  //   localStorage.removeItem('accessToken') // 액세스 토큰 삭제
-  //   deleteCookie('refreshToken') // 리프레시 토큰 삭제
-  //   window.location.reload() // 페이지 새로고침
-  // }
-
-  // 로그아웃 핸들러
   const handleLogout = async () => {
     try {
-      await fetchLogout() // 로그아웃 API 호출
-      // 로컬에서 토큰 제거
+      await fetchLogout()
       localStorage.removeItem('accessToken')
-      // 페이지 새로고침 대신 홈으로 리다이렉트
-      navigate('/account/login', { replace: true })
+      navigate('/', { replace: true })
     } catch (error) {
       console.error('로그아웃 실패:', error)
       alert('로그아웃 중 오류가 발생했습니다.')
     }
   }
 
+  const isActive = (path) => location.pathname.startsWith(path)
+
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between w-full h-12 px-48 mb-10 bg-white shadow-sm py-7 min-w-max">
-      {/* 로고 */}
-      <Link
-        to="/main"
-        className="text-3xl font-bold text-ssacle-blue font-montserrat"
-      >
-        SSACLE
-      </Link>
-
-      {/* 네비게이션 */}
-      <nav className="flex space-x-12 text-base font-medium text-ssacle-black font-noto-sans-kr">
-        <Link to="/ssaprint" className="hover:underline">
-          싸프린트
-        </Link>
-        {/* <Link to="/ssadcup" className="hover:underline">
-          싸드컵
-        </Link> */}
-        <Link to="/board/edu" className="hover:underline">
-          학습게시판
-        </Link>
-        <Link to="/board/note" className="hover:underline">
-          노트 구매
-        </Link>
-      </nav>
-
-      {/* 아이콘 */}
-      <div className="flex space-x-6">
-        {/* <button className="flex items-center justify-center w-5 h-5">
-          <Search size={15} className="text-black" />
-        </button> */}
-
-        {accessToken ? (
-          <button
-            className="flex items-center justify-center w-5 h-5"
-            onClick={handleLogout}
-          >
-            <LogOut size={15} className="text-black" />
-          </button>
-        ) : (
-          <button
-            className="flex items-center justify-center w-5 h-5"
-            onClick={() => navigate('/account/login')}
-          >
-            <Lock size={15} className="text-black" />
-          </button>
-        )}
-
-        <button
-          className="flex items-center justify-center w-5 h-5"
-          onClick={() => navigate('user/profile')}
+    <header className="sticky top-0 z-10 w-full mb-10 bg-white shadow-sm">
+      <div className="flex items-center justify-between h-16 px-4 md:px-8 lg:px-48 max-w-[1920px] mx-auto">
+        {/* 로고 */}
+        <Link
+          to="/"
+          className="text-3xl font-bold transition-transform text-ssacle-blue font-montserrat hover:scale-105"
         >
-          <User size={15} className="text-black" />
-        </button>
+          SSACLE
+        </Link>
+
+        {/* 네비게이션 */}
+        <nav className="hidden space-x-8 text-base font-medium md:flex lg:space-x-12 text-ssacle-black font-noto-sans-kr">
+          <Link
+            to="/ssaprint"
+            className={`py-2 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-ssacle-blue after:transition-transform after:scale-x-0 hover:after:scale-x-100 ${
+              isActive('/ssaprint') ? 'after:scale-x-100' : ''
+            }`}
+          >
+            싸프린트
+          </Link>
+          <Link
+            to="/board/edu"
+            className={`py-2 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-ssacle-blue after:transition-transform after:scale-x-0 hover:after:scale-x-100 ${
+              isActive('/board/edu') ? 'after:scale-x-100' : ''
+            }`}
+          >
+            학습게시판
+          </Link>
+          <Link
+            to="/board/note"
+            className={`py-2 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-ssacle-blue after:transition-transform after:scale-x-0 hover:after:scale-x-100 ${
+              isActive('/board/note') ? 'after:scale-x-100' : ''
+            }`}
+          >
+            노트 구매
+          </Link>
+        </nav>
+
+        {/* 아이콘 */}
+        <div className="flex items-center space-x-4 md:space-x-6">
+          {accessToken ? (
+            <>
+              <button
+                className="flex flex-col items-center justify-center p-2 transition-colors rounded-lg hover:bg-gray-100 group"
+                onClick={handleLogout}
+              >
+                <LogOut
+                  size={18}
+                  className="text-gray-700 transition-colors group-hover:text-ssacle-blue"
+                />
+                <span className="mt-1 text-xs text-gray-700 transition-colors group-hover:text-ssacle-blue">
+                  로그아웃
+                </span>
+              </button>
+              <button
+                className="flex flex-col items-center justify-center p-2 transition-colors rounded-lg hover:bg-gray-100 group"
+                onClick={() => navigate('user/profile')}
+              >
+                <User
+                  size={18}
+                  className="text-gray-700 transition-colors group-hover:text-ssacle-blue"
+                />
+                <span className="mt-1 text-xs text-gray-700 transition-colors group-hover:text-ssacle-blue">
+                  마이페이지
+                </span>
+              </button>
+            </>
+          ) : (
+            <button
+              className="flex flex-col items-center justify-center p-2 transition-colors rounded-lg hover:bg-gray-100 group"
+              onClick={() => navigate('/account/login')}
+            >
+              <Lock
+                size={18}
+                className="text-gray-700 transition-colors group-hover:text-ssacle-blue"
+              />
+              <span className="mt-1 text-xs text-gray-700 transition-colors group-hover:text-ssacle-blue">
+                로그인
+              </span>
+            </button>
+          )}
+        </div>
       </div>
     </header>
   )

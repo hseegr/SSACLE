@@ -1,6 +1,7 @@
 import PresenterBen from '@/components/PresentationPage/PresenterBen/PresenterBen'
 import QuestionCardSection from '@/components/PresentationPage/QuestionCardSection/QuestionCardSection'
 import SsaprintVoteContainer from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteContainer'
+import SsaprintVoteDataWrapper from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteDataWrapper'
 import { ModalSteps } from '@/constants/modalStep'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
 import { Session } from 'openvidu-browser'
@@ -113,6 +114,14 @@ export const createModalStepConfig = ({
     EXIT: {
       text: '나가기',
       onClick: async () => {
+        // 미디어 트랙해제
+        const track = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        })
+
+        track.getTracks().map((track) => track.stop())
+
         await leaveSession()
         navigate('/main')
         closeModal()
@@ -468,7 +477,7 @@ export const createModalStepConfig = ({
         <>
           <span>
             잠시후 ⏱️ 1분 후{' '}
-            <span className="font-bold text-ssacle-blue">투표</span>가
+            <span className="font-bold text-ssacle-blue">평가</span>가
             진행됩니다.
           </span>
         </>
@@ -517,11 +526,13 @@ export const createModalStepConfig = ({
       title: ['✨ 싸프린트 평가 ✨'],
       description: (
         <>
-          <SsaprintVoteContainer
-            session={session}
-            sendStatusSignal={sendStatusSignal}
-            closeModal={closeModal}
-          />
+          <SsaprintVoteDataWrapper>
+            <SsaprintVoteContainer
+              session={session}
+              sendStatusSignal={sendStatusSignal}
+              closeModal={closeModal}
+            />
+          </SsaprintVoteDataWrapper>
         </>
       ),
       buttons: [],

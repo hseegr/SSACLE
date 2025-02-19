@@ -5,16 +5,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { User } from '@/interfaces/user.interface'
 import type { FC } from 'react'
 
 interface SsaprintVoteSelectorProps {
   rank: string
   setRank: (rank: string) => void
-  userList: {
-    username: string
-    userId: string
-    connectionId: string
-  }[]
+  userList: User[]
 }
 
 const SsaprintVoteSelector: FC<SsaprintVoteSelectorProps> = ({
@@ -28,9 +25,9 @@ const SsaprintVoteSelector: FC<SsaprintVoteSelectorProps> = ({
         <SelectValue placeholder="선택" />
       </SelectTrigger>
       <SelectContent>
-        {userList.map(({ username, connectionId, userId }) => (
+        {userList.map(({ nickname, id: userId }) => (
           <SelectItem key={userId} value={userId}>
-            {username}
+            {nickname}
           </SelectItem>
         ))}
       </SelectContent>

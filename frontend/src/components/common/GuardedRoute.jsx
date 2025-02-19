@@ -9,9 +9,9 @@ const GuardedRoute = () => {
   const queryClient = useQueryClient()
 
   // 컴포넌트 마운트 시 validateToken 쿼리 초기화
-  useEffect(() => {
-    queryClient.removeQueries(['validateToken'])
-  }, [])
+  // useEffect(() => {
+  //   queryClient.removeQueries(['validateToken'])
+  // }, [])
 
   const { data, isLoading } = useQuery({
     queryKey: ['validateToken'],
@@ -35,6 +35,8 @@ const GuardedRoute = () => {
       }
     },
     retry: false,
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60 * 24, // 1일
   })
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const GuardedRoute = () => {
   }, [data, isLoading])
 
   if (isValidating) {
-    return <div>인증 확인 중...</div>
+    return
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/account/login" replace />

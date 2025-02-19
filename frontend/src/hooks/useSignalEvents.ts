@@ -76,8 +76,13 @@ export const useSignalEvents = ({
 
     console.log('✨ myScore', myScore)
 
-    setIsModalOpen(true)
-    setModalStep(ModalSteps.VOTE.END)
+    if (
+      signalStates[signalType as SignalStateKeys].size ===
+      targetConnectionCount - 1
+    ) {
+      setIsModalOpen(true)
+      setModalStep(ModalSteps.VOTE.END)
+    }
   }, [])
 
   // debounced 함수를 ref로 관리 → 컴포넌트 라이프사이클내에 한 번만 생성되도록 보장

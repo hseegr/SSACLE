@@ -23,7 +23,7 @@ const SsaprintVotePresenter: FC<SsaprintVotePresenterProps> = ({
       </div>
       <div className="flex justify-around gap-8">
         {[1, 2, 3, 4, 5].map((number) => (
-          <>
+          <div key={number}>
             <label
               onClick={() => setPresenterRating(number)}
               className={cn(
@@ -47,7 +47,7 @@ const SsaprintVotePresenter: FC<SsaprintVotePresenterProps> = ({
               onChange={() => setPresenterRating(number)}
               checked={presenterRating === number}
             />
-          </>
+          </div>
         ))}
       </div>
     </div>

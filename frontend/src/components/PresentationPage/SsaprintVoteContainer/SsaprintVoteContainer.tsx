@@ -1,16 +1,15 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import SsaprintVotePresenter from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVotePresenter'
 import SsaprintVoteQuestion from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteQuestion'
 import SsaprintVoteAttitude from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteAttitude'
 import { Button } from '@/components/ui/button'
-import { usePresentationModalActions } from '@/store/usePresentationModalActions'
-import { useShallow } from 'zustand/react/shallow'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
-import { useQueryClient } from '@tanstack/react-query'
-import useRoomStateStore from '@/store/useRoomStateStore'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
-import { fetchCalculateFinalScore } from '@/services/presentationService'
+import { fetchPresentationParticipants } from '@/services/presentationService'
 import { Session } from 'openvidu-browser'
+import SsaprintVoteDataWrapper from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteDataWrapper'
+import { PresentationParticipants } from '@/interfaces/user.interface'
 
 interface SsaprintVoteContainerProps {
   session: Session
@@ -25,7 +24,6 @@ const SsaprintVoteContainer: FC<SsaprintVoteContainerProps> = ({
 }) => {
   // 현재 단계 상태 (0: 발표자 평가, 1: 질문 답변 평가, 2: 전체적인 태도 평가)
   const [step, setStep] = useState(0)
-  const { roomId } = useParams()
 
   // 1단계: 발표자 평가 상태 (1~5 중 선택)
   const [presenterRating, setPresenterRating] = useState<number>(0)
@@ -44,35 +42,17 @@ const SsaprintVoteContainer: FC<SsaprintVoteContainerProps> = ({
     third: '',
   })
 
-  console.log('attitudeRank', attitudeRank)
+  const queryClient = useQueryClient()
 
-  // const { roomConnectionData } = useRoomStateStore(
-  //   (state) => state.roomConnectionData
-  // )
+  const presentationParticipants = queryClient.getQueryData<
+    PresentationParticipants[]
+  >(['presentation-participants'])
 
-  // console.log('roomConnectionData', roomConnectionData)
   // 예시로 사용할 사용자 명단
-  // const userList =
-  //   (roomId && roomConnectionData[roomId as keyof typeof roomConnectionData]) ??
-  //   []
-
-  const userList = [
-    {
-      username: '홍길동',
-      userId: '3231231',
-      connectionId: 'con_MG9jBf9lVj',
-    },
-    {
-      username: '박창조',
-      userId: '1234211',
-      connectionId: 'con_D6N4TrQIKj',
-    },
-    {
-      username: '김철수',
-      userId: '1233213',
-      connectionId: 'con_D6N4Tr1232',
-    },
-  ]
+  const userList =
+    presentationParticipants?.map((each) => {
+      return each.users[0]
+    }) ?? []
 
   // 단계별로 렌더링할 내용 정의
   const renderStep = () => {
@@ -105,11 +85,6 @@ const SsaprintVoteContainer: FC<SsaprintVoteContainerProps> = ({
     }
   }
 
-  // const queryClient = useQueryClient()
-  // const { nickname: username, id: userId } = queryClient.getQueryData([
-  //   'validateToken',
-  // ])
-
   // 최종 점수 계산
   const calculateFinalScore = () => {
     return userList.map((user) => {
@@ -129,29 +104,14 @@ const SsaprintVoteContainer: FC<SsaprintVoteContainerProps> = ({
 
       // 각 유저의 총점 계산 및 반환
       return {
-        userId: user.userId,
+        userId: user.id,
         score:
           presenterRating * 50 +
-          (questionScore[user.userId] || 0) +
-          (attitudeScore[user.userId] || 0),
-      } as { userId: string; score: number }
+          (questionScore[user.id] || 0) +
+          (attitudeScore[user.id] || 0),
+      } as { userId: number; score: number }
     })
   }
-
-  const test = [
-    {
-      teamId: '123123123',
-      score: 100,
-    },
-    {
-      teamId: '123123123',
-      score: 100,
-    },
-    {
-      teamId: '123123123',
-      score: 100,
-    },
-  ]
 
   // 단계 이동 및 제출 핸들러
   const handleNext = () => setStep(Math.min(step + 1, 2))

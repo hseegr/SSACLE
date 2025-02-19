@@ -7,14 +7,41 @@ import { fetchPresentationAvailability } from '@/services/presentationService'
 import { usePresentationModalStateStore } from '@/store/usePresentationModalStateStore'
 import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 import { useQuery } from '@tanstack/react-query'
-import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect, memo } from 'react'
+import { useBlocker, useLocation, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/react/shallow'
 
-const PresentationPage = () => {
+// 1. 필요한 상태만 정확하게 선택하도록 selector 최적화
+const useModalState = () =>
+  usePresentationModalStateStore(
+    useShallow((state) => ({
+      isModalOpen: state.isModalOpen,
+      modalStep: state.modalStep,
+    }))
+  )
+
+const usePresentationState = () =>
+  usePresentationSignalStore(
+    useShallow((state) => ({
+      presentationStatus: state.presentationStatus,
+    }))
+  )
+
+// 2. 세션 초기화 컴포넌트를 메모이제이션
+const MemoizedSessionInitializer = memo(SessionInitializer)
+
+// 3. 컴포넌트 자체를 메모이제이션
+const PresentationPage = memo(() => {
   const { roomId } = useParams()
-  const navigate = useNavigate()
-  // 발표 참가 여부 확인
+  const [isSessionVisible, setIsSessionVisible] = useState(false)
+  const [isBlocking, setIsBlocking] = useState(true) // 페이지 이탈 차단 여부
+
+  const location = useLocation()
+
+  // 최적화된 상태 구독
+  const { isModalOpen, modalStep } = useModalState()
+  const { presentationStatus } = usePresentationState()
+
   const { data: presentationAvailability, isSuccess } = useQuery({
     queryKey: ['presentation-availability'],
     queryFn: () => fetchPresentationAvailability(roomId ?? 'test-session-id'),
@@ -24,46 +51,61 @@ const PresentationPage = () => {
     retry: 3,
   })
 
-  // if (!presentationAvailability) {
-  //   alert('발표 참가 불가능합니다.')
-  //   navigate(-1)
-  //   return
-  // }
-
-  // 모달 열기 상태
-  const isModalOpen = usePresentationModalStateStore(
-    (state) => state.isModalOpen
-  )
-  const modalStep = usePresentationModalStateStore((state) => state.modalStep)
-  const presentationStatus = usePresentationSignalStore(
-    (state) => state.presentationStatus
-  )
-
-  // isSessionVisible 상태 - 한 번 true가 된 이후에는 계속 true 유지됩니다.
-  const [isSessionVisible, setIsSessionVisible] = useState(false)
+  // React Router 내비게이션 차단
+  useBlocker(({ currentLocation, nextLocation }) => {
+    if (isBlocking && currentLocation.pathname !== nextLocation.pathname) {
+      return !window.confirm('페이지를 벗어나시겠습니까?')
+    }
+    return false
+  })
 
   useEffect(() => {
-    if (!isSessionVisible) {
-      setIsSessionVisible(
-        (prev) =>
-          prev ||
-          (modalStep === ModalSteps.INITIAL.WELCOME &&
-            !isModalOpen &&
-            presentationStatus === 'INITIAL')
-      )
+    // 페이지를 벗어나기 전에 실행되는 이벤트 핸들러
+    const handleBeforeUnload = (e) => {
+      e.preventDefault()
+      e.returnValue = '' // Chrome에서는 이 값이 필요합니다
+      return '' // 표준 경고 메시지가 표시됩니다
     }
-  }, [modalStep, isModalOpen, presentationStatus])
+
+    // 이벤트 리스너 등록
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true }) //
+        .then((stream) =>
+          stream
+            .getTracks() //
+            .forEach((track) => track.stop())
+        )
+    }
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (isSessionVisible) return
+
+    const shouldBeVisible =
+      modalStep === ModalSteps.INITIAL.WELCOME &&
+      !isModalOpen &&
+      presentationStatus === 'INITIAL'
+
+    if (shouldBeVisible) {
+      setIsSessionVisible(true)
+    }
+  }, [isModalOpen, modalStep, presentationStatus, isSessionVisible])
 
   return (
-    <>
-      <PresentationPageWrapper>
-        {isSessionVisible && <SessionInitializer />}
-        {/* 공통 공지 모달 : 상태가 바뀔 때 마다 모달이 뜨도록 구성 */}
-        <StepContainer />
-        <PresentationNoticeModal />
-      </PresentationPageWrapper>
-    </>
+    <PresentationPageWrapper>
+      {isSessionVisible && <MemoizedSessionInitializer />}
+      <StepContainer />
+      <PresentationNoticeModal />
+    </PresentationPageWrapper>
   )
-}
+})
+
+// 컴포넌트 이름 지정 (디버깅용)
+PresentationPage.displayName = 'PresentationPage'
 
 export default PresentationPage

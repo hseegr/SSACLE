@@ -97,7 +97,7 @@ const useScreenShare = () => {
       if (cameraPublisher) {
         // 기존 카메라 publisher 재사용 대신 새로운 인스턴스 생성
         const newCameraPublisher = await OV?.initPublisherAsync(undefined, {
-          videoSource: isCameraOn ? 'camera' : undefined, // 기본 카메라 소스 사용 (undefined 지정 시 기본 카메라)
+          videoSource: isCameraOn, // 기본 카메라 소스 사용 (undefined 지정 시 기본 카메라)
           publishAudio: isMicOn,
           mirror: true,
         })

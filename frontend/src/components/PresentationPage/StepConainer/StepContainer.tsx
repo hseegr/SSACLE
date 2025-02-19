@@ -5,7 +5,7 @@ import {
 import { useOpenviduStateStore } from '@/store/useOpenviduStateStore'
 import { usePresentationSignalStore } from '@/store/usePresentationSignalStore'
 import useRoomStateStore from '@/store/useRoomStateStore'
-import { useEffect, useMemo, useRef, useState, type FC } from 'react'
+import { useEffect, useRef, type FC } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { useParams } from 'react-router-dom'
 import { usePresentationStore } from '@/store/usePresentationStore'

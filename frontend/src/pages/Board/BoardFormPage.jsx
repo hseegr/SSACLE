@@ -179,12 +179,12 @@ const BoardFormPage = () => {
   }
 
   if (loading) {
-    return <div>로딩 중...</div>
+    return <div></div>
   }
 
   return (
-    <div className="min-w-max my-20 container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6">
+    <div className="container max-w-4xl px-4 py-8 mx-auto my-20 min-w-max">
+      <h1 className="mb-6 text-2xl font-bold">
         {boardId ? '게시글 수정' : '새 게시글 작성'}
       </h1>
 
@@ -213,7 +213,7 @@ const BoardFormPage = () => {
             {formData.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-white flex items-center bg-ssacle-blue px-3 py-1 rounded-full text-sm"
+                className="flex items-center px-3 py-1 text-sm text-white rounded-full bg-ssacle-blue"
               >
                 {tag}
                 <button
@@ -231,7 +231,7 @@ const BoardFormPage = () => {
               onChange={handleTagInputChange}
               onKeyDown={handleTagInputKeyDown}
               placeholder="태그를 입력 후 Enter 또는 , 입력"
-              className="outline-none flex-1"
+              className="flex-1 outline-none"
             />
           </div>
         </div>
@@ -239,7 +239,7 @@ const BoardFormPage = () => {
         {/* 내용 입력 */}
         <div>
           <label className="block mb-2">내용</label>
-          <span className="text-gray-500 text-sm">
+          <span className="text-sm text-gray-500">
             {formData.content.length}/{CONTENT_MAX_LENGTH}
           </span>
           <textarea

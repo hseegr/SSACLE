@@ -239,25 +239,25 @@ const BoardDetailPage = () => {
   const { prev, next } = getPrevNextPosts()
   const isAuthor = userData?.nickname === post?.writerInfo
 
-  if (isLoading) return <div>로딩 중...</div>
+  // if (isLoading) return <div>로딩 중...</div>
   if (isError || !post)
     return <div>게시글을 불러오는 중 오류가 발생했습니다.</div>
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 overflow-hidden">
-      <h2 className="text-xl font-semibold text-ssacle-blue flex justify-center mb-6">
+    <div className="w-full max-w-4xl px-4 py-8 mx-auto overflow-hidden">
+      <h2 className="flex justify-center mb-6 text-xl font-semibold text-ssacle-blue">
         {BOARD_TITLES[post.subCategory] || BOARD_TITLES[boardType] || '게시판'}
       </h2>
 
-      <div className="border-b pb-4 mb-4 flex flex-col gap-2">
+      <div className="flex flex-col gap-2 pb-4 mb-4 border-b">
         <h1 className="text-2xl font-bold">{post?.title || '제목 없음'}</h1>
-        <div className="text-gray-500 text-sm">
+        <div className="text-sm text-gray-500">
           {post?.writerInfo || '알 수 없음'} |{' '}
           {post?.time?.split('T')[0] || '날짜 없음'}
         </div>
-        <div className="mt-2 flex gap-2">
+        <div className="flex gap-2 mt-2">
           {post?.tags?.map((tag, index) => (
-            <span key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
+            <span key={index} className="px-2 py-1 text-sm bg-gray-100 rounded">
               {tag}
             </span>
           ))}
@@ -297,18 +297,18 @@ const BoardDetailPage = () => {
       />
 
       {/* 버튼 그룹 */}
-      <div className="mt-6 flex justify-end gap-2">
+      <div className="flex justify-end gap-2 mt-6">
         {isAuthor && (
           <>
             <button
               onClick={handleEditPost}
-              className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 text-white bg-blue-300 rounded hover:bg-blue-600"
             >
               수정
             </button>
             <button
               onClick={handleDeletePost}
-              className="px-4 py-2 bg-blue-300 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 text-white bg-blue-300 rounded hover:bg-blue-600"
             >
               삭제
             </button>
@@ -318,7 +318,7 @@ const BoardDetailPage = () => {
           onClick={() =>
             navigate(`/board/${boardType}?tab=${post.subCategory}`)
           }
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
         >
           목록
         </button>

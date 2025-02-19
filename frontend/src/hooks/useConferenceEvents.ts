@@ -332,6 +332,7 @@ export function useConferenceEvents() {
     removeRoomConnectionData(roomId as string, {
       username: username as string,
       userId: userId as string,
+      connectionId: event.connection.connectionId as string,
     })
   }
 

@@ -140,7 +140,7 @@ export const useConnect = () => {
     setMainStreamManager(null)
     setCameraPublisher(null)
     setScreenPublisher(null)
-  }, [])
+  }, [session])
 
   return { initializeSession, joinSession, leaveSession }
 }

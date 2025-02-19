@@ -72,10 +72,15 @@ export default {
         'bounce-gentle-delay': 'bounceGentle 2s infinite 0.3s',
         'bounce-gentle-delay-more': 'bounceGentle 2s infinite 0.6s',
         'score-pop': 'scorePop 0.5s ease-out',
+        typing: 'typing 2s steps(20) infinite alternate, blink .7s infinite',
+        'typing-first': 'typing 2s steps(40, end), blink 1s step-end infinite',
+        'typing-second':
+          'typing 1.5s steps(30, end) 1s forwards, blink 1s step-end infinite',
+        shine: 'shine 2s linear infinite',
       },
       keyframes: {
         fadeInDown: {
-          '0%': { opacity: '0', transform: 'translateY(-20px)' },
+          '0%': { opacity: '0', transform: 'translateY(-35px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         slideInLeft: {
@@ -94,6 +99,34 @@ export default {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.2)' },
           '100%': { transform: 'scale(1)' },
+        },
+        typing: {
+          '0%': {
+            width: '0%',
+            visibility: 'hidden',
+          },
+          '100%': {
+            width: '100%',
+          },
+        },
+        blink: {
+          '50%': {
+            borderColor: 'transparent',
+          },
+          '100%': {
+            borderColor: 'white',
+          },
+        },
+        // typing: {
+        //   from: { width: '0' },
+        //   to: { width: '100%' },
+        // },
+        // blink: {
+        //   '50%': { 'border-color': 'transparent' },
+        // },
+        shine: {
+          from: { transform: 'translateX(-100%)' },
+          to: { transform: 'translateX(100%)' },
         },
       },
       scale: {
