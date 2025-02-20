@@ -233,6 +233,15 @@ export function useConferenceEvents() {
       event.stream?.connection?.connectionId ===
       currentSession?.connection.connectionId // 내 스트림 여부 확인
 
+    // 이미 존재하는 스트림인지 확인
+    if (
+      currentSession?.remoteConnections.has(
+        event.stream?.connection?.connectionId
+      )
+    ) {
+      return
+    }
+
     switch (streamType) {
       case 'screen': //화면 공유
         if (!isMyStream) {
@@ -290,6 +299,14 @@ export function useConferenceEvents() {
 
       // 발표 참여자 수 증가
       // setConnectionCount()
+
+      // 이미 참여 중인 사람인지 확인
+      if (
+        sessionRef.current?.remoteConnections.has(event.connection.connectionId)
+      ) {
+        return
+      }
+
       const remoteConnectionCount = sessionRef.current?.remoteConnections.size
 
       console.log('remoteConnectionCount', remoteConnectionCount)

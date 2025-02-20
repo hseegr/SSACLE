@@ -18,8 +18,6 @@ const MyPage: React.FC = () => {
     gcTime: 1000 * 60 * 60, // 1시간 동안 캐시 유지
   })
 
-  console.log('🔍 userInfo', userInfo)
-
   return (
     <MypageLayout>
       <Outlet />

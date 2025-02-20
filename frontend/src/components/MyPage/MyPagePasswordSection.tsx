@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useQueryClient } from '@tanstack/react-query'
 import { User } from '@/interfaces/user.interface'
 import { Button } from '@/components/ui/button'
+import PasswordChangeForm from '@/components/MyPage/PasswordChangeForm'
 
 interface MyPagePasswordSectionProps {}
 
@@ -21,9 +22,11 @@ const MyPagePasswordSection: FC<MyPagePasswordSectionProps> = ({}) => {
         {/* <p className="text-sm text-muted-foreground">
           최근 업데이트: {userInfo.passwordLastUpdated}
         </p> */}
-        <Button variant="outline" size="sm">
-          비밀번호 변경
-        </Button>
+        <PasswordChangeForm>
+          <Button variant="outline" size="sm">
+            비밀번호 변경
+          </Button>
+        </PasswordChangeForm>
       </CardContent>
     </Card>
   )

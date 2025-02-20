@@ -146,7 +146,6 @@ const router = createBrowserRouter([
   //   element: <GuardedRoute />,
   //   children: [
   {
-    // * http://localhost:5173/presentation/:presentationType/:roomId?userId=1234567890
     path: '/presentation/:presentationType/:roomId',
     element: <PresentationLayout />,
     children: [{ index: true, element: <PresentationPage /> }],

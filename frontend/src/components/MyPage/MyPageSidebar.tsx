@@ -16,14 +16,14 @@ const MyPageSidebar: FC<MyPageSidebarProps> = ({}) => {
         >
           내 정보
         </button>
-        <button
+        {/* <button
           onClick={() => {
             navigate('/user/profile/account')
           }}
           className="w-full px-4 py-2.5 text-left text-sm font-medium rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           계정 관리
-        </button>
+        </button> */}
         <button
           onClick={() => {
             navigate('/user/profile/activities')

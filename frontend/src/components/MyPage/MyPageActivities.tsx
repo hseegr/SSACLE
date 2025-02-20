@@ -53,10 +53,12 @@ const MyPageActivities: FC<MyPageActivitiesProps> = ({}) => {
             </div>
 
             <div className="flex flex-col gap-4">
-              {mySprint?.map(({ name, endAt, id }) => (
+              {mySprint?.map(({ name, endAt, id: sprintId, teamId }) => (
                 <div
                   onClick={() => {
-                    navigate(`/ssaprint/${id}`)
+                    navigate(`/my-sprints/${sprintId}`, {
+                      state: { sprintId, teamId },
+                    })
                   }}
                   key={name}
                   className="flex items-center justify-between p-4 transition-colors border rounded-lg cursor-pointer bg-card hover:bg-accent/50"
@@ -74,7 +76,7 @@ const MyPageActivities: FC<MyPageActivitiesProps> = ({}) => {
         </CardContent>
       </Card>
 
-      <Separator className="my-6" />
+      {/* <Separator className="my-6" />
 
       <Card className="delay-300 duration-400 animate-fade-in-down">
         <CardHeader>
@@ -92,6 +94,30 @@ const MyPageActivities: FC<MyPageActivitiesProps> = ({}) => {
             <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
               <span className="text-sm text-muted-foreground">
                 아직 참여한 싸드컵이 없습니다.
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card> */}
+
+      <Separator className="my-6" />
+
+      <Card className="delay-200 duration-400 animate-fade-in-down">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-2xl">✨</span>
+            <span>학습 게시판</span>
+            <span className="text-2xl">✨</span>
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            작성한 게시글과 댓글을 확인할 수 있습니다.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+              <span className="text-sm text-muted-foreground">
+                아직 작성한 게시글이 없습니다.
               </span>
             </div>
           </div>
@@ -116,30 +142,6 @@ const MyPageActivities: FC<MyPageActivitiesProps> = ({}) => {
             <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
               <span className="text-sm text-muted-foreground">
                 아직 구매한 노트가 없습니다.
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Separator className="my-6" />
-
-      <Card className="delay-500 duration-400 animate-fade-in-down">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="text-2xl">✨</span>
-            <span>학습 게시판</span>
-            <span className="text-2xl">✨</span>
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            작성한 게시글과 댓글을 확인할 수 있습니다.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
-              <span className="text-sm text-muted-foreground">
-                아직 작성한 게시글이 없습니다.
               </span>
             </div>
           </div>
