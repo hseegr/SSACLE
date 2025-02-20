@@ -72,8 +72,8 @@ export const useConnect = () => {
           audioSource: undefined,
           publishAudio: isMicOn,
           publishVideo: isCameraOn,
-          resolution: '1280x720',
-          frameRate: 30,
+          resolution: '640x480',
+          frameRate: 24,
           insertMode: 'APPEND',
           mirror: true,
         }
@@ -99,10 +99,24 @@ export const useConnect = () => {
     const openvidu = new OpenVidu()
     openvidu.enableProdMode()
 
+    // 연결 안정성을 위한 추가 설정
+    openvidu.setAdvancedConfiguration({
+      forceMediaReconnectionAfterNetworkDrop: true,
+    })
+
     const newSession = openvidu.initSession()
 
     setOV(openvidu)
     setSession(newSession)
+
+    // WebSocket 연결 상태 모니터링
+    newSession.on('exception', (exception) => {
+      if (exception.name === 'ICE_CONNECTION_DISCONNECTED') {
+        console.warn('ICE 연결이 끊어졌습니다. 재연결을 시도합니다...')
+        // 재연결 로직 추가
+        reconnectSession(newSession)
+      }
+    })
 
     // 🔹 새로운 스트림이 생성되었을 때 (예: 다른 사용자의 화면 공유 또는 카메라/마이크 스트림)
     newSession.on('streamCreated', handleStreamCreated)
@@ -116,6 +130,14 @@ export const useConnect = () => {
     return newSession
   }, [])
 
+  const reconnectSession = useCallback(async (session: Session) => {
+    try {
+      await session.connect(session.token, session.connection.data)
+      console.log('세션 재연결 성공')
+    } catch (error) {
+      console.error('세션 재연결 실패:', error)
+    }
+  }, [])
   const leaveSession = useCallback(async () => {
     if (session) {
       try {

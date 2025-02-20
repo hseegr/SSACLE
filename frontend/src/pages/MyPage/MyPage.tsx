@@ -7,8 +7,6 @@ import { Outlet } from 'react-router-dom'
 import MypageLayout from '@/components/layout/MypageLayout'
 
 const MyPage: React.FC = () => {
-  // 실제 구현시에는 API나 전역 상태에서 사용자 정보를 가져와야 합니다
-
   const { data: userInfo } = useQuery<User>({
     queryKey: ['userInfo'],
     queryFn: async () => {

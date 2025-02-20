@@ -329,7 +329,7 @@ export function useConferenceEvents() {
         setTimeout(() => {
           setIsModalOpen(true)
           setModalStep(ModalSteps.INITIAL.READY)
-        }, 1000) // 실제 : 10초 뒤 신호 전송, 테스트 1초
+        }, 1000 * 10) // 실제 : 6초 뒤 신호 전송, 테스트 1초
       }
 
       // roomId 별로 참여자 데이터를 저장합니다.

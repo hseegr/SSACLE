@@ -4,6 +4,7 @@ import SsaprintVoteContainer from '@/components/PresentationPage/SsaprintVoteCon
 import SsaprintVoteDataWrapper from '@/components/PresentationPage/SsaprintVoteContainer/SsaprintVoteDataWrapper'
 import { ModalSteps } from '@/constants/modalStep'
 import { PRESENTATION_STATUS } from '@/constants/presentationStatus'
+import httpCommon from '@/services/http-common'
 import { Session } from 'openvidu-browser'
 import { ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
@@ -576,7 +577,14 @@ export const createModalStepConfig = ({
           text: '결과 확인하기',
           onClick: async () => {
             await leaveSession()
-            navigate(`/ssaprint/${roomId}/result`) // 결과 페이지로 이동
+            // 피글 부여
+            // httpCommon.post(`/sprints/${sprintId}/users/${userId}/score`)
+
+            // sprint 권한 변경
+            // await httpCommon.patch(`/api/v1/ssaprint/${roomId}/presentation-status`)
+
+            // 결과 페이지로 이동
+            navigate(`/ssaprint/${roomId}/result`)
             closeModal()
           },
           style: '',

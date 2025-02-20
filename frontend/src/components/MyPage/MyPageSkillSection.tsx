@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import MypageCategoryChange from '@/components/MyPage/MypageCategoryChange'
 
 interface MyPageSkillSectionProps {}
 
@@ -24,7 +25,7 @@ const MyPageSkillSection: FC<MyPageSkillSectionProps> = ({}) => {
         <div className="space-y-4">
           <div>
             <h3 className="mb-3 text-sm font-medium text-muted-foreground">
-              주요 기술 - 최대 3개 선택 가능
+              나의 주요 기술 선택
             </h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {categoryNames?.map((skill, index) => (
@@ -33,9 +34,11 @@ const MyPageSkillSection: FC<MyPageSkillSectionProps> = ({}) => {
                 </Badge>
               ))}
             </div>
-            <Button variant="outline" size="sm">
-              주요 기술 변경
-            </Button>
+            <MypageCategoryChange>
+              <Button variant="outline" size="sm">
+                주요 기술 변경
+              </Button>
+            </MypageCategoryChange>
           </div>
         </div>
 
