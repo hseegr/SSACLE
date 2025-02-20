@@ -15,8 +15,7 @@ const JoinSprintInfo = ({ sprintData, isOpen, setIsOpen }) => {
 
   // 썸네일 선택 로직
   const categoryWithImage = categories.find((category) => category.image)
-  const stackImage =
-    imageList[categoryNames[0]] || imageList[categoryNames[1]]
+  const stackImage = imageList[categoryNames[0]] || imageList[categoryNames[1]]
 
   const thumbnail = categoryWithImage?.image || stackImage || stackLogos.default
 

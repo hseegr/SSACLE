@@ -23,6 +23,11 @@ const SsaprintLayout = () => {
   })
   const location = useLocation() // 현재 경로 가져오기
 
+  // 싸프린트 페이지가 처음 로드되거나, 싸프린트 메뉴를 다시 클릭할 때 스크롤 최상단 이동
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.key])
+
   // 필터 변경 핸들러 (상태 변경 시 기존 목록 초기화)
   const handleFilterChange = (key, value) => {
     setFilters((prev) => {
@@ -40,8 +45,6 @@ const SsaprintLayout = () => {
 
   // API 호출하여 싸프린트 목록 가져오기
   useEffect(() => {
-    window.scrollTo(0, 0)
-
     let isMounted = true // 최신 요청만 반영하기 위한 플래그
 
     const fetchData = async () => {
@@ -84,7 +87,7 @@ const SsaprintLayout = () => {
     return () => {
       isMounted = false // 이전 요청 취소
     }
-  }, [filters, pagination.currentPage, pagination.pageSize, location.pathname])
+  }, [filters, pagination.currentPage, pagination.pageSize])
 
   return (
     <div className="relative min-h-full flex flex-col">
@@ -104,7 +107,12 @@ const SsaprintLayout = () => {
       <section className="mt-5 w-full min-h-[412px]">
         <ItemList
           items={
-            filters.status === 2 ? sprints.map((item) => item.sprint) : sprints
+            filters.status === 2
+              ? sprints.map((item) => ({
+                  sprint: item.sprint,
+                  teamId: item.teamId, // 완료된 스프린트면 sprint랑 teamId 함께 전달
+                }))
+              : sprints // status !== 2일 경우 sprint만 전달
           }
           domain="ssaprint"
         />

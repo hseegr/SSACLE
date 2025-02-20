@@ -40,7 +40,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
   // 진행 기간 계산
   const durationDays = Math.ceil(
     (new Date(sprint.endAt).getTime() - new Date(sprint.startAt).getTime()) /
-    (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
   )
 
   // 모집 상태 가져오기
@@ -56,8 +56,7 @@ const SprintBasicInfo = ({ sprint, categories }) => {
 
   // 썸네일 선택 로직
   const categoryWithImage = categories.find((category) => category.image)
-  const stackImage =
-    imageList[categoryNames[0]] || imageList[categoryNames[1]]
+  const stackImage = imageList[categoryNames[0]] || imageList[categoryNames[1]]
 
   const thumbnail = categoryWithImage?.image || stackImage || stackLogos.default
 

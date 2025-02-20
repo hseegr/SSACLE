@@ -2,14 +2,21 @@
 import { useNavigate } from 'react-router-dom'
 import { useGetImage } from '@/hooks/useGetImage'
 
-
-const ItemCard = ({ item, domain }) => {
+const ItemCard = ({ item, teamId, domain }) => {
   const imageList = useGetImage()
   const navigate = useNavigate()
 
   // 카드 클릭 시 상세 페이지 이동
   const handleCardClick = () => {
-    navigate(`/${domain}/${item.id}`)
+    if (teamId) {
+      // 완료된 스프린트 → 참여중 페이지 이동
+      navigate(`/my-sprints/${item.id}`, {
+        state: { sprintId: item.id, teamId },
+      })
+    } else {
+      // 기존 상세 페이지 이동
+      navigate(`/${domain}/${item.id}`)
+    }
   }
 
   // 진행 기간 포맷팅 (월, 일만 표시)
@@ -64,7 +71,7 @@ const ItemCard = ({ item, domain }) => {
   // 진행 기간 계산
   const durationDays = Math.ceil(
     (new Date(item.endAt).getTime() - new Date(item.startAt).getTime()) /
-    (1000 * 60 * 60 * 24)
+      (1000 * 60 * 60 * 24)
   )
   const durationStatus = getDurationStatus(durationDays)
 
