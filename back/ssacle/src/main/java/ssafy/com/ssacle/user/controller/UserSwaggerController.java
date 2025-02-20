@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.sprint.dto.SprintRecommendResponseDTO;
 import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
 import ssafy.com.ssacle.user.dto.*;
@@ -78,4 +79,27 @@ public interface UserSwaggerController {
     ResponseEntity<ProfileUpdateResponseDTO> updateProfile(
             @RequestPart(value = "request") ProfileUpdateRequestDTO profileUpdateRequestDTO,
             @RequestPart(value = "image", required = false) MultipartFile image);
+
+
+    @Operation(summary = "사용자의 관심 카테고리 조회", description = "현재 인증된 사용자의 관심 카테고리를 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "관심 카테고리 조회 성공",
+                    content = @Content(schema = @Schema(implementation = CategoryResponse.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생", content = @Content)
+    })
+    @GetMapping("/interested-category")
+    ResponseEntity<List<CategoryResponse>> getUserInterestedCategory();
+
+    @Operation(summary = "사용자의 관심 카테고리 업데이트", description = "현재 인증된 사용자의 관심 카테고리를 업데이트합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "관심 카테고리 업데이트 성공",
+                    content = @Content(schema = @Schema(implementation = UpdateInterestedCategoryResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "입력값이 유효하지 않습니다.", content = @Content),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "서버 에러 발생", content = @Content)
+    })
+    @PatchMapping("/interested-category/update")
+    ResponseEntity<UpdateInterestedCategoryResponseDTO> updateUserInterestedCategory(@RequestBody SelectInterestDTO selectInterestDTO);
+
 }

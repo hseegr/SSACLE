@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.category.domain.Category;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
+import ssafy.com.ssacle.category.exception.CategoryErrorCode;
+import ssafy.com.ssacle.category.exception.CategoryException;
 import ssafy.com.ssacle.category.exception.CategoryNotExistException;
 import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.global.aws.S3ImageUploader;
@@ -21,10 +23,7 @@ import ssafy.com.ssacle.user.domain.RefreshToken;
 import ssafy.com.ssacle.user.domain.Role;
 import ssafy.com.ssacle.user.domain.User;
 import ssafy.com.ssacle.user.dto.*;
-import ssafy.com.ssacle.user.exception.CannotLoginException;
-import ssafy.com.ssacle.user.exception.CannotUpdateProfileException;
-import ssafy.com.ssacle.user.exception.LoginErrorCode;
-import ssafy.com.ssacle.user.exception.UpdateProfileErrorCode;
+import ssafy.com.ssacle.user.exception.*;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
 import ssafy.com.ssacle.usercategory.domain.UserCategory;
@@ -229,10 +228,21 @@ public class UserService {
         }
         return categoryResponseList;
     }
-//    @Transactional
-//    public void updateUserInterestedCategory(User user){
-//
-//    }
+    @Transactional
+    public UpdateInterestedCategoryResponseDTO updateUserInterestedCategory(User user, SelectInterestDTO selectInterestDTO){
+        userCategoryRepository.deleteByUser(user);
+        user = userRepository.findByIdWithCategories(user.getId()).orElseThrow(() -> new CannotLoginException(LoginErrorCode.USER_NOT_FOUND));
+        List<String> categoryNames = selectInterestDTO.getInterestCategoryNames();
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            for (String name : categoryNames) {
+                Category category = categoryRepository.findByCategoryName(name).orElseThrow(()->new CategoryException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+                UserCategory userCategory = new UserCategory(user, category);
+                userCategoryRepository.save(userCategory);
+                user.addCategory(userCategory);
+            }
+        }
+        return new UpdateInterestedCategoryResponseDTO("관심사 업데이트 성공", user.getId());
+    }
     private String generateTempPassword() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
         StringBuilder tempPassword = new StringBuilder();

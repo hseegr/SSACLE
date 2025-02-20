@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.sprint.dto.SprintRecommendResponseDTO;
@@ -62,16 +59,16 @@ public class UserController implements UserSwaggerController{
         return null;
     }
 
-    @GetMapping("/interested-category")
+    @Override
     public ResponseEntity<List<CategoryResponse>> getUserInterestedCategory(){
         User user = userService.getAuthenticatedUser();
         return ResponseEntity.ok().body(userService.getUserInterestedCategory(user));
     }
 
-//    @PatchMapping("/interested-category")
-//    public ResponseEntity<List<CategoryResponse>> updateUserInterestedCategory(){
-//        User user = userService.getAuthenticatedUser();
-//        userService.updateUserInterestedCategory(user);
-//        return ResponseEntity.ok().build();
-//    }
+    @Override
+    public ResponseEntity<UpdateInterestedCategoryResponseDTO> updateUserInterestedCategory(@RequestBody SelectInterestDTO selectInterestDTO){
+        User user = userService.getAuthenticatedUser();
+        UpdateInterestedCategoryResponseDTO updateInterestedCategoryResponseDTO = userService.updateUserInterestedCategory(user,selectInterestDTO);
+        return ResponseEntity.ok().body(updateInterestedCategoryResponseDTO);
+    }
 }
