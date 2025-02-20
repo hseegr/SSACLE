@@ -40,7 +40,7 @@ const SprintProgressStatus = ({ sprint }) => {
           {startDate.format('YYYY년 M월 D일')} ~{' '}
           {endDate.format('YYYY년 M월 D일')}
         </span>
-        <span className="px-2 py-[1px] bg-green-100 text-green-700 text-[10px] rounded-md font-bold">
+        <span className="px-1 py-[1px] bg-green-100 text-green-700 text-[10px] rounded-md font-bold">
           {totalDays}일
         </span>
       </div>

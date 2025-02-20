@@ -1,6 +1,6 @@
 // @ts-nocheck
 import httpCommon from './http-common'
-import { SSAPRINT_END_POINT } from './endPoints'
+import { SSAPRINT_END_POINT, NOTE_END_POINT } from './endPoints'
 
 import { mockSsaprintData } from '@/mocks/ssaprintMockData'
 // import { mockSsaprintDetailData } from '@/mocks/ssaprintDetailMockData'
@@ -288,6 +288,18 @@ export const deleteSsaprintQuestion = async (id) => {
 export const exitSsaprintPresentation = (id) =>
   httpCommon.patch(SSAPRINT_END_POINT.PRESENTATION_EXIT(id))
 
-// ✅ TODO 상태 수정
-export const updateSsaprintTodo = (ssaprintId, todoId) =>
-  httpCommon.patch(SSAPRINT_END_POINT.TODO_STATUS(ssaprintId, todoId))
+/**
+ * 특정 스프린트에 속한 팀들의 노트 목록 조회
+ * @param {number} sprintId - 스프린트 ID
+ * @returns {Promise<Array>} - 해당 스프린트 내 팀들의 학습 노트 목록
+ */
+export const fetchSprintTeamNotes = async (sprintId) => {
+  try {
+    const response = await httpCommon.get(NOTE_END_POINT.TEAM_NOTES(sprintId))
+    return response.data // API 응답 데이터 반환
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('❌ 스프린트 팀 노트 목록 조회 실패:', error)
+    return []
+  }
+}

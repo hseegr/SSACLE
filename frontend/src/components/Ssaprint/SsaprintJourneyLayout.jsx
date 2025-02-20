@@ -7,6 +7,7 @@ import SprintToDoList from '@/components/SprintCommon/SprintToDoList'
 import SprintPresentationSession from '@/components/SprintCommon/SprintPresentationSession'
 import SprintCalendar from '@/components/SprintCommon/SprintCalendar'
 import SprintQuestionCards from '@/components/SprintCommon/SprintQuestionCards'
+import SprintNotesGallery from '@/components/SprintCommon/SprintNotesGallery'
 import Button from '@/components/common/Button'
 import { getActiveSsaprint } from '@/services/ssaprintService'
 
@@ -45,7 +46,7 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
   }
 
   return (
-    <div className="mt-16 flex flex-col gap-4 items-start w-full px-0">
+    <div className="flex flex-col gap-4 items-start w-full px-0">
       {/* 첫 번째 줄 - JoinSprintInfo + SprintProgressStatus */}
       <div className="flex w-full gap-6">
         {/* 왼쪽 영역 - JoinSprintInfo + SprintDetail */}
@@ -106,20 +107,37 @@ const SsaprintJourneyLayout = ({ sprintData }) => {
 
         {/* To-Do 리스트 및 발표 세션 */}
         <div className="min-w-[20rem]">
-          <div
-            className={`relative ${isBeforeStart ? 'opacity-30 pointer-events-none cursor-not-allowed' : ''}`}
-          >
-            <SprintPresentationSession sprint={sprint} />
-          </div>
-          <div
-            className={`mt-6 relative ${isBeforeStart ? 'opacity-30 pointer-events-none cursor-not-allowed' : ''}`}
-          >
-            <SprintToDoList
-              todos={todoList}
-              teamId={team.id}
-              refreshTodos={refreshTodos}
+          {sprint.status === 2 ? (
+            <SprintNotesGallery
+              sprintId={sprint.id}
+              myNotionUrl={team?.notionUrl}
             />
-          </div>
+          ) : (
+            <>
+              <div
+                className={`relative ${
+                  isBeforeStart
+                    ? 'opacity-30 pointer-events-none cursor-not-allowed'
+                    : ''
+                }`}
+              >
+                <SprintPresentationSession sprint={sprint} />
+              </div>
+              <div
+                className={`mt-6 relative ${
+                  isBeforeStart
+                    ? 'opacity-30 pointer-events-none cursor-not-allowed'
+                    : ''
+                }`}
+              >
+                <SprintToDoList
+                  todos={todoList}
+                  teamId={team.id}
+                  refreshTodos={refreshTodos}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
 

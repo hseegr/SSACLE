@@ -103,8 +103,6 @@ export const SSAPRINT_END_POINT = {
     `/ssaprint/${id}/presentation/cards/${cardId}`, // 특정 질문 카드 상세 조회
   PRESENTATION_EXIT: (id) => `/ssaprint/${id}/presentation/exit`, // 발표 종료
 
-  TODO_STATUS: (ssaprintId, todoId) => `/ssaprint/${ssaprintId}/todo/${todoId}`, // TODO 상태 수정
-
   CATEGORY_ALL: '/category/all', // 싸프린트 내 카테고리 전체 조회
   CATEGORY_TOP: '/category/parents', // 최상위 카테고리 조회 (포지션 목록)
   CATEGORY_SUB: (parentId) => `/category/subcategories/${parentId}`, // 하위 카테고리 조회 (포지션별 기술 스택)
@@ -172,6 +170,7 @@ export const COMMENT_END_POINT = {
 export const NOTE_END_POINT = {
   LIST: '/teams/diaries',
   PURCHASE: (teamId) => `/teams/${teamId}/purchase`,
+  TEAM_NOTES: (sprintId) => `/sprint/${sprintId}/teams`, // 특정 스프린트의 팀 노트 목록 조회
 }
 
 // 노션 관련 -> notionService
