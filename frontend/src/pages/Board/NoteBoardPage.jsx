@@ -122,7 +122,7 @@ const NoteBoardPage = () => {
   return (
     <main className="min-w-max">
       <section>
-        <div className="bg-ssacle-sky w-full h-32 rounded-lg mb-4 flex justify-center items-center">
+        <div className="bg-ssacle-sky w-full h-24 rounded-lg mb-4 flex justify-center items-center">
           <div className="flex flex-col items-center gap-1">
             <p className="text-ssacle-black font-semibold mb-2">
               📖 노트 사기란?

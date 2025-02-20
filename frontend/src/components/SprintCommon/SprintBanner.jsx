@@ -5,7 +5,7 @@ const SprintBanner = ({ title, description, domain }) => {
 
   return (
     <section
-      className={`${bgColor} text-gray-700 text-center py-4 rounded-lg min-h-[100px] min-w-[500px] flex flex-col justify-center`}
+      className={`${bgColor} text-gray-700 text-center py-4 rounded-lg min-h-24 min-w-[500px] flex flex-col justify-center`}
     >
       <h1 className="text-md font-semibold">{title}</h1>
       <p className="mt-2 text-sm">{description}</p>
