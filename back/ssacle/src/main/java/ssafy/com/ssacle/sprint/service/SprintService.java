@@ -427,9 +427,11 @@ public class SprintService {
 //            throw new PresentationInvalidStepException();
 //        }
         sprint.updatePresentationStatus(nextStatus);
+        if(nextStatus == PresentationStatus.END)
+            sprint.setStatus(2);
         sprintRepository.save(sprint);
 
-        return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getPresentationStatus());
+        return new PresentationStatusUpdateResponseDTO("발표 상태 업데이트 성공", sprint.getId(), sprint.getPresentationStatus());
     }
 
     @Transactional(readOnly = true)

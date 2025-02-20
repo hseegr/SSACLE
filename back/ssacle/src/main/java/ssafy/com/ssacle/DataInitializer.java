@@ -816,20 +816,20 @@ public class DataInitializer {
                 }
             }
 
-            LocalDateTime startAt = now.plusDays(3);
-            LocalDateTime endAt = now.plusDays(10);
+            LocalDateTime startAt = now.minusDays(6).plusHours(1);
+            LocalDateTime endAt = now.plusHours(5);
             Sprint sprint = SprintBuilder.builder()
                     .name("Sprint Boot 감자 스터디 챌린지")
                     .basicDescription("Spring Boot 입문자들의 모임입니다.")
                     .detailDescription("기본적인 GetMapping, PostMapping 등과 어노테이션에 대한 학습을 목표로 합니다.")
                     .recommendedFor("Spring Boot가 처음이신분\nAnnotation에 대한 학습을 진행하고 싶으신 분")
                     .startAt(startAt)
-                    .endAt(endAt)
+                    .endAt(endAt.minusHours(4))
                     .announceAt(endAt)
-                    .maxMembers(5)
-                    .defaultTodos(generateTodos(startAt))
+                    .maxMembers(4)
+                    .defaultTodos(generateSpringBootTodos(startAt))
                     .build();
-            sprint.setStatus(0);
+            sprint.setStatus(1);
             sprintRepository.save(sprint);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -847,8 +847,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(8);
             Sprint sprint1 = SprintBuilder.builder()
                     .name("Spring Boot 스레드 스프린트")
                     .basicDescription("Spring Boot 고수분 환영")
@@ -858,9 +858,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint1.setStatus(1);
+            sprint1.setStatus(0);
             sprintRepository.save(sprint1);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -879,7 +879,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(3);
-            endAt = now.plusDays(10);
+            endAt = now.plusDays(9);
             Sprint sprint2 = SprintBuilder.builder()
                     .name("Spring Boot에 대한 전반적인 이해")
                     .basicDescription("Spring Boot에 관심 많으신 분들 환영이요.")
@@ -891,7 +891,7 @@ public class DataInitializer {
                     .maxMembers(6)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint2.setStatus(2);
+            sprint2.setStatus(0);
             sprintRepository.save(sprint2);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -912,7 +912,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(1);
-            endAt = now.plusDays(8);
+            endAt = now.plusDays(7);
             Sprint sprint3 = SprintBuilder.builder()
                     .name("Sprint MVC 패턴 관련 스프린트")
                     .basicDescription("Spring MVC 스프린트")
@@ -942,8 +942,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint4 = SprintBuilder.builder()
                     .name("Spring MVC DTO를 위한 모임")
                     .basicDescription("DTO를 깊게 팔겁니다.")
@@ -953,9 +953,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(2+random.nextInt(6))
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint4.setStatus(1);
+            sprint4.setStatus(0);
             sprintRepository.save(sprint4);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -973,8 +973,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(3);
-            endAt = now.plusDays(4);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(12);
             Sprint sprint5 = SprintBuilder.builder()
                     .name("MVC 구조에 대해 잘 모르시는 분")
                     .basicDescription("백엔드 감자분들 환영")
@@ -986,7 +986,7 @@ public class DataInitializer {
                     .maxMembers(6)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint5.setStatus(1);
+            sprint5.setStatus(0);
             sprintRepository.save(sprint5);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1006,8 +1006,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(10);
-            endAt = now.minusDays(3);
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(5);
             Sprint sprint6 = SprintBuilder.builder()
                     .name("Sprint Security에 대한 깊은 이해를 위한 스프린트")
                     .basicDescription("Spring Security 잘 알고 쓰자")
@@ -1017,9 +1017,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint6.setStatus(2);
+            sprint6.setStatus(0);
             sprintRepository.save(sprint6);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1037,8 +1037,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(7);
-            endAt = now;
+            startAt = now.plusDays(7);
+            endAt = now.plusDays(13);
             Sprint sprint7 = SprintBuilder.builder()
                     .name("Spring 고수 분들 들어와")
                     .basicDescription("Security 설정 알고 쓰자")
@@ -1050,7 +1050,7 @@ public class DataInitializer {
                     .maxMembers(5)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint7.setStatus(1);
+            sprint7.setStatus(0);
             sprintRepository.save(sprint7);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1071,7 +1071,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(1);
-            endAt = now.plusDays(8);
+            endAt = now.plusDays(7);
             Sprint sprint8 = SprintBuilder.builder()
                     .name("Python 입문자를 위한 스프린트")
                     .basicDescription("Python & Django 스프린트")
@@ -1101,8 +1101,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(2);
-            endAt = now.plusDays(5);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint9 = SprintBuilder.builder()
                     .name("Django 고수 분들 환영")
                     .basicDescription("Django를 통한 대규모 처리")
@@ -1112,9 +1112,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint9.setStatus(1);
+            sprint9.setStatus(0);
             sprintRepository.save(sprint9);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1132,8 +1132,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint10 = SprintBuilder.builder()
                     .name("Django 1부터 100까지")
                     .basicDescription("Django 감자분들 환영")
@@ -1145,7 +1145,7 @@ public class DataInitializer {
                     .maxMembers(7)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint10.setStatus(1);
+            sprint10.setStatus(0);
             sprintRepository.save(sprint10);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1167,8 +1167,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.plusDays(1);
-            endAt = now.plusDays(8);
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(2);
             Sprint sprint11 = SprintBuilder.builder()
                     .name("ExpressJS 스프린트")
                     .basicDescription("비동기에 대해서 깊게 알아보자")
@@ -1176,11 +1176,12 @@ public class DataInitializer {
                     .recommendedFor("Express를 활용한 프로젝트 경험자\n비동기 처리에 깊게 파고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt)
+                    .announceAt(endAt.minusHours(2))
                     .maxMembers(4)
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateExpressTodos(startAt))
                     .build();
-            sprint11.setStatus(0);
+            sprint11.setStatus(1);
+            sprint11.setCurrentMembers(4);
             sprintRepository.save(sprint11);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1198,8 +1199,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(13);
-            endAt = now.minusDays(6);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(12);
             Sprint sprint12 = SprintBuilder.builder()
                     .name("당근 마켓 클론 코디을 통한 스프린트")
                     .basicDescription("주어진 프런트 엔드에 맞춘 백엔드 설계")
@@ -1211,7 +1212,7 @@ public class DataInitializer {
                     .maxMembers(5)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint12.setStatus(2);
+            sprint12.setStatus(0);
             sprintRepository.save(sprint12);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1229,8 +1230,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(10);
-            endAt = now.minusDays(3);
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(9);
             Sprint sprint13 = SprintBuilder.builder()
                     .name("백엔드 초보자 환영")
                     .basicDescription("Express.js 세팅부터 기본적인 활용")
@@ -1242,7 +1243,7 @@ public class DataInitializer {
                     .maxMembers(6)
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint13.setStatus(2);
+            sprint13.setStatus(0);
             sprintRepository.save(sprint13);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1267,8 +1268,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(7);
-            endAt = now;
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint14 = SprintBuilder.builder()
                     .name("React useState 기초 입문")
                     .basicDescription("React의 useState를 처음 배우는 분들을 위한 스프린트입니다.")
@@ -1276,11 +1277,12 @@ public class DataInitializer {
                     .recommendedFor("React 입문자\n컴포넌트 상태 관리 개념이 궁금하신 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt)
-                    .maxMembers(5)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .announceAt(endAt.minusHours(3))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateReactTodos(startAt))
                     .build();
-            sprint14.setStatus(1);
+            sprint14.setStatus(0);
+            sprint14.setCurrentMembers(2);
             sprintRepository.save(sprint14);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1298,8 +1300,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint15  = SprintBuilder.builder()
                     .name("useState와 이벤트 핸들링")
                     .basicDescription("useState를 활용하여 사용자 입력을 처리하는 실습형 스프린트입니다.")
@@ -1309,8 +1311,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint15.setStatus(1);
+            sprint15.setStatus(0);
             sprintRepository.save(sprint15);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1328,8 +1331,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(8);
             Sprint sprint16= SprintBuilder.builder()
                     .name("useState 최적화 및 성능 개선")
                     .basicDescription("useState의 성능 최적화와 불필요한 렌더링 방지를 학습하는 스프린트입니다.")
@@ -1339,9 +1342,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint16.setStatus(1);
+            sprint16.setStatus(0);
             sprintRepository.save(sprint16);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1362,7 +1365,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(5);
-            endAt = now.plusDays(12);
+            endAt = now.plusDays(11);
             Sprint sprint17 = SprintBuilder.builder()
                     .name("useEffect 기본 개념과 활용")
                     .basicDescription("React의 useEffect를 처음 배우는 분들을 위한 스프린트입니다.")
@@ -1392,8 +1395,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(8);
-            endAt = now.minusDays(1);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(7);
             Sprint sprint18 = SprintBuilder.builder()
                     .name("useEffect 최적화 및 성능 개선")
                     .basicDescription("불필요한 렌더링을 방지하고 성능을 최적화하는 useEffect 사용법을 학습하는 스프린트입니다.")
@@ -1405,7 +1408,7 @@ public class DataInitializer {
                     .maxMembers(5)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint18.setStatus(2);
+            sprint18.setStatus(0);
             sprintRepository.save(sprint18);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1425,8 +1428,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(7);
-            endAt = now;
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(3);
             Sprint sprint19 = SprintBuilder.builder()
                     .name("React Context API를 활용한 전역 상태 관리")
                     .basicDescription("Redux 없이 전역 상태를 쉽게 관리하는 방법을 배웁니다.")
@@ -1436,9 +1439,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint19.setStatus(1);
+            sprint19.setStatus(0);
             sprintRepository.save(sprint19);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1459,7 +1462,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(4);
-            endAt = now.plusDays(11);
+            endAt = now.plusDays(10);
             Sprint sprint20 = SprintBuilder.builder()
                     .name("Vue Router 기초 학습")
                     .basicDescription("Vue Router의 기본 개념과 라우팅 설정 방법을 익히는 스프린트입니다.")
@@ -1489,8 +1492,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(7);
-            endAt = now;
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(9);
             Sprint sprint21 = SprintBuilder.builder()
                     .name("Vue Router와 네비게이션 가드")
                     .basicDescription("페이지 이동 시 인증 및 권한을 관리하는 방법을 학습하는 스프린트입니다.")
@@ -1498,11 +1501,12 @@ public class DataInitializer {
                     .recommendedFor("Vue 기반 인증 시스템을 구축하고 싶은 개발자\n라우트 가드를 통해 접근 제어를 구현하고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt)
-                    .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .announceAt(endAt.minusHours(3))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateVueTodos(startAt))
                     .build();
-            sprint21.setStatus(1);
+            sprint21.setStatus(0);
+            sprint21.setCurrentMembers(2);
             sprintRepository.save(sprint21);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1520,8 +1524,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(3);
-            endAt = now.plusDays(4);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(3);
             Sprint sprint22 =  SprintBuilder.builder()
                     .name("Vue Router 동적 라우팅과 파라미터 활용")
                     .basicDescription("Vue Router에서 동적 라우트를 생성하고 URL 파라미터를 다루는 방법을 학습하는 스프린트입니다.")
@@ -1531,9 +1535,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint22.setStatus(1);
+            sprint22.setStatus(0);
             sprintRepository.save(sprint22);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1551,8 +1555,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(14);
-            endAt = now.minusDays(7);
+            startAt = now.plusDays(7);
+            endAt = now.plusDays(13);
             Sprint sprint23 = SprintBuilder.builder()
                     .name("Vue Router 트랜지션 및 애니메이션 효과 적용")
                     .basicDescription("페이지 이동 시 자연스러운 애니메이션을 적용하는 방법을 학습하는 스프린트입니다.")
@@ -1564,7 +1568,7 @@ public class DataInitializer {
                     .maxMembers(5)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint23.setStatus(2);
+            sprint23.setStatus(0);
             sprintRepository.save(sprint23);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1584,8 +1588,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now;
-            endAt = now.plusDays(7);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(6);
             Sprint sprint24 = SprintBuilder.builder()
                     .name("Vuex를 활용한 상태 관리 최적화")
                     .basicDescription("Vuex를 활용하여 전역 상태를 효율적으로 관리하는 방법을 배웁니다.")
@@ -1595,9 +1599,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(7)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint24.setStatus(1);
+            sprint24.setStatus(0);
             sprintRepository.save(sprint24);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1618,7 +1622,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(1);
-            endAt = now.plusDays(8);
+            endAt = now.plusDays(7);
             Sprint sprint25 = SprintBuilder.builder()
                     .name("Angular DI 기초와 서비스 주입")
                     .basicDescription("Angular의 DI(Dependency Injection) 개념과 서비스 주입 방법을 학습하는 스프린트입니다.")
@@ -1648,8 +1652,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(12);
             Sprint sprint26 = SprintBuilder.builder()
                     .name("Angular DI를 활용한 모듈화와 테스트")
                     .basicDescription("DI를 활용한 모듈화와 서비스 주입의 최적화 방법을 배우는 스프린트입니다.")
@@ -1661,7 +1665,7 @@ public class DataInitializer {
                     .maxMembers(6)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint26.setStatus(1);
+            sprint26.setStatus(0);
             sprintRepository.save(sprint26);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1681,8 +1685,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(2);
-            endAt = now.plusDays(5);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint27 = SprintBuilder.builder()
                     .name("Svelte Stores 기초 학습")
                     .basicDescription("Svelte의 상태 관리 시스템인 Stores의 개념과 기본 사용법을 익히는 스프린트입니다.")
@@ -1692,9 +1696,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint27.setStatus(1);
+            sprint27.setStatus(0);
             sprintRepository.save(sprint27);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1712,8 +1716,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(12);
-            endAt = now.minusDays(5);
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(11);
             Sprint sprint28 = SprintBuilder.builder()
                     .name("Svelte Stores를 활용한 전역 상태 관리")
                     .basicDescription("Svelte Stores를 이용해 전역 상태를 관리하는 방법을 학습하는 스프린트입니다.")
@@ -1725,7 +1729,7 @@ public class DataInitializer {
                     .maxMembers(8)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint28.setStatus(2);
+            sprint28.setStatus(0);
             sprintRepository.save(sprint28);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1743,8 +1747,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(9);
-            endAt = now.minusDays(2);
+            startAt = now.plusDays(9);
+            endAt = now.plusDays(11);
             Sprint sprint29 = SprintBuilder.builder()
                     .name("Svelte Stores를 활용한 비동기 데이터 관리")
                     .basicDescription("Svelte의 Stores를 활용하여 API 데이터를 효율적으로 관리하는 방법을 배우는 스프린트입니다.")
@@ -1754,9 +1758,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint29.setStatus(2);
+            sprint29.setStatus(0);
             sprintRepository.save(sprint29);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1776,8 +1780,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(11);
             Sprint sprint30 = SprintBuilder.builder()
                     .name("데이터베이스 인덱싱 기초")
                     .basicDescription("인덱스의 개념과 기본적인 활용법을 학습하는 스프린트입니다.")
@@ -1789,7 +1793,7 @@ public class DataInitializer {
                     .maxMembers(5 + random.nextInt(5))  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint30.setStatus(1);
+            sprint30.setStatus(0);
             sprintRepository.save(sprint30);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1807,7 +1811,7 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
+            startAt = now.plusDays(1);
             endAt = now.plusDays(3);
             Sprint sprint31 = SprintBuilder.builder()
                     .name("고급 인덱스 전략 및 성능 튜닝")
@@ -1818,9 +1822,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint31.setStatus(1);
+            sprint31.setStatus(0);
             sprintRepository.save(sprint31);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1838,8 +1842,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(14);
-            endAt = now.minusDays(7);
+            startAt = now.plusDays(14);
+            endAt = now.plusDays(16);
             Sprint sprint32 = SprintBuilder.builder()
                     .name("인덱스와 락 충돌 분석")
                     .basicDescription("데이터베이스의 락과 인덱스가 어떻게 상호작용하는지 학습하는 스프린트입니다.")
@@ -1849,9 +1853,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint32.setStatus(2);
+            sprint32.setStatus(0);
             sprintRepository.save(sprint32);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1869,7 +1873,7 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.plusDays(3);
+            startAt = now.plusDays(4);
             endAt = now.plusDays(10);
             Sprint sprint33 = SprintBuilder.builder()
                     .name("인덱스와 조인 최적화")
@@ -1878,9 +1882,9 @@ public class DataInitializer {
                     .recommendedFor("대량 데이터 조인을 빠르게 처리하고 싶은 개발자\nSQL 조인 최적화를 통해 시스템 성능을 개선하고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt)
-                    .maxMembers(8)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .announceAt(endAt.minusHours(4))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateIndexTodos(startAt))
                     .build();
             sprint33.setStatus(0);
             sprintRepository.save(sprint33);
@@ -1900,8 +1904,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(3);
-            endAt = now.plusDays(4);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(3);
             Sprint sprint34 = SprintBuilder.builder()
                     .name("실제 서비스에서 인덱스 활용 사례 분석")
                     .basicDescription("대규모 트래픽을 처리하는 실전 서비스에서 인덱스를 최적화하는 방법을 배우는 스프린트입니다.")
@@ -1911,9 +1915,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint34.setStatus(1);
+            sprint34.setStatus(0);
             sprintRepository.save(sprint34);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1933,8 +1937,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(8);
-            endAt = now.minusDays(1);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(7);
             Sprint sprint35 = SprintBuilder.builder()
                     .name("트랜잭션과 ACID 개념 학습")
                     .basicDescription("트랜잭션의 개념과 ACID 원칙을 학습하는 스프린트입니다.")
@@ -1946,7 +1950,7 @@ public class DataInitializer {
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint35.setStatus(2);
+            sprint35.setStatus(0);
             sprintRepository.save(sprint35);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -1965,7 +1969,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(5);
-            endAt = now.plusDays(12);
+            endAt = now.plusDays(11);
             Sprint sprint36 = SprintBuilder.builder()
                     .name("실전 트랜잭션 관리 및 장애 대응")
                     .basicDescription("트랜잭션의 일관성과 복구 전략을 실전 사례로 배우는 스프린트입니다.")
@@ -1998,7 +2002,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(3);
-            endAt = now.plusDays(10);
+            endAt = now.plusDays(9);
             Sprint sprint37 = SprintBuilder.builder()
                     .name("Sharding 기초 개념 학습")
                     .basicDescription("Sharding(샤딩)의 개념과 기본적인 적용 방법을 학습하는 스프린트입니다.")
@@ -2028,8 +2032,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(12);
             Sprint sprint38 = SprintBuilder.builder()
                     .name("Sharding 아키텍처 설계 및 성능 최적화")
                     .basicDescription("Sharding을 활용하여 분산 데이터베이스를 설계하고 성능을 최적화하는 스프린트입니다.")
@@ -2041,7 +2045,7 @@ public class DataInitializer {
                     .maxMembers(3)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint38.setStatus(1);
+            sprint38.setStatus(0);
             sprintRepository.save(sprint38);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2059,8 +2063,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(8);
             Sprint sprint39 = SprintBuilder.builder()
                     .name("실전 프로젝트에서 Sharding 적용 사례 연구")
                     .basicDescription("대규모 서비스에서 Sharding이 실제로 어떻게 적용되는지 분석하는 스프린트입니다.")
@@ -2070,9 +2074,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(5 + random.nextInt(5))  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint39.setStatus(1);
+            sprint39.setStatus(0);
             sprintRepository.save(sprint39);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2092,8 +2096,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(3);
-            endAt = now.plusDays(4);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(3);
             Sprint sprint40 = SprintBuilder.builder()
                     .name("캐시 전략과 성능 최적화")
                     .basicDescription("효율적인 캐시 전략을 활용하여 애플리케이션 성능을 최적화하는 스프린트입니다.")
@@ -2103,9 +2107,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(5)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint40.setStatus(1);
+            sprint40.setStatus(0);
             sprintRepository.save(sprint40);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2127,7 +2131,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(1);
-            endAt = now.plusDays(8);
+            endAt = now.plusDays(7);
             Sprint sprint41 = SprintBuilder.builder()
                     .name("Jetpack Compose 기초 학습")
                     .basicDescription("Jetpack Compose의 기초 개념과 UI 구성 방법을 학습하는 스프린트입니다.")
@@ -2157,8 +2161,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(8);
-            endAt = now.minusDays(1);
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(5);
             Sprint sprint42 = SprintBuilder.builder()
                     .name("안드로이드 UI, XML에서 Compose로 탈출!")
                     .basicDescription("Jetpack Compose로 UI 개발 방식을 혁신하는 스프린트입니다.")
@@ -2168,9 +2172,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint42.setStatus(2);
+            sprint42.setStatus(0);
             sprintRepository.save(sprint42);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2190,8 +2194,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(3);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint43 = SprintBuilder.builder()
                     .name("안드로이드 개발자를 위한 코루틴 첫걸음")
                     .basicDescription("Kotlin Coroutines의 기본 개념과 비동기 프로그래밍을 학습하는 스프린트입니다.")
@@ -2203,7 +2207,7 @@ public class DataInitializer {
                     .maxMembers(3)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint43.setStatus(1);
+            sprint43.setStatus(0);
             sprintRepository.save(sprint43);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2222,7 +2226,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(4);
-            endAt = now.plusDays(11);
+            endAt = now.plusDays(10);
             Sprint sprint44= SprintBuilder.builder()
                     .name("Flow로 배우는 리액티브 프로그래밍")
                     .basicDescription("`Flow`를 활용하여 데이터 스트림을 관리하는 방법을 학습하는 스프린트입니다.")
@@ -2253,7 +2257,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(2);
-            endAt = now.plusDays(9);
+            endAt = now.plusDays(8);
             Sprint sprint45= SprintBuilder.builder()
                     .name("코루틴과 Retrofit – 네트워크 비동기 처리 완전 정복")
                     .basicDescription("Kotlin Coroutines를 활용한 네트워크 통신 최적화 방법을 배우는 스프린트입니다.")
@@ -2283,8 +2287,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(11);
-            endAt = now.minusDays(4);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(6);
             Sprint sprint46= SprintBuilder.builder()
                     .name("성능 최적화를 위한 코루틴 심화 – Structured Concurrency")
                     .basicDescription("Kotlin Coroutines의 `Structured Concurrency`를 활용하여 성능을 최적화하는 방법을 배우는 스프린트입니다.")
@@ -2294,9 +2298,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(7)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint46.setStatus(2);
+            sprint46.setStatus(0);
             sprintRepository.save(sprint46);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2316,8 +2320,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(11);
             Sprint sprint47= SprintBuilder.builder()
                     .name("UIKit은 이제 그만! SwiftUI로 UI 개발 시작하기")
                     .basicDescription("SwiftUI의 핵심 개념을 배우고, UI를 선언형 방식으로 개발하는 스프린트입니다.")
@@ -2329,7 +2333,7 @@ public class DataInitializer {
                     .maxMembers(3)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint47.setStatus(1);
+            sprint47.setStatus(0);
             sprintRepository.save(sprint47);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2347,8 +2351,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(3);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(6);
             Sprint sprint48= SprintBuilder.builder()
                     .name("부드러운 애니메이션! SwiftUI로 다이나믹한 UI 만들기")
                     .basicDescription("SwiftUI의 애니메이션 기능을 활용하여 직관적이고 부드러운 UI를 만드는 스프린트입니다.")
@@ -2358,9 +2362,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint48.setStatus(1);
+            sprint48.setStatus(0);
             sprintRepository.save(sprint48);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2383,8 +2387,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(3);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint49 = SprintBuilder.builder()
                     .name("Jenkins 기본기 다지기 - CI/CD의 첫걸음")
                     .basicDescription("Jenkins를 활용한 CI/CD 파이프라인 기본 개념을 학습하는 스프린트입니다.")
@@ -2396,13 +2400,14 @@ public class DataInitializer {
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint49.setStatus(1);
+            sprint49.setStatus(0);
             sprintRepository.save(sprint49);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
                         .orElseThrow(CategoryNotExistException::new);
                 sprintCategoryRepository.save(new SprintCategory(sprint49, sprintCategory));
             });
+
 
             categoryIds = new ArrayList<>();
             categoryIds.add(jenkins.getId());
@@ -2414,8 +2419,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.minusDays(1);
+            endAt = now.plusDays(1);
             Sprint sprint50 = SprintBuilder.builder()
                     .name("Jenkins와 Docker로 완전 자동화 배포하기")
                     .basicDescription("Jenkins와 Docker를 결합하여 컨테이너 기반 CI/CD 자동화를 학습하는 스프린트입니다.")
@@ -2423,9 +2428,9 @@ public class DataInitializer {
                     .recommendedFor("Docker와 CI/CD 자동화를 함께 배우고 싶은 개발자\n컨테이너 기반 배포를 익히고 싶은 분")
                     .startAt(startAt)
                     .endAt(endAt)
-                    .announceAt(endAt)
-                    .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .announceAt(endAt.plusHours(1))
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateDockerJenkinsTodos(startAt))
                     .build();
             sprint50.setStatus(1);
             sprintRepository.save(sprint50);
@@ -2434,6 +2439,8 @@ public class DataInitializer {
                         .orElseThrow(CategoryNotExistException::new);
                 sprintCategoryRepository.save(new SprintCategory(sprint50, sprintCategory));
             });
+
+
 
             categoryIds = new ArrayList<>();
             categoryIds.add(jenkins.getId());
@@ -2446,7 +2453,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(5);
-            endAt = now.plusDays(12);
+            endAt = now.plusDays(11);
             Sprint sprint51 = SprintBuilder.builder()
                     .name("Jenkins 최적화 - 빠르고 안전한 배포 환경 만들기")
                     .basicDescription("Jenkins를 최적화하여 CI/CD 속도를 높이고, 보안을 강화하는 방법을 학습하는 스프린트입니다.")
@@ -2478,8 +2485,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(12);
+            endAt = now.plusDays(14);
             Sprint sprint52 = SprintBuilder.builder()
                     .name("GitHub Actions 기초 - CI/CD 첫걸음")
                     .basicDescription("GitHub Actions를 활용하여 CI/CD를 자동화하는 기초 개념을 학습하는 스프린트입니다.")
@@ -2489,9 +2496,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint52.setStatus(1);
+            sprint52.setStatus(0);
             sprintRepository.save(sprint52);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2509,8 +2516,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(8);
-            endAt = now.minusDays(1);
+            startAt = now.plusDays(8);
+            endAt = now.plusDays(14);
             Sprint sprint53 = SprintBuilder.builder()
                     .name("GitHub Actions와 Docker - 컨테이너 기반 배포 자동화")
                     .basicDescription("GitHub Actions를 활용하여 Docker 컨테이너 기반 배포를 자동화하는 스프린트입니다.")
@@ -2522,7 +2529,7 @@ public class DataInitializer {
                     .maxMembers(7)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint53.setStatus(2);
+            sprint53.setStatus(0);
             sprintRepository.save(sprint53);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2540,8 +2547,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(8);
             Sprint sprint54 = SprintBuilder.builder()
                     .name("GitHub Actions로 테스트 자동화하기")
                     .basicDescription("GitHub Actions를 활용하여 자동 테스트 환경을 구축하는 스프린트입니다.")
@@ -2551,9 +2558,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(3)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint54.setStatus(1);
+            sprint54.setStatus(0);
             sprintRepository.save(sprint54);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2572,7 +2579,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(5);
-            endAt = now.plusDays(12);
+            endAt = now.plusDays(11);
             Sprint sprint55 = SprintBuilder.builder()
                     .name("GitHub Actions 최적화 - 빠르고 효율적인 CI/CD 구축")
                     .basicDescription("GitHub Actions의 실행 속도를 최적화하고, 비용을 절감하는 방법을 배우는 스프린트입니다.")
@@ -2605,7 +2612,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(2);
-            endAt = now.plusDays(9);
+            endAt = now.plusDays(8);
             Sprint sprint56 = SprintBuilder.builder()
                     .name("Terraform으로 클라우드 인프라 자동화하기")
                     .basicDescription("Terraform을 활용하여 인프라를 코드로 관리하는 스프린트입니다.")
@@ -2640,8 +2647,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(11);
+            endAt = now.plusDays(13);
             Sprint sprint57 = SprintBuilder.builder()
                     .name("TensorFlow 기초 - 머신러닝 첫걸음")
                     .basicDescription("TensorFlow를 활용하여 머신러닝 기초 개념을 학습하는 스프린트입니다.")
@@ -2651,9 +2658,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint57.setStatus(1);
+            sprint57.setStatus(0);
             sprintRepository.save(sprint57);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2671,8 +2678,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(1);
-            endAt = now.plusDays(6);
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(5);
             Sprint sprint58 = SprintBuilder.builder()
                     .name("TensorFlow 모델 최적화 - 성능 튜닝과 배포")
                     .basicDescription("TensorFlow를 활용하여 학습된 모델의 성능을 최적화하고 배포하는 방법을 배우는 스프린트입니다.")
@@ -2682,9 +2689,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint58.setStatus(1);
+            sprint58.setStatus(0);
             sprintRepository.save(sprint58);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2704,8 +2711,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(12);
-            endAt = now.minusDays(5);
+            startAt = now.plusDays(7);
+            endAt = now.plusDays(13);
             Sprint sprint59 = SprintBuilder.builder()
                     .name("PyTorch 입문 - 기본 개념부터 간단한 모델 구축까지")
                     .basicDescription("PyTorch를 처음 배우는 개발자를 위한 기본 개념과 모델 구축 실습 스프린트입니다.")
@@ -2717,7 +2724,7 @@ public class DataInitializer {
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint59.setStatus(2);
+            sprint59.setStatus(0);
             sprintRepository.save(sprint59);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2735,8 +2742,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(2);
-            endAt = now.plusDays(5);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint60 = SprintBuilder.builder()
                     .name("PyTorch로 CNN 구현하기 - 이미지 분류 모델 만들기")
                     .basicDescription("PyTorch를 활용하여 CNN 기반 이미지 분류 모델을 구축하는 스프린트입니다.")
@@ -2746,9 +2753,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint60.setStatus(1);
+            sprint60.setStatus(0);
             sprintRepository.save(sprint60);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2766,8 +2773,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(3);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(10);
             Sprint sprint61 = SprintBuilder.builder()
                     .name("PyTorch 모델 최적화 및 배포 - ONNX & TorchScript")
                     .basicDescription("PyTorch 모델을 최적화하고 ONNX 및 TorchScript를 활용한 배포 방법을 학습하는 스프린트입니다.")
@@ -2779,7 +2786,7 @@ public class DataInitializer {
                     .maxMembers(6)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint61.setStatus(1);
+            sprint61.setStatus(0);
             sprintRepository.save(sprint61);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2799,8 +2806,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(9);
-            endAt = now.minusDays(2);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(8);
             Sprint sprint62 = SprintBuilder.builder()
                     .name("Kubeflow로 MLOps 파이프라인 구축하기")
                     .basicDescription("Kubeflow를 활용하여 머신러닝 모델 개발부터 배포까지 자동화하는 스프린트입니다.")
@@ -2812,7 +2819,7 @@ public class DataInitializer {
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint62.setStatus(2);
+            sprint62.setStatus(0);
             sprintRepository.save(sprint62);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2832,8 +2839,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(5);
-            endAt = now.plusDays(2);
+            startAt = now.plusDays(13);
+            endAt = now.plusDays(15);
             Sprint sprint63 = SprintBuilder.builder()
                     .name("MLflow로 머신러닝 모델 관리 및 실험 추적하기")
                     .basicDescription("MLflow를 활용하여 머신러닝 모델의 실험 및 배포를 효율적으로 관리하는 스프린트입니다.")
@@ -2843,9 +2850,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint63.setStatus(1);
+            sprint63.setStatus(0);
             sprintRepository.save(sprint63);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2866,8 +2873,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(15);
-            endAt = now.minusDays(8);
+            startAt = now.plusDays(8);
+            endAt = now.plusDays(14);
             Sprint sprint64= SprintBuilder.builder()
                     .name("SSL/TLS 기초 - HTTPS의 원리와 인증서 이해하기")
                     .basicDescription("SSL/TLS 프로토콜의 기본 개념과 HTTPS 보안 원리를 학습하는 스프린트입니다.")
@@ -2879,7 +2886,7 @@ public class DataInitializer {
                     .maxMembers(7)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint64.setStatus(2);
+            sprint64.setStatus(0);
             sprintRepository.save(sprint64);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2897,8 +2904,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(2);
-            endAt = now.plusDays(5);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(4);
             Sprint sprint65= SprintBuilder.builder()
                     .name("SSL/TLS 보안 강화 - 최적의 설정과 취약점 방어")
                     .basicDescription("SSL/TLS 보안을 강화하는 방법과 최신 취약점에 대응하는 방법을 학습하는 스프린트입니다.")
@@ -2908,9 +2915,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(4)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint65.setStatus(1);
+            sprint65.setStatus(0);
             sprintRepository.save(sprint65);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2931,7 +2938,7 @@ public class DataInitializer {
                 }
             }
             startAt = now.plusDays(5);
-            endAt = now.plusDays(12);
+            endAt = now.plusDays(11);
             Sprint sprint66= SprintBuilder.builder()
                     .name("방화벽 기초 - 네트워크 보안의 첫걸음")
                     .basicDescription("방화벽(Firewall)의 기본 개념과 역할을 학습하는 스프린트입니다.")
@@ -2961,8 +2968,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(6);
-            endAt = now.plusDays(1);
+            startAt = now.plusDays(6);
+            endAt = now.plusDays(12);
             Sprint sprint67= SprintBuilder.builder()
                     .name("방화벽 보안 정책 설정 및 실습")
                     .basicDescription("방화벽 정책을 설정하고 실제 환경에서 적용하는 방법을 학습하는 스프린트입니다.")
@@ -2974,7 +2981,7 @@ public class DataInitializer {
                     .maxMembers(3)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint67.setStatus(1);
+            sprint67.setStatus(0);
             sprintRepository.save(sprint67);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -2992,8 +2999,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(4);
-            endAt = now.plusDays(3);
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(7);
             Sprint sprint68= SprintBuilder.builder()
                     .name("차세대 방화벽(NGFW)와 클라우드 보안")
                     .basicDescription("차세대 방화벽(NGFW, Next-Generation Firewall)과 클라우드 보안 기술을 학습하는 스프린트입니다.")
@@ -3005,7 +3012,7 @@ public class DataInitializer {
                     .maxMembers(4)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint68.setStatus(1);
+            sprint68.setStatus(0);
             sprintRepository.save(sprint68);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -3025,8 +3032,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(9);
-            endAt = now.minusDays(2);
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(8);
             Sprint sprint69= SprintBuilder.builder()
                     .name("OWASP Top 10 - 웹 보안 취약점 분석과 대응")
                     .basicDescription("웹 애플리케이션 보안의 기본 개념과 OWASP Top 10을 학습하는 스프린트입니다.")
@@ -3038,7 +3045,7 @@ public class DataInitializer {
                     .maxMembers(6)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint69.setStatus(2);
+            sprint69.setStatus(0);
             sprintRepository.save(sprint69);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -3058,8 +3065,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now.minusDays(1);
-            endAt = now.plusDays(6);
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(5);
             Sprint sprint70= SprintBuilder.builder()
                     .name("SAST - 코드 기반 보안 분석 및 자동화")
                     .basicDescription("정적 분석(SAST)을 활용하여 코드 내 보안 취약점을 사전에 탐지하는 스프린트입니다.")
@@ -3069,9 +3076,9 @@ public class DataInitializer {
                     .endAt(endAt)
                     .announceAt(endAt)
                     .maxMembers(6)  // 5~10명
-                    .defaultTodos(generateTodos(startAt))
+                    .defaultTodos(generateThreeDayTodos(startAt))
                     .build();
-            sprint70.setStatus(1);
+            sprint70.setStatus(0);
             sprintRepository.save(sprint70);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -3089,8 +3096,8 @@ public class DataInitializer {
                     categoryIds.add(grandParent.getId());
                 }
             }
-            startAt = now;
-            endAt = now.plusDays(7);
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(6);
             Sprint sprint71= SprintBuilder.builder()
                     .name("DAST - 웹 애플리케이션 동적 분석 및 보안 강화")
                     .basicDescription("동적 분석(DAST)을 활용하여 실행 중인 애플리케이션의 보안 취약점을 탐지하는 스프린트입니다.")
@@ -3102,7 +3109,7 @@ public class DataInitializer {
                     .maxMembers(6)  // 5~10명
                     .defaultTodos(generateTodos(startAt))
                     .build();
-            sprint71.setStatus(1);
+            sprint71.setStatus(0);
             sprintRepository.save(sprint71);
             categoryIds.forEach(categoryId -> {
                 Category sprintCategory = categoryRepository.findById(categoryId)
@@ -3134,6 +3141,168 @@ public class DataInitializer {
         };
 
         for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+
+    /** 3일치 TodoRequest 생성 */
+    private List<TodoRequest> generateThreeDayTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+
+        String[][] tasksByDay = {
+                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
+                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
+                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"}
+        };
+
+        for (int i = 0; i < 3; i++) { // 3일치만 생성
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+    private List<TodoRequest> generateReactTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"React의 상태 관리 개념 이해", "useState의 필요성 파악", "기본 문법 익히기"},
+                {"useState 선언 및 초기값 설정", "setState를 활용한 상태 변경 실습", "기본 예제 구현"},
+                {"다양한 데이터 타입 상태 관리", "배열, 객체를 useState로 다루기", "불변성 개념 학습"},
+                {"이벤트 핸들러와 useState 연동", "onChange, onClick 이벤트와 상태 변경", "실전 예제 구현"},
+                {"useState를 활용한 간단한 TODO 앱 만들기", "입력값 상태 관리", "리스트 추가 및 삭제"},
+                {"useState 최적화 및 성능 고려", "불필요한 렌더링 방지 기법", "useCallback과의 조합"},
+                {"최종 프로젝트 실습", "코드 리뷰 및 피드백", "질문 & 답변 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+    private List<TodoRequest> generateVueTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"Vue Router의 기본 개념 학습", "SPA(Single Page Application) 개념 이해", "기본적인 Vue Router 설정 실습"},
+                {"라우트 설정 및 네비게이션 구현", "동적 라우팅과 네임드 뷰 학습", "네비게이션 링크 활용"},
+                {"네비게이션 가드의 개념 이해", "beforeEach, beforeEnter, afterEach 가드 학습", "기본적인 인증 가드 구현"},
+                {"로그인 여부에 따른 접근 제한 구현", "Vuex 또는 Pinia를 활용한 인증 상태 관리", "로그인 여부에 따라 특정 페이지 접근 제한 실습"},
+                {"사용자 권한별 접근 제어", "meta 필드를 활용한 역할 기반 인증", "관리자/사용자 역할에 따른 페이지 접근 실습"},
+                {"네비게이션 가드 고급 활용", "비동기 데이터 로딩 시 네비게이션 가드 적용", "에러 페이지 및 리다이렉션 처리"},
+                {"최종 프로젝트 실습", "라우트 가드 적용한 인증 시스템 구현", "코드 리뷰 및 QA 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+    private List<TodoRequest> generateIndexTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"SQL 조인의 기본 개념 학습", "INNER JOIN, LEFT JOIN, RIGHT JOIN 차이 이해", "실습을 위한 샘플 데이터 생성"},
+                {"Nested Loop Join 개념 이해", "인덱스 미적용 vs 적용 비교", "실제 쿼리 실행 계획 분석"},
+                {"Hash Join 개념과 활용", "대량 데이터 조인 시 성능 비교", "조인 키에 대한 해시 인덱스 적용 실험"},
+                {"Merge Join 개념과 정렬 최적화", "정렬된 데이터셋을 활용한 성능 개선", "쿼리 실행 계획 비교"},
+                {"복합 인덱스를 활용한 조인 최적화", "WHERE 조건과 조인 성능 분석", "카디널리티와 인덱스 선택 기준 학습"},
+                {"실전 조인 최적화 실습", "대량 데이터셋을 이용한 성능 비교", "실제 프로젝트 환경에서 인덱스 튜닝 적용"},
+                {"최종 리뷰 및 성능 테스트", "인덱스 생성 및 삭제에 따른 성능 차이 분석", "전체적인 최적화 전략 정리 및 QA 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+
+    private List<TodoRequest> generateExpressTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"ExpressJS 기본 개념 복습", "미들웨어의 동작 원리 이해", "기본적인 API 엔드포인트 생성"},
+                {"비동기 프로그래밍 개념 정리", "콜백 함수와 콜백 지옥 해결 방법", "Promise 기본 문법 익히기"},
+                {"async/await 심화 학습", "Promise와 async/await 비교", "try/catch를 활용한 에러 핸들링"},
+                {"Express에서 비동기 처리", "비동기 미들웨어 구현", "express-async-handler 활용법 익히기"},
+                {"데이터베이스 연동과 비동기 처리", "Mongoose와 비동기 요청 핸들링", "트랜잭션과 비동기 처리 전략 학습"},
+                {"비동기 흐름 제어와 성능 최적화", "이벤트 루프와 비동기 작업 최적화", "Node.js Worker Threads 개념 이해"},
+                {"최종 프로젝트 실습", "비동기 API를 활용한 RESTful 서비스 구축", "코드 리뷰 및 최적화"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+    private List<TodoRequest> generateSpringBootTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"Spring Boot 개요 및 프로젝트 생성", "Spring Initializr를 활용한 프로젝트 생성", "기본적인 폴더 구조 이해"},
+                {"Controller와 요청 매핑", "@GetMapping, @PostMapping, @RequestMapping 학습", "간단한 API 엔드포인트 작성"},
+                {"Spring Boot의 DI와 IoC 개념", "@Component, @Service, @Autowired 학습", "의존성 주입을 활용한 서비스 레이어 구현"},
+                {"Spring Boot의 데이터 처리", "Spring Data JPA 기본 개념", "@Entity, @Repository를 사용한 데이터베이스 연동"},
+                {"Spring Boot 예외 처리 및 로깅", "@ExceptionHandler, @ControllerAdvice를 활용한 글로벌 예외 처리", "SLF4J 및 Logback 설정"},
+                {"Spring Boot 프로젝트 실습", "RestController 기반의 간단한 CRUD API 개발", "Swagger를 활용한 API 문서화"},
+                {"최종 프로젝트 구현 및 코드 리뷰", "Spring Boot 프로젝트 배포 및 실행", "스터디 최종 정리 및 QA 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+
+    private List<TodoRequest> generateDockerJenkinsTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"Docker와 Jenkins 개요", "CI/CD 기본 개념 복습", "Docker 설치 및 환경 설정"},
+                {"Jenkins 컨테이너 실행", "Docker를 활용한 Jenkins 구축", "Jenkins 기본 설정 및 플러그인 설치"},
+                {"Jenkinsfile 작성 및 파이프라인 구축", "단계별 빌드 & 테스트 자동화", "멀티스테이지 빌드 적용 및 최적화"}
+        };
+
+        for (int i = 0; i < 3; i++) {
             LocalDate date = startAt.toLocalDate().plusDays(i);
             List<String> tasks = List.of(tasksByDay[i]);
 

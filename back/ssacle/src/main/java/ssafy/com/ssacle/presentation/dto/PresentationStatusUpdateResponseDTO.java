@@ -8,7 +8,7 @@ import ssafy.com.ssacle.presentation.domain.PresentationStatus;
 @AllArgsConstructor
 public class PresentationStatusUpdateResponseDTO {
     private String message;
-
+    private Long sprintId;
     private PresentationStatus presentationStatus;
 
 }
