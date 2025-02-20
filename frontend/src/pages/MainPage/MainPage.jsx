@@ -95,7 +95,7 @@ const MainPage = () => {
   )
 
   return (
-    <main className="min-w-max">
+    <main className="min-w-[1000px]">
       {/* 프로필, 나의 싸프린트 + 싸드컵 현황 보드 */}
       <div className="flex flex-row mb-20 gap-x-5">
         <section className="basis-2/5">
