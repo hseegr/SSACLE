@@ -54,7 +54,7 @@ const MySsaprintList = ({ currentSprintsData }) => {
         <div className="flex flex-col pl-6 pt-4">
           {/* 제목 영역 */}
           <p className="tracking-tighter text-xl font-bold mb-6">
-            나의 싸프린트 & 싸드컵 🌟
+            나의 싸프린트 🌟
           </p>
 
           {/* currentSprintsData 배열을 순회하며 각 스프린트 정보 표시 */}
