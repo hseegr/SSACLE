@@ -3,6 +3,7 @@ package ssafy.com.ssacle.category.repository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ssafy.com.ssacle.category.domain.Category;
 
@@ -33,4 +34,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, Categ
 
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.parent WHERE c.level = 2")
     List<Category> findMidLevelCategoriesByJoin();
+
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.parent p LEFT JOIN FETCH p.parent WHERE c.categoryName = :categoryName")
+    Optional<Category> findByCategoryNameWithParent(@Param("categoryName") String categoryName);
+
 }

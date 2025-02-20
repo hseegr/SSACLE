@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class AINewsResponseDTO {
+    private Long id;
     private String title;
     private String url;
     private LocalDate createdAt;

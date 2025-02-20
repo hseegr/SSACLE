@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ssafy.com.ssacle.category.dto.CategoryResponse;
 import ssafy.com.ssacle.sprint.dto.SprintRecommendResponseDTO;
 import ssafy.com.ssacle.sprint.dto.SprintSummaryResponse;
 import ssafy.com.ssacle.sprint.service.SprintService;
@@ -59,4 +61,17 @@ public class UserController implements UserSwaggerController{
         ProfileUpdateResponseDTO profileUpdateResponseDTO = userService.updateProfile(user, profileUpdateRequestDTO, image);
         return null;
     }
+
+    @GetMapping("/interested-category")
+    public ResponseEntity<List<CategoryResponse>> getUserInterestedCategory(){
+        User user = userService.getAuthenticatedUser();
+        return ResponseEntity.ok().body(userService.getUserInterestedCategory(user));
+    }
+
+//    @PatchMapping("/interested-category")
+//    public ResponseEntity<List<CategoryResponse>> updateUserInterestedCategory(){
+//        User user = userService.getAuthenticatedUser();
+//        userService.updateUserInterestedCategory(user);
+//        return ResponseEntity.ok().build();
+//    }
 }

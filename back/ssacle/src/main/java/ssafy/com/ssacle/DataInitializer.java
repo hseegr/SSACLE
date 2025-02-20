@@ -92,8 +92,6 @@ public class DataInitializer {
             initializeSprints(sprintRepository,categoryRepository,sprintCategoryRepository);
 //            initializeSprintParticipation(sprintRepository, userRepository, teamRepository, sprintService, questionCardService, diaryService);
 //            initializeTeams(sprintRepository,teamRepository,userRepository,userTeamRepository);
-//            initializeSsaldCups(ssaldCupRepository, sprintRepository, categoryRepository,ssaldCupCategoryRepository, sprintCategoryRepository);
-            //initializeSsaldCupParticipation(ssaldCupRepository, userRepository, teamRepository);
         };
     }
 
@@ -115,6 +113,7 @@ public class DataInitializer {
             User user9 = User.createStudent("ssafy9@ssafy.com", "ssafy1234", "강싸피", "1335056", "나의 꿈은 싸탈이야");
             User user10 = User.createStudent("ssafy10@ssafy.com", "ssafy1234", "정싸피", "1212121", "싸피 인생 12회차");
             User user11 = User.createStudent("spancer1@naver.com", "rlatngus@1", "김수현", "1240587", "응애응애 까르륵");
+
 
             User alumni1 = User.createAlumni("ssafy11@ssafy.com", "ssafy1234", "김졸업", "1112121", "KB 국민 은행");
             User alumni2 = User.createAlumni("ssafy12@ssafy.com", "ssafy1234", "박졸업", "1112345", "싸피 실습 코치");
@@ -223,7 +222,7 @@ public class DataInitializer {
 
             Category docker = Category.builder().categoryName("Docker").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Docker.png").build();
             Category kunernetes = Category.builder().categoryName("Kunernetes").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Kubernetes.png").build();
-            Category googlecloud = Category.builder().categoryName("Google Cloud").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Google+Cloud.png").build();
+            Category googlecloud = Category.builder().categoryName("Google Cloud").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/GoogleCloud.png").build();
             Category azure = Category.builder().categoryName("Azure").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Azure.png").build();
             Category aws = Category.builder().categoryName("AWS").parent(infra).level(2).image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/AWS.png").build();
             categoryRepository.saveAll(List.of(docker, kunernetes, googlecloud, azure, aws));
@@ -245,9 +244,9 @@ public class DataInitializer {
 
 // DevOps 중간 카테고리
             Category ciCd = Category.builder().categoryName("CI/CD").parent(devOps).level(2)
-                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/CI-CD.png").build();
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/CICD.png").build();
             Category infraAsCode = Category.builder().categoryName("Infrastructure as Code").parent(devOps).level(2)
-                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/Terraform.png").build();
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/InfrastructureasCode.png").build();
             categoryRepository.saveAll(List.of(ciCd, infraAsCode));
 
 // DevOps 하위 카테고리
@@ -261,9 +260,9 @@ public class DataInitializer {
 
 // AI/ML 중간 카테고리
             Category deepLearning = Category.builder().categoryName("Deep Learning").parent(aiMl).level(2)
-                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/DeepLearning.png").build();
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/DeepLearning.jpeg").build();
             Category mlOps = Category.builder().categoryName("MLOps").parent(aiMl).level(2)
-                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/MLOps.png").build();
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/MLOPs.png").build();
             categoryRepository.saveAll(List.of(deepLearning, mlOps));
 
 // AI/ML 하위 카테고리
@@ -279,7 +278,7 @@ public class DataInitializer {
             Category networkSecurity = Category.builder().categoryName("Network Security").parent(security).level(2)
                     .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/NetworkSecurity.png").build();
             Category appSecurity = Category.builder().categoryName("Application Security").parent(security).level(2)
-                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/AppSecurity.png").build();
+                    .image("https://ssacle.s3.ap-northeast-2.amazonaws.com/image/category/AplicationSecurity.png").build();
             categoryRepository.saveAll(List.of(networkSecurity, appSecurity));
 
 // Security 하위 카테고리
@@ -765,8 +764,2416 @@ public class DataInitializer {
             System.out.println("Board data already exists.");
         }
     }
+    @Transactional
+    public void initializeSprints(SprintRepository sprintRepository,
+                                  CategoryRepository categoryRepository,
+                                  SprintCategoryRepository sprintCategoryRepository) {
+        if (sprintRepository.count() == 0) {
+            // Back-end 하위 카테고리
+            Random random = new Random();
+            LocalDateTime now = LocalDateTime.now();
+            Category springBoot = categoryRepository.findByCategoryNameWithParent("Spring Boot").orElseThrow(CategoryNotExistException::new);
+            List<Long> categoryIds = new ArrayList<>();
+            categoryIds.add(springBoot.getId());
+            Category parent = springBoot.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
 
+            LocalDateTime startAt = now.plusDays(3);
+            LocalDateTime endAt = now.plusDays(10);
+            Sprint sprint = SprintBuilder.builder()
+                    .name("Sprint Boot 감자 스터디 챌린지")
+                    .basicDescription("Spring Boot 입문자들의 모임입니다.")
+                    .detailDescription("기본적인 GetMapping, PostMapping 등과 어노테이션에 대한 학습을 목표로 합니다.")
+                    .recommendedFor("Spring Boot가 처음이신분\nAnnotation에 대한 학습을 진행하고 싶으신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint.setStatus(0);
+            sprintRepository.save(sprint);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                                .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springBoot.getId());
+            parent = springBoot.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint1 = SprintBuilder.builder()
+                    .name("Spring Boot 스레드 스프린트")
+                    .basicDescription("Spring Boot 고수분 환영")
+                    .detailDescription("단순히 Spring Boot를 쓰는 것이 아닌 자바 스레드와 비교를 통해 Spring Boot에 대한 깊은 이해를 목표로 합니다.")
+                    .recommendedFor("Spring Boot 고수\n대규모 처리에 대한 관심도가 높으신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint1.setStatus(1);
+            sprintRepository.save(sprint1);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint1, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springBoot.getId());
+            parent = springBoot.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(10);
+            Sprint sprint2 = SprintBuilder.builder()
+                    .name("Spring Boot에 대한 전반적인 이해")
+                    .basicDescription("Spring Boot에 관심 많으신 분들 환영이요.")
+                    .detailDescription("Spring JPA에 사용에 있어 N+1 어려움을 어떻게 효율적으로 해결할지 고민하기 위해 스프린트를 진행합니다.")
+                    .recommendedFor("Spring Boot JPA에 관심 많으신 분\nLazyInitializationException에 고통 받으신 분\n Lazy와 Eager에 대해 깊이 알고 싶으신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint2.setStatus(2);
+            sprintRepository.save(sprint2);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint2, sprintCategory));
+            });
+
+
+            Category springMvc = categoryRepository.findByCategoryNameWithParent("Spring MVC").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springMvc.getId());
+            parent = springMvc.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(8);
+            Sprint sprint3 = SprintBuilder.builder()
+                    .name("Sprint MVC 패턴 관련 스프린트")
+                    .basicDescription("Spring MVC 스프린트")
+                    .detailDescription("Builder 패턴에 대해서 깊은 학습을 위해 스프린트를 만들었습니다.")
+                    .recommendedFor("단순히 생성자를 사용하는 것이 아닌 Builder 패턴을 통한 범용성 넓은 생성에 관심을 갖춘 사람")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint3.setStatus(0);
+            sprintRepository.save(sprint3);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint3, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springMvc.getId());
+            parent = springMvc.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint4 = SprintBuilder.builder()
+                    .name("Spring MVC DTO를 위한 모임")
+                    .basicDescription("DTO를 깊게 팔겁니다.")
+                    .detailDescription("DTO를 왜 쓰는지, 파리미터가 1개인 경우 등 어떤 경우에 DTO를 적용해야하는지 학습")
+                    .recommendedFor("Spring MVC 감자\nDTO에 대해 관심을 가지신 분\n지금껏 DTO 대신 Map을 사용하신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(2+random.nextInt(6))
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint4.setStatus(1);
+            sprintRepository.save(sprint4);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint4, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springMvc.getId());
+            parent = springMvc.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(3);
+            endAt = now.plusDays(4);
+            Sprint sprint5 = SprintBuilder.builder()
+                    .name("MVC 구조에 대해 잘 모르시는 분")
+                    .basicDescription("백엔드 감자분들 환영")
+                    .detailDescription("기본적인 MVC 패턴도 잘모르신다. MVC 각각의 레이어에서 어떤 것을 주로 담당하는지 같이 알아가요.")
+                    .recommendedFor("Spring을 활용한 백엔드 개발 입문자 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint5.setStatus(1);
+            sprintRepository.save(sprint5);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint5, sprintCategory));
+            });
+
+
+            Category springSecurity = categoryRepository.findByCategoryNameWithParent("Spring Security").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springSecurity.getId());
+            parent = springSecurity.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(10);
+            endAt = now.minusDays(3);
+            Sprint sprint6 = SprintBuilder.builder()
+                    .name("Sprint Security에 대한 깊은 이해를 위한 스프린트")
+                    .basicDescription("Spring Security 잘 알고 쓰자")
+                    .detailDescription("Spring Security 설정에 있어 프로젝트에서 복붙이 아닌 전체적인 서비스를 이해하며 Config 파일을 짜자")
+                    .recommendedFor("탄탄한 보안 구축에 흥미를 가지시는 분\nSpring Security에서 하는 일에 대한 깊은 이해를 목표로 하시는 분\nJWTFilter와 Spring Security에 대한 차이와 어떤 작용을 하는지 궁금하신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint6.setStatus(2);
+            sprintRepository.save(sprint6);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint6, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(springSecurity.getId());
+            parent = springSecurity.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(7);
+            endAt = now;
+            Sprint sprint7 = SprintBuilder.builder()
+                    .name("Spring 고수 분들 들어와")
+                    .basicDescription("Security 설정 알고 쓰자")
+                    .detailDescription("대규모 서비스 분석을 통해 적절한 Securiy 설정법 학습")
+                    .recommendedFor("Spring 고수\n현직자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint7.setStatus(1);
+            sprintRepository.save(sprint7);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint7, sprintCategory));
+            });
+
+
+            Category djangoOrm = categoryRepository.findByCategoryNameWithParent("Django ORM").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(djangoOrm.getId());
+            parent = djangoOrm.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(8);
+            Sprint sprint8 = SprintBuilder.builder()
+                    .name("Python 입문자를 위한 스프린트")
+                    .basicDescription("Python & Django 스프린트")
+                    .detailDescription("Python을 이용한 백엔드 개발에 필요한 Django의 초기 세팅과 Python 기본 문법 학습을 위한 스프린트")
+                    .recommendedFor("전공무관\nPython을 백엔드 개발에 흥미가 있는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint8.setStatus(0);
+            sprintRepository.save(sprint8);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint8, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(djangoOrm.getId());
+            parent = djangoOrm.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(2);
+            endAt = now.plusDays(5);
+            Sprint sprint9 = SprintBuilder.builder()
+                    .name("Django 고수 분들 환영")
+                    .basicDescription("Django를 통한 대규모 처리")
+                    .detailDescription("Django를 통한 대규모 데이터 분석에 목표로 가장 빠른 속도를 만들어 보세요")
+                    .recommendedFor("Python을 통한 대규모 처리 경험자\n데이터 분야 관련 전공자\n현직자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint9.setStatus(1);
+            sprintRepository.save(sprint9);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint9, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(djangoOrm.getId());
+            parent = djangoOrm.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint10 = SprintBuilder.builder()
+                    .name("Django 1부터 100까지")
+                    .basicDescription("Django 감자분들 환영")
+                    .detailDescription("경쟁을 통해 성장하는 것을 목표로 합니다. 저도 잘 모르니 같이 공부하면서 성장해요")
+                    .recommendedFor("Django 초보자\n같이 성장할 사람\n")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint10.setStatus(1);
+            sprintRepository.save(sprint10);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint10, sprintCategory));
+            });
+
+
+            Category djangoRestFramework = categoryRepository.findByCategoryNameWithParent("Django REST Framework").orElseThrow(CategoryNotExistException::new);
+
+            Category expressJs = categoryRepository.findByCategoryNameWithParent("Express.js").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(expressJs.getId());
+            parent = expressJs.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(8);
+            Sprint sprint11 = SprintBuilder.builder()
+                    .name("ExpressJS 스프린트")
+                    .basicDescription("비동기에 대해서 깊게 알아보자")
+                    .detailDescription("Promise, async/await 등 비동기 처리에 대해 깊게 공부하고 싶은 사람들 환영")
+                    .recommendedFor("Express를 활용한 프로젝트 경험자\n비동기 처리에 깊게 파고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint11.setStatus(0);
+            sprintRepository.save(sprint11);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint11, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(expressJs.getId());
+            parent = expressJs.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(13);
+            endAt = now.minusDays(6);
+            Sprint sprint12 = SprintBuilder.builder()
+                    .name("당근 마켓 클론 코디을 통한 스프린트")
+                    .basicDescription("주어진 프런트 엔드에 맞춘 백엔드 설계")
+                    .detailDescription("React로 구축된 당근 마켓 프런트 코드와 연동되는 백엔드 코드를 만들어보자")
+                    .recommendedFor("Express를 통한 프로젝트 경험자\nNode.js 경험자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint12.setStatus(2);
+            sprintRepository.save(sprint12);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint12, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(expressJs.getId());
+            parent = expressJs.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(10);
+            endAt = now.minusDays(3);
+            Sprint sprint13 = SprintBuilder.builder()
+                    .name("백엔드 초보자 환영")
+                    .basicDescription("Express.js 세팅부터 기본적인 활용")
+                    .detailDescription("기본적인 MVC 패턴도 잘모르신다. MVC 패턴을 좀 더 알고 싶으신 분들을 위한 스프린트")
+                    .recommendedFor("백엔드 응애\nExpress 입문자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint13.setStatus(2);
+            sprintRepository.save(sprint13);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint13, sprintCategory));
+            });
+
+
+            Category nestJsModules = categoryRepository.findByCategoryNameWithParent("NestJS Modules").orElseThrow(CategoryNotExistException::new);
+            Category flaskRestful = categoryRepository.findByCategoryNameWithParent("Flask RESTful").orElseThrow(CategoryNotExistException::new);
+            Category eloquentOrm = categoryRepository.findByCategoryNameWithParent("Eloquent ORM").orElseThrow(CategoryNotExistException::new);
+
+            // Front-end 하위 카테고리
+            Category useState = categoryRepository.findByCategoryNameWithParent("useState").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(useState.getId());
+            parent = useState.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(7);
+            endAt = now;
+            Sprint sprint14 = SprintBuilder.builder()
+                    .name("React useState 기초 입문")
+                    .basicDescription("React의 useState를 처음 배우는 분들을 위한 스프린트입니다.")
+                    .detailDescription("React의 상태 관리 개념을 익히고, useState의 기본적인 사용법을 연습합니다.")
+                    .recommendedFor("React 입문자\n컴포넌트 상태 관리 개념이 궁금하신 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint14.setStatus(1);
+            sprintRepository.save(sprint14);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint14, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(useState.getId());
+            parent = useState.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint15  = SprintBuilder.builder()
+                    .name("useState와 이벤트 핸들링")
+                    .basicDescription("useState를 활용하여 사용자 입력을 처리하는 실습형 스프린트입니다.")
+                    .detailDescription("입력 폼, 버튼 클릭, 값 변경 이벤트를 관리하는 방법을 학습합니다.")
+                    .recommendedFor("React에서 사용자 인터랙션을 다루고 싶은 분\n입력 폼과 상태 관리에 대한 이해도를 높이고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)
+                    .build();
+            sprint15.setStatus(1);
+            sprintRepository.save(sprint15);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint15, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(useState.getId());
+            parent = useState.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint16= SprintBuilder.builder()
+                    .name("useState 최적화 및 성능 개선")
+                    .basicDescription("useState의 성능 최적화와 불필요한 렌더링 방지를 학습하는 스프린트입니다.")
+                    .detailDescription("React의 리렌더링 개념을 이해하고, useState와 useEffect를 함께 사용하여 최적화하는 방법을 익힙니다.")
+                    .recommendedFor("React 성능 최적화에 관심 있는 개발자\n불필요한 렌더링을 최소화하는 방법을 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint16.setStatus(1);
+            sprintRepository.save(sprint16);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint16, sprintCategory));
+            });
+
+
+            Category useEffect = categoryRepository.findByCategoryNameWithParent("useEffect").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(useEffect.getId());
+            parent = useEffect.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(12);
+            Sprint sprint17 = SprintBuilder.builder()
+                    .name("useEffect 기본 개념과 활용")
+                    .basicDescription("React의 useEffect를 처음 배우는 분들을 위한 스프린트입니다.")
+                    .detailDescription("컴포넌트의 생명주기를 이해하고, useEffect의 의존성 배열을 활용하는 법을 익힙니다.")
+                    .recommendedFor("React 입문자\nuseEffect의 동작 원리를 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint17.setStatus(0);
+            sprintRepository.save(sprint17);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint17, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(useEffect.getId());
+            parent = useEffect.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(8);
+            endAt = now.minusDays(1);
+            Sprint sprint18 = SprintBuilder.builder()
+                    .name("useEffect 최적화 및 성능 개선")
+                    .basicDescription("불필요한 렌더링을 방지하고 성능을 최적화하는 useEffect 사용법을 학습하는 스프린트입니다.")
+                    .detailDescription("React의 리렌더링 문제를 해결하는 법을 배우고, useEffect를 효율적으로 활용하는 전략을 익힙니다.")
+                    .recommendedFor("React 성능 최적화에 관심 있는 개발자\n렌더링 최적화와 useEffect의 깊은 이해를 원하는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint18.setStatus(2);
+            sprintRepository.save(sprint18);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint18, sprintCategory));
+            });
+
+
+            Category reactContextApi = categoryRepository.findByCategoryNameWithParent("React Context API").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(reactContextApi.getId());
+            parent = reactContextApi.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(7);
+            endAt = now;
+            Sprint sprint19 = SprintBuilder.builder()
+                    .name("React Context API를 활용한 전역 상태 관리")
+                    .basicDescription("Redux 없이 전역 상태를 쉽게 관리하는 방법을 배웁니다.")
+                    .detailDescription("useContext와 Context Provider를 활용하여 상태를 전역으로 공유하는 패턴을 학습합니다.")
+                    .recommendedFor("Redux 없이 상태 관리를 원하는 React 개발자\n컴포넌트 간 props drilling 문제를 해결하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint19.setStatus(1);
+            sprintRepository.save(sprint19);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint19, sprintCategory));
+            });
+
+
+            Category vueRouter = categoryRepository.findByCategoryNameWithParent("Vue Router").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(vueRouter.getId());
+            parent = vueRouter.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(11);
+            Sprint sprint20 = SprintBuilder.builder()
+                    .name("Vue Router 기초 학습")
+                    .basicDescription("Vue Router의 기본 개념과 라우팅 설정 방법을 익히는 스프린트입니다.")
+                    .detailDescription("Vue에서 페이지를 이동하는 방법과, `router-view`, `router-link`를 활용하는 기초적인 내용을 학습합니다.")
+                    .recommendedFor("Vue.js를 처음 배우는 개발자\nSPA(단일 페이지 애플리케이션) 라우팅 개념을 이해하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint20.setStatus(0);
+            sprintRepository.save(sprint20);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint20, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(vueRouter.getId());
+            parent = vueRouter.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(7);
+            endAt = now;
+            Sprint sprint21 = SprintBuilder.builder()
+                    .name("Vue Router와 네비게이션 가드")
+                    .basicDescription("페이지 이동 시 인증 및 권한을 관리하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("네비게이션 가드를 사용하여 로그인 여부에 따라 접근을 제한하는 방법을 실습합니다.")
+                    .recommendedFor("Vue 기반 인증 시스템을 구축하고 싶은 개발자\n라우트 가드를 통해 접근 제어를 구현하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint21.setStatus(1);
+            sprintRepository.save(sprint21);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint21, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(vueRouter.getId());
+            parent = vueRouter.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(3);
+            endAt = now.plusDays(4);
+            Sprint sprint22 =  SprintBuilder.builder()
+                    .name("Vue Router 동적 라우팅과 파라미터 활용")
+                    .basicDescription("Vue Router에서 동적 라우트를 생성하고 URL 파라미터를 다루는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("`:id`와 같은 동적 세그먼트를 사용하여, 동적인 데이터 기반 페이지를 구현하는 방법을 익힙니다.")
+                    .recommendedFor("Vue Router를 활용하여 동적 페이지를 만들고 싶은 개발자\nURL 매개변수를 활용하여 데이터를 동적으로 불러오고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint22.setStatus(1);
+            sprintRepository.save(sprint22);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint22, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(vueRouter.getId());
+            parent = vueRouter.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(14);
+            endAt = now.minusDays(7);
+            Sprint sprint23 = SprintBuilder.builder()
+                    .name("Vue Router 트랜지션 및 애니메이션 효과 적용")
+                    .basicDescription("페이지 이동 시 자연스러운 애니메이션을 적용하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("Vue의 `transition` 컴포넌트를 활용하여 부드러운 화면 전환 효과를 적용하는 방법을 실습합니다.")
+                    .recommendedFor("Vue 프로젝트에서 UX 개선을 위해 애니메이션을 적용하고 싶은 개발자\n페이지 전환 시 자연스러운 화면 이동 효과를 만들고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint23.setStatus(2);
+            sprintRepository.save(sprint23);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint23, sprintCategory));
+            });
+
+
+            Category vuex = categoryRepository.findByCategoryNameWithParent("Vuex").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(vuex.getId());
+            parent = vuex.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now;
+            endAt = now.plusDays(7);
+            Sprint sprint24 = SprintBuilder.builder()
+                    .name("Vuex를 활용한 상태 관리 최적화")
+                    .basicDescription("Vuex를 활용하여 전역 상태를 효율적으로 관리하는 방법을 배웁니다.")
+                    .detailDescription("Vue의 중앙 집중식 상태 관리 패턴을 이해하고, `state`, `getters`, `mutations`, `actions`의 개념을 학습합니다.")
+                    .recommendedFor("Vue 애플리케이션의 상태 관리를 체계적으로 하고 싶은 개발자\n컴포넌트 간 복잡한 데이터 흐름을 정리하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint24.setStatus(1);
+            sprintRepository.save(sprint24);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint24, sprintCategory));
+            });
+
+
+            Category angularDi = categoryRepository.findByCategoryNameWithParent("Angular DI").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(angularDi.getId());
+            parent = angularDi.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(8);
+            Sprint sprint25 = SprintBuilder.builder()
+                    .name("Angular DI 기초와 서비스 주입")
+                    .basicDescription("Angular의 DI(Dependency Injection) 개념과 서비스 주입 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("DI가 Angular에서 어떻게 동작하는지 배우고, `@Injectable` 및 `providers`의 역할을 학습합니다.")
+                    .recommendedFor("Angular 개발을 시작하는 초급자\n서비스와 컴포넌트 간 데이터 공유를 원하시는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint25.setStatus(0);
+            sprintRepository.save(sprint25);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint25, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(angularDi.getId());
+            parent = angularDi.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint26 = SprintBuilder.builder()
+                    .name("Angular DI를 활용한 모듈화와 테스트")
+                    .basicDescription("DI를 활용한 모듈화와 서비스 주입의 최적화 방법을 배우는 스프린트입니다.")
+                    .detailDescription("의존성 주입을 통해 유지보수하기 쉬운 코드를 작성하고, 유닛 테스트에서 `Mock` 서비스를 사용하는 법을 학습합니다.")
+                    .recommendedFor("Angular 애플리케이션의 유지보수를 쉽게 하고 싶은 개발자\n테스트 환경에서 DI를 활용하는 방법을 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint26.setStatus(1);
+            sprintRepository.save(sprint26);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint26, sprintCategory));
+            });
+
+
+            Category svelteStores = categoryRepository.findByCategoryNameWithParent("Svelte Stores").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(svelteStores.getId());
+            parent = svelteStores.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(2);
+            endAt = now.plusDays(5);
+            Sprint sprint27 = SprintBuilder.builder()
+                    .name("Svelte Stores 기초 학습")
+                    .basicDescription("Svelte의 상태 관리 시스템인 Stores의 개념과 기본 사용법을 익히는 스프린트입니다.")
+                    .detailDescription("Svelte의 `writable`, `readable`, `derived` Stores의 개념과 활용법을 배웁니다.")
+                    .recommendedFor("Svelte를 처음 접하는 개발자\n컴포넌트 간 상태 관리를 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint27.setStatus(1);
+            sprintRepository.save(sprint27);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint27, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(svelteStores.getId());
+            parent = svelteStores.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(12);
+            endAt = now.minusDays(5);
+            Sprint sprint28 = SprintBuilder.builder()
+                    .name("Svelte Stores를 활용한 전역 상태 관리")
+                    .basicDescription("Svelte Stores를 이용해 전역 상태를 관리하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("Svelte의 `writable`과 `derived` Stores를 활용하여 전역 상태를 효율적으로 관리하고, 반응성을 최적화하는 방법을 배웁니다.")
+                    .recommendedFor("Svelte 애플리케이션에서 전역 상태 관리가 필요한 개발자\n반응형 상태 관리 패턴을 학습하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(8)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint28.setStatus(2);
+            sprintRepository.save(sprint28);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint28, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(svelteStores.getId());
+            parent = svelteStores.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(9);
+            endAt = now.minusDays(2);
+            Sprint sprint29 = SprintBuilder.builder()
+                    .name("Svelte Stores를 활용한 비동기 데이터 관리")
+                    .basicDescription("Svelte의 Stores를 활용하여 API 데이터를 효율적으로 관리하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("Svelte의 `readable`과 `derived` Stores를 활용하여 비동기 데이터 요청을 최적화하고, API 응답을 효율적으로 관리하는 방법을 익힙니다.")
+                    .recommendedFor("Svelte에서 API 데이터를 다루는 방법을 배우고 싶은 개발자\n비동기 상태 관리를 최적화하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint29.setStatus(2);
+            sprintRepository.save(sprint29);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint29, sprintCategory));
+            });
+
+            // Database 하위 카테고리
+            Category indexing = categoryRepository.findByCategoryNameWithParent("Indexing").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(indexing.getId());
+            parent = indexing.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint30 = SprintBuilder.builder()
+                    .name("데이터베이스 인덱싱 기초")
+                    .basicDescription("인덱스의 개념과 기본적인 활용법을 학습하는 스프린트입니다.")
+                    .detailDescription("B-Tree와 Hash Index의 차이를 이해하고, 인덱스가 쿼리 성능에 미치는 영향을 실습합니다.")
+                    .recommendedFor("데이터베이스 성능 최적화에 관심 있는 개발자\nSQL 쿼리 실행 속도를 개선하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5 + random.nextInt(5))  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint30.setStatus(1);
+            sprintRepository.save(sprint30);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint30, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(indexing.getId());
+            parent = indexing.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint31 = SprintBuilder.builder()
+                    .name("고급 인덱스 전략 및 성능 튜닝")
+                    .basicDescription("복합 인덱스와 부분 인덱스를 활용한 성능 최적화 방법을 배우는 스프린트입니다.")
+                    .detailDescription("커버링 인덱스, 클러스터드 인덱스, 파티셔닝 기법을 사용하여 데이터베이스 성능을 극대화하는 방법을 실습합니다.")
+                    .recommendedFor("SQL 실행 계획을 분석하고 쿼리 성능을 최적화하고 싶은 개발자\n복합 인덱스를 활용하여 성능을 개선하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint31.setStatus(1);
+            sprintRepository.save(sprint31);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint31, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(indexing.getId());
+            parent = indexing.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(14);
+            endAt = now.minusDays(7);
+            Sprint sprint32 = SprintBuilder.builder()
+                    .name("인덱스와 락 충돌 분석")
+                    .basicDescription("데이터베이스의 락과 인덱스가 어떻게 상호작용하는지 학습하는 스프린트입니다.")
+                    .detailDescription("인덱스가 검색 성능을 향상시키지만, 동시에 락 충돌을 유발할 수도 있는 이유를 분석하고, Deadlock을 최소화하는 전략을 학습합니다.")
+                    .recommendedFor("데이터베이스 동시성 문제를 이해하고 싶은 개발자\nDeadlock을 예방하고 시스템 성능을 최적화하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint32.setStatus(2);
+            sprintRepository.save(sprint32);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint32, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(indexing.getId());
+            parent = indexing.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(10);
+            Sprint sprint33 = SprintBuilder.builder()
+                    .name("인덱스와 조인 최적화")
+                    .basicDescription("인덱스를 활용하여 SQL 조인 성능을 최적화하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("Nested Loop Join, Hash Join, Merge Join 등 다양한 조인 기법을 학습하고, 인덱스와 결합하여 최적의 쿼리 성능을 만드는 전략을 익힙니다.")
+                    .recommendedFor("대량 데이터 조인을 빠르게 처리하고 싶은 개발자\nSQL 조인 최적화를 통해 시스템 성능을 개선하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(8)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint33.setStatus(0);
+            sprintRepository.save(sprint33);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint33, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(indexing.getId());
+            parent = indexing.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(3);
+            endAt = now.plusDays(4);
+            Sprint sprint34 = SprintBuilder.builder()
+                    .name("실제 서비스에서 인덱스 활용 사례 분석")
+                    .basicDescription("대규모 트래픽을 처리하는 실전 서비스에서 인덱스를 최적화하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("검색 엔진, 금융 시스템, 이커머스 사이트에서 사용되는 인덱스 설계 패턴을 분석하고, 최적의 인덱스 설계를 실습합니다.")
+                    .recommendedFor("대규모 서비스의 데이터베이스 최적화 사례를 배우고 싶은 개발자\n실전 환경에서 성능 최적화 전략을 적용하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint34.setStatus(1);
+            sprintRepository.save(sprint34);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint34, sprintCategory));
+            });
+
+
+            Category acid = categoryRepository.findByCategoryNameWithParent("ACID").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(acid.getId());
+            parent = acid.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(8);
+            endAt = now.minusDays(1);
+            Sprint sprint35 = SprintBuilder.builder()
+                    .name("트랜잭션과 ACID 개념 학습")
+                    .basicDescription("트랜잭션의 개념과 ACID 원칙을 학습하는 스프린트입니다.")
+                    .detailDescription("Atomicity(원자성), Consistency(일관성), Isolation(고립성), Durability(지속성)의 개념을 배우고, 트랜잭션 관리의 중요성을 이해합니다.")
+                    .recommendedFor("데이터 정합성을 보장하고 싶은 개발자\n트랜잭션 관리 개념을 명확히 이해하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint35.setStatus(2);
+            sprintRepository.save(sprint35);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint35, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(acid.getId());
+            parent = acid.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(12);
+            Sprint sprint36 = SprintBuilder.builder()
+                    .name("실전 트랜잭션 관리 및 장애 대응")
+                    .basicDescription("트랜잭션의 일관성과 복구 전략을 실전 사례로 배우는 스프린트입니다.")
+                    .detailDescription("Deadlock(교착 상태) 해결 방법, 트랜잭션 격리 수준 조정, 데이터 정합성을 유지하기 위한 장애 대응 전략을 학습합니다.")
+                    .recommendedFor("트랜잭션을 안정적으로 운영하고 싶은 개발자\n실무에서 발생하는 트랜잭션 충돌과 장애를 분석하고 해결하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint36.setStatus(0);
+            sprintRepository.save(sprint36);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint36, sprintCategory));
+            });
+
+
+            Category sharding = categoryRepository.findByCategoryNameWithParent("Sharding").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sharding.getId());
+            parent = sharding.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(3);
+            endAt = now.plusDays(10);
+            Sprint sprint37 = SprintBuilder.builder()
+                    .name("Sharding 기초 개념 학습")
+                    .basicDescription("Sharding(샤딩)의 개념과 기본적인 적용 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("Sharding이 필요한 이유와 `수평 샤딩` vs `수직 샤딩`의 차이를 배우고, 기본적인 샤딩 전략을 익힙니다.")
+                    .recommendedFor("대규모 데이터를 효율적으로 관리하고 싶은 개발자\nSharding을 처음 접하는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint37.setStatus(0);
+            sprintRepository.save(sprint37);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint37, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sharding.getId());
+            parent = sharding.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint38 = SprintBuilder.builder()
+                    .name("Sharding 아키텍처 설계 및 성능 최적화")
+                    .basicDescription("Sharding을 활용하여 분산 데이터베이스를 설계하고 성능을 최적화하는 스프린트입니다.")
+                    .detailDescription("해시 기반 Sharding, 레인지 기반 Sharding, 동적 Sharding 방법을 배우고, 실제 프로젝트에서 성능을 개선하는 전략을 실습합니다.")
+                    .recommendedFor("대용량 트래픽을 처리할 데이터베이스 설계에 관심 있는 개발자\nSharding 성능 최적화 전략을 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint38.setStatus(1);
+            sprintRepository.save(sprint38);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint38, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sharding.getId());
+            parent = sharding.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint39 = SprintBuilder.builder()
+                    .name("실전 프로젝트에서 Sharding 적용 사례 연구")
+                    .basicDescription("대규모 서비스에서 Sharding이 실제로 어떻게 적용되는지 분석하는 스프린트입니다.")
+                    .detailDescription("금융, 이커머스, 게임 서버 등의 서비스에서 Sharding 적용 사례를 연구하고, MySQL, PostgreSQL, MongoDB 등의 분산 데이터베이스 활용법을 실습합니다.")
+                    .recommendedFor("실제 서비스에서 Sharding을 적용한 사례를 분석하고 싶은 개발자\nSharding을 대규모 시스템에 도입하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5 + random.nextInt(5))  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint39.setStatus(1);
+            sprintRepository.save(sprint39);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint39, sprintCategory));
+            });
+
+
+            Category cacheStrategies = categoryRepository.findByCategoryNameWithParent("Cache Strategies").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(cacheStrategies.getId());
+            parent = cacheStrategies.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(3);
+            endAt = now.plusDays(4);
+            Sprint sprint40 = SprintBuilder.builder()
+                    .name("캐시 전략과 성능 최적화")
+                    .basicDescription("효율적인 캐시 전략을 활용하여 애플리케이션 성능을 최적화하는 스프린트입니다.")
+                    .detailDescription("LRU, LFU, FIFO 등의 캐싱 알고리즘을 비교하고, Redis, Memcached를 활용하여 실전 환경에서의 캐싱 적용법을 학습합니다.")
+                    .recommendedFor("대규모 트래픽을 처리하는 개발자\n애플리케이션의 응답 속도를 개선하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint40.setStatus(1);
+            sprintRepository.save(sprint40);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint40, sprintCategory));
+            });
+
+
+            // Mobile 하위 카테고리
+            Category jetpackCompose = categoryRepository.findByCategoryNameWithParent("Jetpack Compose").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(jetpackCompose.getId());
+            parent = jetpackCompose.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(1);
+            endAt = now.plusDays(8);
+            Sprint sprint41 = SprintBuilder.builder()
+                    .name("Jetpack Compose 기초 학습")
+                    .basicDescription("Jetpack Compose의 기초 개념과 UI 구성 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("Composable 함수의 개념, 상태 관리, Layout 및 Modifier의 역할을 배우고 실습합니다.")
+                    .recommendedFor("Android UI 개발을 Jetpack Compose로 시작하려는 개발자\nXML 기반 UI에서 Compose로 전환을 고민하는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint41.setStatus(0);
+            sprintRepository.save(sprint41);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint41, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(jetpackCompose.getId());
+            parent = jetpackCompose.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(8);
+            endAt = now.minusDays(1);
+            Sprint sprint42 = SprintBuilder.builder()
+                    .name("안드로이드 UI, XML에서 Compose로 탈출!")
+                    .basicDescription("Jetpack Compose로 UI 개발 방식을 혁신하는 스프린트입니다.")
+                    .detailDescription("XML 기반 UI의 한계를 극복하고 `Composable` 함수, `State` 관리, `Modifier` 활용법을 익혀 빠르고 유연한 UI 개발을 경험합니다.")
+                    .recommendedFor("Jetpack Compose를 처음 배우는 개발자\nXML에서 Compose로 전환을 고려하는 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint42.setStatus(2);
+            sprintRepository.save(sprint42);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint42, sprintCategory));
+            });
+
+
+            Category kotlinCoroutines = categoryRepository.findByCategoryNameWithParent("Kotlin Coroutines").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(kotlinCoroutines.getId());
+            parent = kotlinCoroutines.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint43 = SprintBuilder.builder()
+                    .name("안드로이드 개발자를 위한 코루틴 첫걸음")
+                    .basicDescription("Kotlin Coroutines의 기본 개념과 비동기 프로그래밍을 학습하는 스프린트입니다.")
+                    .detailDescription("`suspend function`, `CoroutineScope`, `Job`, `Dispatcher` 개념을 배우고, 간단한 예제를 통해 비동기 호출을 구현합니다.")
+                    .recommendedFor("Kotlin을 사용하지만 아직 코루틴을 제대로 활용하지 못한 개발자\n안드로이드에서 비동기 처리를 효율적으로 하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint43.setStatus(1);
+            sprintRepository.save(sprint43);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint43, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(kotlinCoroutines.getId());
+            parent = kotlinCoroutines.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(4);
+            endAt = now.plusDays(11);
+            Sprint sprint44= SprintBuilder.builder()
+                    .name("Flow로 배우는 리액티브 프로그래밍")
+                    .basicDescription("`Flow`를 활용하여 데이터 스트림을 관리하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("`StateFlow`, `SharedFlow`, `collectLatest` 등을 활용하여 실시간 데이터 흐름을 제어하는 법을 배우고, RxJava와의 차이점도 비교합니다.")
+                    .recommendedFor("Kotlin의 비동기 스트림을 활용한 데이터 흐름 관리를 배우고 싶은 개발자\nRxJava에서 Coroutines Flow로 전환하려는 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint44.setStatus(0);
+            sprintRepository.save(sprint44);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint44, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(kotlinCoroutines.getId());
+            parent = kotlinCoroutines.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(9);
+            Sprint sprint45= SprintBuilder.builder()
+                    .name("코루틴과 Retrofit – 네트워크 비동기 처리 완전 정복")
+                    .basicDescription("Kotlin Coroutines를 활용한 네트워크 통신 최적화 방법을 배우는 스프린트입니다.")
+                    .detailDescription("`Retrofit`과 `CoroutineScope`를 조합하여 네트워크 요청을 관리하고, `try-catch`, `timeout`, `retry` 기법을 활용하여 안정적인 네트워크 처리를 구현합니다.")
+                    .recommendedFor("안드로이드에서 네트워크 요청을 최적화하고 싶은 개발자\n비동기 API 호출을 더 효율적으로 관리하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(5)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint45.setStatus(0);
+            sprintRepository.save(sprint45);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint45, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(kotlinCoroutines.getId());
+            parent = kotlinCoroutines.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(11);
+            endAt = now.minusDays(4);
+            Sprint sprint46= SprintBuilder.builder()
+                    .name("성능 최적화를 위한 코루틴 심화 – Structured Concurrency")
+                    .basicDescription("Kotlin Coroutines의 `Structured Concurrency`를 활용하여 성능을 최적화하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("`SupervisorJob`, `withContext`, `async-await`, `coroutineScope`의 개념을 배우고, 여러 개의 비동기 작업을 효율적으로 관리하는 방법을 학습합니다.")
+                    .recommendedFor("대규모 애플리케이션에서 코루틴을 제대로 활용하고 싶은 개발자\n동시성 프로그래밍을 최적화하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint46.setStatus(2);
+            sprintRepository.save(sprint46);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint46, sprintCategory));
+            });
+
+
+            Category swiftUi = categoryRepository.findByCategoryNameWithParent("SwiftUI").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(swiftUi.getId());
+            parent = swiftUi.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint47= SprintBuilder.builder()
+                    .name("UIKit은 이제 그만! SwiftUI로 UI 개발 시작하기")
+                    .basicDescription("SwiftUI의 핵심 개념을 배우고, UI를 선언형 방식으로 개발하는 스프린트입니다.")
+                    .detailDescription("`View`, `State`, `Binding`, `ObservableObject` 개념을 익히고, UIKit과의 차이점을 비교하며 SwiftUI 기반 UI 개발을 실습합니다.")
+                    .recommendedFor("UIKit을 사용하다 SwiftUI로 전환하고 싶은 개발자\nSwiftUI의 선언형 UI 개발 방식에 익숙해지고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint47.setStatus(1);
+            sprintRepository.save(sprint47);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint47, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(swiftUi.getId());
+            parent = swiftUi.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint48= SprintBuilder.builder()
+                    .name("부드러운 애니메이션! SwiftUI로 다이나믹한 UI 만들기")
+                    .basicDescription("SwiftUI의 애니메이션 기능을 활용하여 직관적이고 부드러운 UI를 만드는 스프린트입니다.")
+                    .detailDescription("`withAnimation`, `implicit & explicit animations`, `matchedGeometryEffect`, `spring animation` 등을 학습하고, 실제 앱에서 동적인 UI를 구현하는 법을 실습합니다.")
+                    .recommendedFor("SwiftUI에서 자연스러운 애니메이션을 구현하고 싶은 개발자\n유저 인터랙션을 강조한 UI를 만들고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint48.setStatus(1);
+            sprintRepository.save(sprint48);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint48, sprintCategory));
+            });
+
+
+            Category combine = categoryRepository.findByCategoryNameWithParent("Combine").orElseThrow(CategoryNotExistException::new);
+
+            // DevOps 하위 카테고리
+            Category jenkins = categoryRepository.findByCategoryNameWithParent("Jenkins").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(jenkins.getId());
+            parent = jenkins.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint49 = SprintBuilder.builder()
+                    .name("Jenkins 기본기 다지기 - CI/CD의 첫걸음")
+                    .basicDescription("Jenkins를 활용한 CI/CD 파이프라인 기본 개념을 학습하는 스프린트입니다.")
+                    .detailDescription("Jenkins 설치 및 설정, 기본적인 `Pipeline` 작성법, 빌드 및 배포 자동화를 배우고 간단한 프로젝트에 적용해 봅니다.")
+                    .recommendedFor("CI/CD를 처음 배우는 개발자\nJenkins를 활용한 자동화 배포를 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint49.setStatus(1);
+            sprintRepository.save(sprint49);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint49, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(jenkins.getId());
+            parent = jenkins.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint50 = SprintBuilder.builder()
+                    .name("Jenkins와 Docker로 완전 자동화 배포하기")
+                    .basicDescription("Jenkins와 Docker를 결합하여 컨테이너 기반 CI/CD 자동화를 학습하는 스프린트입니다.")
+                    .detailDescription("Docker 컨테이너에서 Jenkins 실행, `Jenkinsfile` 작성법, `Multi-stage Build`, `Docker Compose`를 활용한 배포 자동화를 실습합니다.")
+                    .recommendedFor("Docker와 CI/CD 자동화를 함께 배우고 싶은 개발자\n컨테이너 기반 배포를 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint50.setStatus(1);
+            sprintRepository.save(sprint50);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint50, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(jenkins.getId());
+            parent = jenkins.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(12);
+            Sprint sprint51 = SprintBuilder.builder()
+                    .name("Jenkins 최적화 - 빠르고 안전한 배포 환경 만들기")
+                    .basicDescription("Jenkins를 최적화하여 CI/CD 속도를 높이고, 보안을 강화하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("병렬 빌드 실행, `Shared Libraries` 활용, `Blue-Green Deployment`, `Rolling Update`, 보안 플러그인 활용법을 실습합니다.")
+                    .recommendedFor("Jenkins를 효율적으로 운영하고 싶은 DevOps 엔지니어\n대규모 프로젝트에서 CI/CD 성능을 개선하고 싶은 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint51.setStatus(0);
+            sprintRepository.save(sprint51);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint51, sprintCategory));
+            });
+
+
+            Category githubActions = categoryRepository.findByCategoryNameWithParent("GitHub Actions").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(githubActions.getId());
+            parent = githubActions.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint52 = SprintBuilder.builder()
+                    .name("GitHub Actions 기초 - CI/CD 첫걸음")
+                    .basicDescription("GitHub Actions를 활용하여 CI/CD를 자동화하는 기초 개념을 학습하는 스프린트입니다.")
+                    .detailDescription("`Workflow`, `Job`, `Step`, `Runner`의 개념을 익히고, 간단한 `.github/workflows` 파일을 작성하여 CI/CD 자동화 환경을 구축해봅니다.")
+                    .recommendedFor("GitHub Actions를 처음 접하는 개발자\nCI/CD 자동화를 시작하려는 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint52.setStatus(1);
+            sprintRepository.save(sprint52);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint52, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(githubActions.getId());
+            parent = githubActions.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(8);
+            endAt = now.minusDays(1);
+            Sprint sprint53 = SprintBuilder.builder()
+                    .name("GitHub Actions와 Docker - 컨테이너 기반 배포 자동화")
+                    .basicDescription("GitHub Actions를 활용하여 Docker 컨테이너 기반 배포를 자동화하는 스프린트입니다.")
+                    .detailDescription("`Docker Build`, `Push to Docker Hub`, `AWS ECR` 배포 등을 학습하며, GitHub Actions와 Docker의 완벽한 연동을 실습합니다.")
+                    .recommendedFor("Docker와 CI/CD 자동화를 함께 배우고 싶은 개발자\n컨테이너 기반 배포를 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint53.setStatus(2);
+            sprintRepository.save(sprint53);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint53, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(githubActions.getId());
+            parent = githubActions.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint54 = SprintBuilder.builder()
+                    .name("GitHub Actions로 테스트 자동화하기")
+                    .basicDescription("GitHub Actions를 활용하여 자동 테스트 환경을 구축하는 스프린트입니다.")
+                    .detailDescription("`Unit Test`, `Integration Test`, `Code Coverage`, `Lint Check` 등의 자동화 테스트 프로세스를 구축하는 법을 학습합니다.")
+                    .recommendedFor("CI/CD 과정에서 자동화 테스트를 적용하고 싶은 개발자\n프로젝트 안정성을 높이고 싶은 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint54.setStatus(1);
+            sprintRepository.save(sprint54);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint54, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(githubActions.getId());
+            parent = githubActions.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(12);
+            Sprint sprint55 = SprintBuilder.builder()
+                    .name("GitHub Actions 최적화 - 빠르고 효율적인 CI/CD 구축")
+                    .basicDescription("GitHub Actions의 실행 속도를 최적화하고, 비용을 절감하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("`Caching`, `Matrix Builds`, `Reusable Workflows`, `Self-hosted Runner` 등의 개념을 익히고, CI/CD의 실행 속도를 개선합니다.")
+                    .recommendedFor("GitHub Actions의 성능을 최적화하고 싶은 개발자\n대규모 프로젝트에서 빠른 CI/CD 환경을 구축하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint55.setStatus(0);
+            sprintRepository.save(sprint55);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint55, sprintCategory));
+            });
+
+
+            Category terraform = categoryRepository.findByCategoryNameWithParent("Terraform").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(terraform.getId());
+            parent = terraform.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(2);
+            endAt = now.plusDays(9);
+            Sprint sprint56 = SprintBuilder.builder()
+                    .name("Terraform으로 클라우드 인프라 자동화하기")
+                    .basicDescription("Terraform을 활용하여 인프라를 코드로 관리하는 스프린트입니다.")
+                    .detailDescription("Terraform의 기본 개념을 익히고, `terraform init`, `plan`, `apply` 명령어를 활용하여 AWS, GCP, Azure 같은 클라우드 환경을 자동화하는 방법을 학습합니다.")
+                    .recommendedFor("Infrastructure as Code(IaC)에 관심 있는 개발자\nAWS, GCP, Azure 등의 클라우드 인프라를 Terraform으로 관리하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint56.setStatus(0);
+            sprintRepository.save(sprint56);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint56, sprintCategory));
+            });
+
+
+            Category ansible = categoryRepository.findByCategoryNameWithParent("Ansible").orElseThrow(CategoryNotExistException::new);
+
+            // AI/ML 하위 카테고리
+            Category tensorFlow = categoryRepository.findByCategoryNameWithParent("TensorFlow").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(tensorFlow.getId());
+            parent = tensorFlow.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint57 = SprintBuilder.builder()
+                    .name("TensorFlow 기초 - 머신러닝 첫걸음")
+                    .basicDescription("TensorFlow를 활용하여 머신러닝 기초 개념을 학습하는 스프린트입니다.")
+                    .detailDescription("TensorFlow의 기본 구조, `Tensors`, `Operations`, `Graph`, `Session` 개념을 익히고, 간단한 머신러닝 모델을 구축해봅니다.")
+                    .recommendedFor("머신러닝을 처음 배우는 개발자\nTensorFlow의 기본 개념을 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint57.setStatus(1);
+            sprintRepository.save(sprint57);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint57, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(tensorFlow.getId());
+            parent = tensorFlow.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(1);
+            endAt = now.plusDays(6);
+            Sprint sprint58 = SprintBuilder.builder()
+                    .name("TensorFlow 모델 최적화 - 성능 튜닝과 배포")
+                    .basicDescription("TensorFlow를 활용하여 학습된 모델의 성능을 최적화하고 배포하는 방법을 배우는 스프린트입니다.")
+                    .detailDescription("`TF Lite`, `TF Serving`, `Quantization`, `Pruning` 등을 활용하여 모델을 최적화하고, 클라우드 배포 방법을 실습합니다.")
+                    .recommendedFor("TensorFlow 모델을 효율적으로 배포하고 싶은 개발자\n딥러닝 모델의 성능 최적화 및 경량화를 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint58.setStatus(1);
+            sprintRepository.save(sprint58);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint58, sprintCategory));
+            });
+
+
+            Category pyTorch = categoryRepository.findByCategoryNameWithParent("PyTorch").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(pyTorch.getId());
+            parent = pyTorch.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(12);
+            endAt = now.minusDays(5);
+            Sprint sprint59 = SprintBuilder.builder()
+                    .name("PyTorch 입문 - 기본 개념부터 간단한 모델 구축까지")
+                    .basicDescription("PyTorch를 처음 배우는 개발자를 위한 기본 개념과 모델 구축 실습 스프린트입니다.")
+                    .detailDescription("`Tensor`, `Autograd`, `nn.Module`, `DataLoader` 등의 개념을 익히고 간단한 딥러닝 모델을 구축하여 학습합니다.")
+                    .recommendedFor("딥러닝을 처음 배우는 개발자\nPyTorch의 기본 구조를 익히고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint59.setStatus(2);
+            sprintRepository.save(sprint59);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint59, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(pyTorch.getId());
+            parent = pyTorch.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(2);
+            endAt = now.plusDays(5);
+            Sprint sprint60 = SprintBuilder.builder()
+                    .name("PyTorch로 CNN 구현하기 - 이미지 분류 모델 만들기")
+                    .basicDescription("PyTorch를 활용하여 CNN 기반 이미지 분류 모델을 구축하는 스프린트입니다.")
+                    .detailDescription("`Conv2D`, `BatchNorm`, `MaxPool`, `Dropout`을 활용하여 ResNet, VGG 등의 구조를 학습하고, MNIST, CIFAR-10 데이터셋을 사용하여 실습합니다.")
+                    .recommendedFor("PyTorch를 활용하여 CNN 모델을 구축해보고 싶은 개발자\n이미지 처리 딥러닝 모델을 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint60.setStatus(1);
+            sprintRepository.save(sprint60);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint60, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(pyTorch.getId());
+            parent = pyTorch.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint61 = SprintBuilder.builder()
+                    .name("PyTorch 모델 최적화 및 배포 - ONNX & TorchScript")
+                    .basicDescription("PyTorch 모델을 최적화하고 ONNX 및 TorchScript를 활용한 배포 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("`TorchScript`, `ONNX`, `Quantization`, `Pruning` 등을 이용한 모델 최적화 및 경량화, 배포 방법을 실습합니다.")
+                    .recommendedFor("딥러닝 모델을 효율적으로 배포하고 싶은 개발자\nPyTorch 모델의 성능을 최적화하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint61.setStatus(1);
+            sprintRepository.save(sprint61);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint61, sprintCategory));
+            });
+
+
+            Category kubeflow = categoryRepository.findByCategoryNameWithParent("Kubeflow").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(kubeflow.getId());
+            parent = kubeflow.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(9);
+            endAt = now.minusDays(2);
+            Sprint sprint62 = SprintBuilder.builder()
+                    .name("Kubeflow로 MLOps 파이프라인 구축하기")
+                    .basicDescription("Kubeflow를 활용하여 머신러닝 모델 개발부터 배포까지 자동화하는 스프린트입니다.")
+                    .detailDescription("`Kubeflow Pipelines`, `TFJob`, `KFServing`을 활용하여 머신러닝 모델을 효과적으로 관리하고 배포하는 방법을 학습합니다.")
+                    .recommendedFor("MLOps에 관심 있는 개발자\n대규모 머신러닝 모델을 자동화하고 싶은 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint62.setStatus(2);
+            sprintRepository.save(sprint62);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint62, sprintCategory));
+            });
+
+
+            Category mlFlow = categoryRepository.findByCategoryNameWithParent("MLflow").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(mlFlow.getId());
+            parent = mlFlow.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(5);
+            endAt = now.plusDays(2);
+            Sprint sprint63 = SprintBuilder.builder()
+                    .name("MLflow로 머신러닝 모델 관리 및 실험 추적하기")
+                    .basicDescription("MLflow를 활용하여 머신러닝 모델의 실험 및 배포를 효율적으로 관리하는 스프린트입니다.")
+                    .detailDescription("`MLflow Tracking`, `MLflow Projects`, `MLflow Models`, `MLflow Registry`를 활용하여 머신러닝 모델 실험 및 배포 프로세스를 최적화합니다.")
+                    .recommendedFor("머신러닝 실험을 체계적으로 관리하고 싶은 개발자\nMLflow 기반 MLOps 환경을 구축하고 싶은 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint63.setStatus(1);
+            sprintRepository.save(sprint63);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint63, sprintCategory));
+            });
+
+
+            // Security 하위 카테고리
+            Category sslTls = categoryRepository.findByCategoryNameWithParent("SSL/TLS").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sslTls.getId());
+            parent = sslTls.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(15);
+            endAt = now.minusDays(8);
+            Sprint sprint64= SprintBuilder.builder()
+                    .name("SSL/TLS 기초 - HTTPS의 원리와 인증서 이해하기")
+                    .basicDescription("SSL/TLS 프로토콜의 기본 개념과 HTTPS 보안 원리를 학습하는 스프린트입니다.")
+                    .detailDescription("`SSL Handshake`, `Public Key & Private Key`, `Certificate Authority (CA)`, `TLS 1.2 vs TLS 1.3` 등의 개념을 익히고 HTTPS 보안이 어떻게 이루어지는지 실습합니다.")
+                    .recommendedFor("SSL/TLS를 처음 배우는 개발자\nHTTPS를 직접 설정해보고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(7)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint64.setStatus(2);
+            sprintRepository.save(sprint64);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint64, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sslTls.getId());
+            parent = sslTls.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(2);
+            endAt = now.plusDays(5);
+            Sprint sprint65= SprintBuilder.builder()
+                    .name("SSL/TLS 보안 강화 - 최적의 설정과 취약점 방어")
+                    .basicDescription("SSL/TLS 보안을 강화하는 방법과 최신 취약점에 대응하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("`Cipher Suites`, `HSTS(HTTP Strict Transport Security)`, `Perfect Forward Secrecy (PFS)`, `SSL Pinning` 등을 활용하여 보안성을 높이는 방법을 실습합니다.")
+                    .recommendedFor("보안이 중요한 애플리케이션을 개발하는 개발자\nSSL/TLS의 최신 취약점 및 보안 강화를 적용하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint65.setStatus(1);
+            sprintRepository.save(sprint65);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint65, sprintCategory));
+            });
+
+
+            Category firewall = categoryRepository.findByCategoryNameWithParent("Firewall").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(firewall.getId());
+            parent = firewall.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.plusDays(5);
+            endAt = now.plusDays(12);
+            Sprint sprint66= SprintBuilder.builder()
+                    .name("방화벽 기초 - 네트워크 보안의 첫걸음")
+                    .basicDescription("방화벽(Firewall)의 기본 개념과 역할을 학습하는 스프린트입니다.")
+                    .detailDescription("`패킷 필터링`, `스테이트풀 인스펙션`, `애플리케이션 레벨 방화벽` 개념을 익히고, 방화벽이 네트워크 보안에서 어떤 역할을 하는지 학습합니다.")
+                    .recommendedFor("네트워크 보안 개념을 익히고 싶은 개발자\n방화벽의 동작 원리를 이해하고 싶은 보안 엔지니어")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(8)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint66.setStatus(0);
+            sprintRepository.save(sprint66);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint66, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(firewall.getId());
+            parent = firewall.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(6);
+            endAt = now.plusDays(1);
+            Sprint sprint67= SprintBuilder.builder()
+                    .name("방화벽 보안 정책 설정 및 실습")
+                    .basicDescription("방화벽 정책을 설정하고 실제 환경에서 적용하는 방법을 학습하는 스프린트입니다.")
+                    .detailDescription("`Firewall Rules`, `ACL (Access Control List)`, `IPS/IDS (침입 탐지 및 방지 시스템)`, `DMZ`를 활용하여 보안 정책을 설정하는 법을 실습합니다.")
+                    .recommendedFor("실제 환경에서 방화벽을 설정하고 보안 정책을 적용하고 싶은 개발자\n보안 강화를 위한 네트워크 필터링을 배우고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(3)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint67.setStatus(1);
+            sprintRepository.save(sprint67);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint67, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(firewall.getId());
+            parent = firewall.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(4);
+            endAt = now.plusDays(3);
+            Sprint sprint68= SprintBuilder.builder()
+                    .name("차세대 방화벽(NGFW)와 클라우드 보안")
+                    .basicDescription("차세대 방화벽(NGFW, Next-Generation Firewall)과 클라우드 보안 기술을 학습하는 스프린트입니다.")
+                    .detailDescription("`Deep Packet Inspection (DPI)`, `AI 기반 보안`, `클라우드 기반 방화벽`, `제로 트러스트 보안` 등의 최신 보안 트렌드를 학습하고 실습합니다.")
+                    .recommendedFor("최신 보안 기술을 익히고 싶은 보안 엔지니어\n클라우드 환경에서 방화벽을 설정하고 싶은 개발자")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(4)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint68.setStatus(1);
+            sprintRepository.save(sprint68);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint68, sprintCategory));
+            });
+
+
+            Category owaspTop10 = categoryRepository.findByCategoryNameWithParent("OWASP Top 10").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(owaspTop10.getId());
+            parent = owaspTop10.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(9);
+            endAt = now.minusDays(2);
+            Sprint sprint69= SprintBuilder.builder()
+                    .name("OWASP Top 10 - 웹 보안 취약점 분석과 대응")
+                    .basicDescription("웹 애플리케이션 보안의 기본 개념과 OWASP Top 10을 학습하는 스프린트입니다.")
+                    .detailDescription("`SQL Injection`, `XSS`, `CSRF`, `Broken Authentication`, `Security Misconfiguration` 등 웹 보안의 주요 취약점을 분석하고, 방어 전략을 학습합니다.")
+                    .recommendedFor("웹 애플리케이션 보안에 관심 있는 개발자\nOWASP Top 10의 주요 취약점을 깊이 이해하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint69.setStatus(2);
+            sprintRepository.save(sprint69);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint69, sprintCategory));
+            });
+
+
+            Category sastDast = categoryRepository.findByCategoryNameWithParent("SAST/DAST").orElseThrow(CategoryNotExistException::new);
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sastDast.getId());
+            parent = sastDast.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now.minusDays(1);
+            endAt = now.plusDays(6);
+            Sprint sprint70= SprintBuilder.builder()
+                    .name("SAST - 코드 기반 보안 분석 및 자동화")
+                    .basicDescription("정적 분석(SAST)을 활용하여 코드 내 보안 취약점을 사전에 탐지하는 스프린트입니다.")
+                    .detailDescription("`Static Analysis`, `Code Scanning Tools (SonarQube, Checkmarx)`, `CI/CD 연동 보안 자동화` 등을 활용하여 소스 코드의 보안 취약점을 분석하고 대응하는 방법을 학습합니다.")
+                    .recommendedFor("정적 코드 분석을 통해 보안성을 높이고 싶은 개발자\nCI/CD 환경에서 보안 자동화를 도입하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint70.setStatus(1);
+            sprintRepository.save(sprint70);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint70, sprintCategory));
+            });
+
+            categoryIds = new ArrayList<>();
+            categoryIds.add(sastDast.getId());
+            parent = sastDast.getParent();
+            if (parent != null) {
+                categoryIds.add(parent.getId());
+                Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
+                if (grandParent != null) {
+                    categoryIds.add(grandParent.getId());
+                }
+            }
+            startAt = now;
+            endAt = now.plusDays(7);
+            Sprint sprint71= SprintBuilder.builder()
+                    .name("DAST - 웹 애플리케이션 동적 분석 및 보안 강화")
+                    .basicDescription("동적 분석(DAST)을 활용하여 실행 중인 애플리케이션의 보안 취약점을 탐지하는 스프린트입니다.")
+                    .detailDescription("`Dynamic Application Security Testing`, `Burp Suite`, `OWASP ZAP`, `실시간 공격 시뮬레이션` 등을 이용하여 보안 취약점을 탐지하고 대응하는 방법을 실습합니다.")
+                    .recommendedFor("웹 애플리케이션의 보안 취약점을 분석하고 싶은 개발자\nDAST 도구를 활용하여 공격 시뮬레이션을 수행하고 싶은 분")
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .announceAt(endAt)
+                    .maxMembers(6)  // 5~10명
+                    .defaultTodos(generateTodos(startAt))
+                    .build();
+            sprint71.setStatus(1);
+            sprintRepository.save(sprint71);
+            categoryIds.forEach(categoryId -> {
+                Category sprintCategory = categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotExistException::new);
+                sprintCategoryRepository.save(new SprintCategory(sprint71, sprintCategory));
+            });
+
+            System.out.println("🚀 스프린트 데이터가 성공적으로 추가되었습니다!");
+        } else {
+            System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
+        }
+    }
+
+
+//
+    /** 7일치 TodoRequest 생성 */
+    private List<TodoRequest> generateTodos(LocalDateTime startAt) {
+        List<TodoRequest> todos = new ArrayList<>();
+        Random random = new Random();
+
+        String[][] tasksByDay = {
+                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
+                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
+                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"},
+                {"보안 및 최적화", "고급 기능 활용", "성능 테스트"},
+                {"실전 문제 해결", "버그 수정 및 디버깅", "모범 사례 학습"},
+                {"프로젝트 확장 및 배포", "서드파티 연동", "실제 환경 적용"},
+                {"최종 복습 및 발표", "코드 리뷰", "QA 세션"}
+        };
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = startAt.toLocalDate().plusDays(i);
+            List<String> tasks = List.of(tasksByDay[i]);
+
+            todos.add(new TodoRequest(date, tasks));
+        }
+
+        return todos;
+    }
+//
 //    @Transactional
+//    public void initializeSprintParticipation(SprintRepository sprintRepository,
+//                                              UserRepository userRepository,
+//                                              TeamRepository teamRepository,
+//                                              SprintService sprintService,
+//                                              QuestionCardService questionCardService,
+//                                              DiaryService diaryService) {
+//        if (teamRepository.count() > 0) {
+//            System.out.println("✅ 기존 팀이 존재하므로 스프린트 초기화 생략");
+//            return;
+//        }
+//
+//        List<Sprint> allSprints = sprintRepository.findAll();
+//        List<User> admins = userRepository.findAllWithTeams().stream()
+//                .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
+//                .toList();
+//
+//        for (Sprint sprint : allSprints) {
+//            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
+//
+//            for (User admin : admins) {
+//                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
+//                sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
+//            }
+//
+//            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
+//            if ((sprint.getId() - 2) % 3 == 0) {
+//                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
+//
+//                for (Team team : teams) {
+//                    // ✅ 각 팀별로 QuestionCard 생성
+//                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
+//                            sprint.getId(),
+//                            team.getId(), // ✅ 팀 ID 추가
+//                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
+//                            false
+//                    );
+//                    questionCardService.createQuestionCard(questionCardRequest);
+//                }
+//
+//                // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
+//                for (Team team : teams) {
+//                    LocalDate startDate = sprint.getStartAt().toLocalDate();
+//                    LocalDate endDate = sprint.getEndAt().toLocalDate();
+//
+//                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+//                        Diary diary = new Diary(team, team.getName(),
+//                                "Sprint " + sprint.getId() + "의 " + date + " 일기 내용입니다.", date);
+//                        diaryService.saveDiary(diary);
+//                    }
+//                }
+//            }
+//        }
+//
+//        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
+//    }
+
+
+
+
+
+
+    //    @Transactional
 //    public void initializeComments(CommentRepository commentRepository, BoardRepository boardRepository, UserRepository userRepository) {
 //        if (commentRepository.count() == 0) {
 //            List<Comment> commentList = new ArrayList<>();
@@ -867,463 +3274,6 @@ public class DataInitializer {
 //            comment = comment.getParent();
 //        }
 //        return depth;
-//    }
-
-
-
-//    @Transactional
-//    public void initializeSprints(SprintRepository sprintRepository,
-//                                  CategoryRepository categoryRepository,
-//                                  SprintCategoryRepository sprintCategoryRepository) {
-//        if (sprintRepository.count() == 0) {
-//            List<Sprint> sprints = new ArrayList<>();
-//            List<SprintCategory> sprintCategories = new ArrayList<>();
-//            LocalDateTime now = LocalDateTime.now();
-//            Random random = new Random();
-//
-//            // ✅ level 3인 카테고리만 조회
-//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-//
-//            for (Category category : lowestLevelCategories) {
-//                List<Long> categoryIds = new ArrayList<>();
-//                categoryIds.add(category.getId());
-//                // ✅ 부모 카테고리와 조부모 카테고리 초기화
-//                Category parent = category.getParent();
-//
-//                if (parent != null) {
-//                    categoryIds.add(parent.getId());
-//                    Category grandParent = parent.getParent();  // 여기서 LazyInitializationException 발생 가능
-//                    if (grandParent != null) {
-//                        categoryIds.add(grandParent.getId());
-//                    }
-//                }
-//                StringBuilder sb = new StringBuilder();
-//                for(Long catgoryId : categoryIds){
-//                    Category c= categoryRepository.findById(catgoryId).orElseThrow(()-> new CategoryNotExistException());
-//                    sb.append(c.getCategoryName()+" ");
-//                }
-//                String recommend = sb.toString().trim();
-//                recommend.replaceAll(" ",",");
-//                for (int i = 0; i < 3; i++) { // 각 카테고리당 3개씩 생성
-//                    LocalDateTime startAt;
-//                    LocalDateTime endAt;
-//
-//                    if (i == 0) { // 시작 전 (status = 0)
-//                        int start = random.nextInt(2);
-//                        startAt = now.plusDays(start + 3);
-//                        endAt = startAt.plusDays(start+ 10);
-//                    } else if (i == 1) { // 진행 중 (status = 1)
-//                        startAt = now.minusDays(7);
-//                        endAt = now;
-//                    } else { // 종료됨 (status = 2)
-//                        int start = random.nextInt(2);
-//                        startAt = now.minusDays(start + 9);
-//                        endAt = startAt.minusDays(start+2);
-//                    }
-//
-//                    Sprint sprint = SprintBuilder.builder()
-//                            .name(category.getCategoryName() + " Sprint " + (i + 1))
-//                            .basicDescription("학습 내용: " + category.getCategoryName())
-//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-//                            .recommendedFor(recommend)
-//                            .startAt(startAt)
-//                            .endAt(endAt)
-//                            .announceAt(endAt)
-//                            .maxMembers(2+random.nextInt(3))
-//                            .defaultTodos(generateTodos(startAt)) // 7일치 Todo 데이터 추가
-//                            .build();
-//                    if(i==1){
-//                        sprint.setStatus(1);
-//                    }else if(i==2){
-//                        sprint.setStatus(2);
-//                    }
-//                    sprintRepository.save(sprint);
-//
-//                    // ✅ 부모, 조부모 카테고리 연결
-//                    categoryIds.forEach(categoryId -> {
-//                        Category sprintCategory = categoryRepository.findById(categoryId)
-//                                .orElseThrow(CategoryNotExistException::new);
-//                        sprintCategoryRepository.save(new SprintCategory(sprint, sprintCategory));
-//                    });
-//
-//                    sprints.add(sprint);
-//                }
-//            }
-//            System.out.println("스프린트 데이터가 성공적으로 추가되었습니다.");
-//        } else {
-//            System.out.println("스프린트 데이터가 이미 존재합니다.");
-//        }
-//    }
-@Transactional
-public void initializeSprints(SprintRepository sprintRepository,
-                              CategoryRepository categoryRepository,
-                              SprintCategoryRepository sprintCategoryRepository) {
-    if (sprintRepository.count() == 0) {
-        List<Sprint> sprints = new ArrayList<>();
-        List<SprintCategory> sprintCategories = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-        Random random = new Random();
-
-        // ✅ level 3인 카테고리만 조회
-        List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-
-        // ✅ 카테고리별 스프린트 명
-        Map<String, List<String>> sprintNames = Map.ofEntries(
-                Map.entry("Spring Boot", List.of("Spring Boot Mastery", "Spring REST API 초격차", "Spring Security 전문가 과정")),
-                Map.entry("React", List.of("React Ninja Training", "React Hook 실전 활용", "Next.js 완벽 정복")),
-                Map.entry("MySQL", List.of("MySQL 퍼포먼스 튜닝", "SQL 인덱싱 고급 과정", "Sharding & Replication")),
-                Map.entry("Docker", List.of("Docker 완전 정복", "DevOps를 위한 Docker 실습", "Docker Compose로 CI/CD 구축")),
-                Map.entry("Kubernetes", List.of("Kubernetes 실전 마스터", "클러스터 자동화 도전", "Helm을 활용한 배포")),
-                Map.entry("AI/ML", List.of("AI 모델 배포 실전", "딥러닝 프로젝트 도전", "PyTorch로 컴퓨터 비전 구현")),
-                Map.entry("Security", List.of("네트워크 보안 완벽 가이드", "OWASP Top 10 실습", "웹 애플리케이션 보안 전문가 과정")),
-                Map.entry("Node.js", List.of("Node.js 백엔드 핵심 과정", "Express.js로 RESTful API 개발", "NestJS 실전 프로젝트")),
-                Map.entry("Vue.js", List.of("Vue 3 완벽 마스터", "Nuxt.js로 SEO 최적화", "Pinia & Vuex 상태 관리")),
-                Map.entry("Android", List.of("Jetpack Compose로 UI 설계", "Kotlin Coroutines로 비동기 처리", "MVVM 아키텍처 완벽 적용")),
-                Map.entry("iOS", List.of("SwiftUI로 iOS 앱 개발", "Combine 프레임워크 완전 정복", "CoreData를 활용한 데이터 저장")),
-                Map.entry("DevOps", List.of("Jenkins로 CI/CD 구축", "GitHub Actions 자동화", "Terraform으로 인프라 관리"))
-        );
-
-        // ✅ 기본 설명 (한 줄 소개)
-        Map<String, String> basicDescriptions = Map.ofEntries(
-                Map.entry("Spring Boot", "Spring Boot로 강력한 백엔드 구축!"),
-                Map.entry("React", "⚛React로 빠르고 유연한 UI를 만들어보세요!"),
-                Map.entry("MySQL", "MySQL을 활용한 고성능 데이터베이스 구축!"),
-                Map.entry("Docker", "Docker로 컨테이너 환경을 자유롭게 구성!"),
-                Map.entry("Kubernetes", "Kubernetes로 자동화된 인프라 운영!"),
-                Map.entry("AI/ML", "AI와 ML을 활용한 데이터 기반 혁신!"),
-                Map.entry("Security", "보안의 기본부터 심화까지 완벽 가이드!"),
-                Map.entry("Node.js", "Node.js로 서버 개발을 효율적으로!"),
-                Map.entry("Vue.js", "Vue.js로 직관적인 프론트엔드 개발!"),
-                Map.entry("Android", "최신 Android 기술을 실전에서 학습!"),
-                Map.entry("iOS", "iOS 앱 개발을 Swift로 경험해보세요!"),
-                Map.entry("DevOps", "DevOps 문화와 CI/CD 자동화를 배우세요!")
-        );
-
-        Map<String, String> detailDescriptions = Map.ofEntries(
-                Map.entry("Spring Boot", "Spring Boot 기반 RESTful API, 보안, 배포까지 마스터!"),
-                Map.entry("React", "React Hooks와 Next.js를 활용한 실전 프로젝트 도전!"),
-                Map.entry("MySQL", "인덱싱, 조인 최적화, Replication & Sharding 실습!"),
-                Map.entry("Docker", "Dockerfile 작성부터 Kubernetes 연동까지 완벽 가이드!"),
-                Map.entry("Kubernetes", "클러스터 구성, Helm 차트 활용, 배포 자동화 도전!"),
-                Map.entry("AI/ML", "TensorFlow와 PyTorch로 머신러닝 모델을 만들고 배포!"),
-                Map.entry("Security", "OWASP Top 10 실습과 모의 해킹을 통한 보안 학습!"),
-                Map.entry("Node.js", "NestJS, Express.js 기반 백엔드 서버 개발 실습!"),
-                Map.entry("Vue.js", "Vue 3 Composition API와 Nuxt.js를 활용한 최적화!"),
-                Map.entry("Android", "Jetpack Compose, 코루틴, MVVM 패턴 완벽 학습!"),
-                Map.entry("iOS", "SwiftUI와 Combine을 활용한 최신 iOS 앱 개발!"),
-                Map.entry("DevOps", "Jenkins, GitHub Actions, Terraform을 활용한 CI/CD 구축!")
-        );
-
-
-        for (Category category : lowestLevelCategories) {
-            List<String> names = sprintNames.getOrDefault(category.getCategoryName(), List.of(category.getCategoryName() + " Sprint"));
-            String basicDescription = basicDescriptions.getOrDefault(category.getCategoryName(), "🔥 최신 기술을 배우고 혁신을 이루어보세요!");
-            String detailDescription = detailDescriptions.getOrDefault(category.getCategoryName(), "최신 기술을 실전 프로젝트에 적용하며 성장할 수 있는 기회!");
-
-            for (String sprintName : names) {
-                LocalDateTime startAt;
-                LocalDateTime endAt;
-
-                int type = random.nextInt(3);
-                if (type == 0) { // 시작 전 (status = 0)
-                    startAt = now.plusDays(3 + random.nextInt(3));
-                    endAt = startAt.plusDays(10 + random.nextInt(5));
-                } else if (type == 1) { // 진행 중 (status = 1)
-                    startAt = now.minusDays(7);
-                    endAt = now.plusDays(3);
-                } else { // 종료됨 (status = 2)
-                    startAt = now.minusDays(10 + random.nextInt(5));
-                    endAt = startAt.plusDays(5 + random.nextInt(3));
-                }
-
-                Sprint sprint = SprintBuilder.builder()
-                        .name(sprintName)
-                        .basicDescription(basicDescription)
-                        .detailDescription(detailDescription)
-                        .recommendedFor(category.getCategoryName() + " Enthusiasts")
-                        .startAt(startAt)
-                        .endAt(endAt)
-                        .announceAt(endAt)
-                        .maxMembers(2 + random.nextInt(4))
-                        .defaultTodos(generateTodos(startAt))
-                        .build();
-
-                sprint.setStatus(type);
-                sprintRepository.save(sprint);
-                sprints.add(sprint);
-
-                sprintCategoryRepository.save(new SprintCategory(sprint, category));
-            }
-        }
-        System.out.println("🚀 스프린트 데이터가 성공적으로 추가되었습니다!");
-    } else {
-        System.out.println("✅ 스프린트 데이터가 이미 존재합니다.");
-    }
-}
-
-//
-    /** 7일치 TodoRequest 생성 */
-    private List<TodoRequest> generateTodos(LocalDateTime startAt) {
-        List<TodoRequest> todos = new ArrayList<>();
-        Random random = new Random();
-
-        String[][] tasksByDay = {
-                {"기본 개념 학습", "아키텍처 개요", "핵심 원리 이해"},
-                {"설치 및 환경 설정", "기본 코드 작성", "간단한 예제 구현"},
-                {"주요 기능 익히기", "실전 프로젝트 적용", "API 활용"},
-                {"보안 및 최적화", "고급 기능 활용", "성능 테스트"},
-                {"실전 문제 해결", "버그 수정 및 디버깅", "모범 사례 학습"},
-                {"프로젝트 확장 및 배포", "서드파티 연동", "실제 환경 적용"},
-                {"최종 복습 및 발표", "코드 리뷰", "QA 세션"}
-        };
-
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = startAt.toLocalDate().plusDays(i);
-            List<String> tasks = List.of(tasksByDay[i]);
-
-            todos.add(new TodoRequest(date, tasks));
-        }
-
-        return todos;
-    }
-//
-//    @Transactional
-//    public void initializeSprintParticipation(SprintRepository sprintRepository,
-//                                              UserRepository userRepository,
-//                                              TeamRepository teamRepository,
-//                                              SprintService sprintService,
-//                                              QuestionCardService questionCardService,
-//                                              DiaryService diaryService) {
-//        if (teamRepository.count() > 0) {
-//            System.out.println("✅ 기존 팀이 존재하므로 스프린트 초기화 생략");
-//            return;
-//        }
-//
-//        List<Sprint> allSprints = sprintRepository.findAll();
-//        List<User> admins = userRepository.findAllWithTeams().stream()
-//                .filter(user -> user.getEmail().startsWith("admin1") || user.getEmail().startsWith("admin2"))
-//                .toList();
-//
-//        for (Sprint sprint : allSprints) {
-//            System.out.println("----------스프린트 ID " + sprint.getId() + "-----------");
-//
-//            for (User admin : admins) {
-//                System.out.println("----------사용자 ID " + admin.getId() + "-----------");
-//                sprintService.joinSprint(sprint.getId(), admin, sprint.getId() + "_" + admin.getId());
-//            }
-//
-//            // ✅ Sprint ID가 2+3*x인 경우에 QuestionCard 및 Diary 추가
-//            if ((sprint.getId() - 2) % 3 == 0) {
-//                List<Team> teams = teamRepository.findBySprint(sprint); // ✅ 해당 Sprint의 팀 가져오기
-//
-//                for (Team team : teams) {
-//                    // ✅ 각 팀별로 QuestionCard 생성
-//                    QuestionCardRequest questionCardRequest = new QuestionCardRequest(
-//                            sprint.getId(),
-//                            team.getId(), // ✅ 팀 ID 추가
-//                            "Sprint " + sprint.getId() + "의 팀 [" + team.getName() + "]을 위한 질문 카드입니다.",
-//                            false
-//                    );
-//                    questionCardService.createQuestionCard(questionCardRequest);
-//                }
-//
-//                // ✅ Diary 추가 (스프린트 시작일부터 종료일까지 모든 날짜 추가)
-//                for (Team team : teams) {
-//                    LocalDate startDate = sprint.getStartAt().toLocalDate();
-//                    LocalDate endDate = sprint.getEndAt().toLocalDate();
-//
-//                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-//                        Diary diary = new Diary(team, team.getName(),
-//                                "Sprint " + sprint.getId() + "의 " + date + " 일기 내용입니다.", date);
-//                        diaryService.saveDiary(diary);
-//                    }
-//                }
-//            }
-//        }
-//
-//        System.out.println("✅ 모든 Sprint에 admin1~admin2이 참가하고, 특정 Sprint에 QuestionCard 및 Diary가 추가되었습니다.");
-//    }
-
-//    @Transactional
-//    public void initializeSsaldCups(SsaldCupRepository ssaldCupRepository,
-//                                    SprintRepository sprintRepository,
-//                                    CategoryRepository categoryRepository,
-//                                    SsaldCupCategoryRepository ssaldCupCategoryRepository,
-//                                    SprintCategoryRepository sprintCategoryRepository) {
-//        if (ssaldCupRepository.count() == 0) {
-//            List<SsaldCup> ssaldCups = new ArrayList<>();
-//            List<SsaldCupCategory> ssaldCupCategories = new ArrayList<>();
-//            LocalDateTime now = LocalDateTime.now();
-//            Random random = new Random();
-//            List<Category> midLevelCategories = categoryRepository.findMidLevelCategoriesByJoin();
-//            List<Category> lowestLevelCategories = categoryRepository.findLowestLevelCategoriesByJoin();
-//
-//            for (Category category : midLevelCategories) {
-//                List<Long> categoryIds = new ArrayList<>();
-//                categoryIds.add(category.getId());
-//                Category parent = category.getParent();
-//                if (parent != null) {
-//                    categoryIds.add(parent.getId());
-//                }
-//
-//                for (int i = 0; i < 3; i++) {
-//                    LocalDateTime startAt;
-//                    LocalDateTime endAt;
-//
-//                    if (i == 0) { // 시작 전 (status = 0)
-//                        int start = random.nextInt(2);
-//                        if(start<=0)
-//                            start=1;
-//                        int week = random.nextInt(8);
-//                        if(week <=0)
-//                            week=1;
-//                        startAt = now.plusDays(start);
-//                        endAt = startAt.plusDays(start).plusWeeks(week);
-//                    } else if (i == 1) { // 진행 중 (status = 1)
-//                        int week = random.nextInt(5);
-//                        if(week <=0)
-//                            week=1;
-//                        startAt = now.minusWeeks(week);
-//                        endAt = now;
-//                    } else { // 종료됨 (status = 2)
-//                        int start = random.nextInt(2);
-//                        if(start<=0)
-//                            start=1;
-//                        int week = random.nextInt(6);
-//                        if(week <=0)
-//                            week=1;
-//                        startAt = now.minusDays(start).minusWeeks(week+2);
-//                        endAt = startAt.minusDays(start).minusWeeks(week+2).plusWeeks(1);
-//                    }
-//
-////                    // ✅ 1번 싸드컵은 9주 동안 진행되도록 설정
-////                    if (ssaldCups.isEmpty()) {
-////                        startAt = now;
-////                        endAt = startAt.plusWeeks(9);
-////                    }
-//
-//                    SsaldCup ssaldCup = SsaldCupBuilder.builder()
-//                            .name(category.getCategoryName() + " SsaldCup " + (i + 1))
-//                            .basicDescription("학습 내용: " + category.getCategoryName())
-//                            .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-//                            .maxTeams(random.nextInt(8)) // ✅ 10팀 설정
-//                            .maxTeamMembers(random.nextInt(4))
-//                            .startAt(startAt)
-//                            .endAt(endAt)
-//                            .build();
-//                    if(ssaldCup.getStartAt().isAfter(now)){
-//                        ssaldCup.setStatus(0);
-//                    }else if(ssaldCup.getStartAt().isEqual(now) || (ssaldCup.getStartAt().isBefore(now) && ssaldCup.getEndAt().isAfter(now)))
-//                        ssaldCup.setStatus(1);
-//                    else ssaldCup.setStatus(2);
-//                    StringBuilder recommend = new StringBuilder();
-//                    ssaldCupRepository.save(ssaldCup);
-//                    StringBuilder sb = new StringBuilder();
-//                    for (Long categoryId : categoryIds) {
-//                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
-//                                .orElseThrow(CategoryNotExistException::new);
-//                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
-//                        sb.append(ssaldCupCategory.getCategoryName()).append(" ");
-//                    }
-//                    String recommendFor = sb.toString().trim().replaceAll(" ", ",");
-////
-////                    categoryIds.forEach(categoryId -> {
-////                        Category ssaldCupCategory = categoryRepository.findById(categoryId)
-////                                .orElseThrow(CategoryNotExistException::new);
-////                        ssaldCupCategoryRepository.save(new SsaldCupCategory(ssaldCup, ssaldCupCategory));
-////                        recommend.append(ssaldCupCategory.getCategoryName()+" ");
-////                    });
-//                    recommendFor.replaceAll(" ",",");
-//                    ssaldCups.add(ssaldCup);
-//
-//                    List<Category> relatedLowestCategories = lowestLevelCategories.stream()
-//                            .filter(lowestCategory -> lowestCategory.getParent() != null &&
-//                                    lowestCategory.getParent().getId().equals(category.getId()))
-//                            .collect(Collectors.toList());
-//
-//                    int duration = (int)ChronoUnit.WEEKS.between(startAt, endAt);
-//                    LocalDateTime start =startAt;
-//                    for (int j = 0; j < duration; j++) {
-//                        LocalDateTime sprintStart=start;
-//                        if(j>0)
-//                            sprintStart=sprintStart.plusWeeks(j);
-//                        LocalDateTime sprintEnd = start.plusWeeks(j+1);
-//                        LocalDateTime announceAt = sprintEnd;
-//                        if(relatedLowestCategories.size()==0)
-//                            continue;
-//                        int rand = random.nextInt(relatedLowestCategories.size());
-//                        int num = rand > 0 ? rand : 0;
-//                        Category selectedLowestCategory = relatedLowestCategories.get(num);
-//
-//                        Sprint sprint = SprintBuilder.builder()
-//                                .name(ssaldCup.getName() + "_Sprint_" + (j + 1))
-//                                .basicDescription("학습 내용: " + category.getCategoryName())
-//                                .detailDescription(category.getCategoryName() + " 관련 프로젝트와 실습")
-//                                .recommendedFor(recommendFor)
-//                                .startAt(sprintStart)
-//                                .endAt(sprintEnd)
-//                                .announceAt(announceAt)
-//                                .maxMembers(ssaldCup.getMaxTeamMembers())
-//                                .sequence(j + 1)
-//                                .ssaldCup(ssaldCup)
-//                                .build();
-//                        LocalDateTime time = LocalDateTime.now();
-//                        if(sprint.getStartAt().isAfter(time))
-//                            sprint.setStatus(0);
-//                        else if(sprint.getStartAt().isEqual(time) || (sprint.getStartAt().isBefore(time)&& sprint.getEndAt().isAfter(time)))
-//                            sprint.setStatus(1);
-//                        else
-//                            sprint.setStatus(2);
-//                        sprintRepository.save(sprint);
-//                        sprintCategoryRepository.save(new SprintCategory(sprint, selectedLowestCategory));
-//                    }
-//                }
-//            }
-//            System.out.println("싸드컵과 하위 스프린트가 추가되었습니다.");
-//        } else {
-//            System.out.println("싸드컵 더미 데이터가 이미 존재합니다.");
-//        }
-//    }
-
-
-
-//    @Transactional
-//    public void initializeSsaldCupParticipation(SsaldCupRepository ssaldCupRepository,
-//                                                UserRepository userRepository,
-//                                                TeamRepository teamRepository) {
-//
-//        // ✅ 1번 싸드컵 조회
-//        SsaldCup ssaldCup = ssaldCupRepository.findById(1L)
-//                .orElseThrow(() -> new IllegalStateException("1번 싸드컵이 존재하지 않습니다."));
-//
-//        // ✅ ID=1~20인 사용자 조회
-//        List<User> temp = userRepository.findAllWithUserTeams();
-//        List<User> users = new ArrayList<>();
-//        for (User user : temp) {
-//            if (user.getId() >= 1 && user.getId() <= 20) {
-//                users.add(user);
-//            }
-//        }
-//
-//        if (users.size() < 20) {
-//            throw new IllegalStateException("ID=1~20인 사용자가 20명 존재해야 합니다.");
-//        }
-//
-//        List<Team> teams = new ArrayList<>();
-//
-//        // ✅ 2명씩 10팀 구성
-//        for (int i = 0; i < 10; i++) {
-//            Team team = new Team("Team" + (i + 1), 0);
-//            team.addUser(users.get(i * 2));
-//            team.addUser(users.get(i * 2 + 1));
-//            team.setCurrentMembers(2);
-//            team.setSsaldCup(ssaldCup);
-//            teams.add(team);
-//        }
-//
-//        teamRepository.saveAll(teams);
-//
-//        System.out.println("✅ 1번 싸드컵에 10개 팀이 생성되었습니다.");
 //    }
 
 

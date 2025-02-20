@@ -132,7 +132,7 @@ public class SprintService {
                 .orElseThrow(SprintNotExistException::new);
         if(teamRepository.existsByName(teamName))
             throw new TeamNameExistException();
-
+        sprint.setCurrentMembers(sprint.getCurrentMembers()+1);
         List<DefaultTodoResponse> defaultTodos = defaultTodoService.getDefaultTodosBySprintId(sprintId);
         List<CategoryNameAndLevelResponseDTO> categories = categoryRepository.findCategoryNamesBySprintId(sprintId);
 

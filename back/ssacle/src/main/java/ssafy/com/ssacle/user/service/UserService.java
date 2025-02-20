@@ -3,14 +3,18 @@ package ssafy.com.ssacle.user.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ssafy.com.ssacle.category.domain.Category;
+import ssafy.com.ssacle.category.dto.CategoryResponse;
+import ssafy.com.ssacle.category.exception.CategoryNotExistException;
+import ssafy.com.ssacle.category.repository.CategoryRepository;
 import ssafy.com.ssacle.global.aws.S3ImageUploader;
 import ssafy.com.ssacle.global.jwt.JwtTokenUtil;
 import ssafy.com.ssacle.user.domain.RefreshToken;
@@ -23,6 +27,7 @@ import ssafy.com.ssacle.user.exception.LoginErrorCode;
 import ssafy.com.ssacle.user.exception.UpdateProfileErrorCode;
 import ssafy.com.ssacle.user.repository.RefreshRepository;
 import ssafy.com.ssacle.user.repository.UserRepository;
+import ssafy.com.ssacle.usercategory.domain.UserCategory;
 import ssafy.com.ssacle.usercategory.repository.UserCategoryRepository;
 
 import java.time.LocalDateTime;
@@ -36,6 +41,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshRepository refreshRepository;
     private final UserCategoryRepository userCategoryRepository;
+    private final CategoryRepository categoryRepository;
     private final TokenService tokenService;
     private final S3ImageUploader s3ImageUploader;
 
@@ -203,6 +209,30 @@ public class UserService {
         userRepository.save(user);
         return new UpdatePasswordResponseDTO("비밀번호 변경 성공", user.getId());
     }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getUserInterestedCategory(User user){
+        List<UserCategory> userCategories = userCategoryRepository.findByUserId(user.getId());
+        List<Long> categoryIds = new ArrayList<>();
+        for(UserCategory userCategory : userCategories){
+            categoryIds.add(userCategory.getCategory().getId());
+        }
+        List<Category> categories = new ArrayList<>();
+        for(Long id : categoryIds){
+            categories.add(categoryRepository.findById(id).orElseThrow(CategoryNotExistException::new));
+        }
+        List<CategoryResponse> categoryResponseList = new ArrayList<>();
+        for(Category category : categories){
+            CategoryResponse categoryResponse = new CategoryResponse(category);
+            categoryResponse.setImage(null);
+            categoryResponseList.add(categoryResponse);
+        }
+        return categoryResponseList;
+    }
+//    @Transactional
+//    public void updateUserInterestedCategory(User user){
+//
+//    }
     private String generateTempPassword() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
         StringBuilder tempPassword = new StringBuilder();

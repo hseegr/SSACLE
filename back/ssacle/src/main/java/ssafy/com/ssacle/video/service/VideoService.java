@@ -218,6 +218,7 @@ public class VideoService {
                     log.error("OpenVidu 세션 종료 중 오류 발생 | Session ID: {}, Error: {}", session.getSessionId(), e.getMessage());
                 }
             }
+
         } while (!activeSessions.isEmpty());
         log.info("✅ 모든 OpenVidu 세션 삭제 완료.");
     }
