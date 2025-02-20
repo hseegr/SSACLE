@@ -20,7 +20,7 @@ const SsapCard = ({ sprintData, idx }) => {
 
   const logoPath = imageList[requiredSkills[0]] || imageList.default
 
-  // 신청하기 클릭 핸들러 (버튼을 눌렀을 때만 이동) 
+  // 신청하기 클릭 핸들러 (버튼을 눌렀을 때만 이동)
   const handleApply = (e) => {
     e.stopPropagation() // 다른 클릭 이벤트 방지
     navigate(`/ssaprint/${sprintId}`) // 버튼 클릭 시 페이지 이동

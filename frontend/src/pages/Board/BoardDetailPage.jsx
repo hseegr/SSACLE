@@ -5,6 +5,7 @@ import {
   fetchBoardDetail,
   fetchBoardList,
   fetchDeleteBoard,
+  fetchPurchaseBoard,
 } from '@/services/boardService'
 import CommentForm from '@/components/Board/Comment/CommentForm'
 import CommentList from '@/components/Board/Comment/CommentList'
@@ -188,32 +189,90 @@ const BoardDetailPage = () => {
   const [showPayModal, setShowPayModal] = useState(false)
   const [selectedPostId, setSelectedPostId] = useState(null)
 
-  const handlePostNavigate = (postId) => {
+  const handlePostNavigate = async (postId) => {
     if (!postId) return
 
-    const targetPost = postId === prev?.id ? prev : next
-    if (
-      post?.subCategory === 'legend' &&
-      targetPost?.writerInfo !== userData?.nickname
-    ) {
-      setSelectedPostId(postId)
-      setShowPayModal(true)
-    } else {
-      navigate(`/board/${boardType}/${postId}`)
+    try {
+      // 이동하려는 게시글의 정보 조회
+      const targetPost = await fetchBoardDetail(postId)
+
+      // 명예의 전당 게시글이고 작성자가 아닌 경우
+      if (
+        targetPost.subCategory === 'legend' &&
+        targetPost.writerInfo !== userData?.nickname
+      ) {
+        // 이미 구매한 게시글인 경우
+        if (targetPost.isPurchased) {
+          alert('이미 구매한 게시글입니다.')
+          navigate(`/board/${boardType}/${postId}`)
+          return
+        }
+
+        // 구매가 필요한 경우
+        setSelectedPostId(postId)
+        setShowPayModal(true)
+      } else {
+        // 일반 게시글이거나 본인이 작성한 글인 경우 바로 이동
+        navigate(`/board/${boardType}/${postId}`)
+      }
+    } catch (error) {
+      console.error('게시글 정보 조회 실패:', error)
+      alert('게시글 정보를 불러오는데 실패했습니다.')
     }
   }
 
+  // 게시글 구매 뮤테이션 추가
+  const purchaseBoardMutation = useMutation({
+    mutationFn: (boardId) => fetchPurchaseBoard(boardId),
+    onSuccess: () => {
+      // 게시글 데이터 갱신을 위한 쿼리 무효화
+      queryClient.invalidateQueries(['boardDetail', selectedPostId])
+    },
+    onError: (error) => {
+      if (error?.response?.data?.code !== 'BOARD_015') {
+        console.error('게시글 구매 실패:', error)
+      }
+    },
+  })
+
+  const REQUIRED_PICKLES = 7 // 필요한 피클 수를 상수로 정의
+
   const handlePayConfirm = async () => {
     try {
-      const requiredPickles = 7
-      if (userData?.pickles >= requiredPickles) {
+      // 최신 데이터를 조회해서 이미 구매했는지 다시 확인
+      const postDetail = await fetchBoardDetail(selectedPostId)
+
+      if (postDetail.isPurchased) {
+        alert('이미 구매한 게시글입니다.')
         setShowPayModal(false)
         navigate(`/board/${boardType}/${selectedPostId}`)
+        return
+      }
+
+      // 피클이 충분하면 결제 요청 실행
+      if (userData?.pickles >= REQUIRED_PICKLES) {
+        try {
+          await purchaseBoardMutation.mutateAsync(selectedPostId)
+          setShowPayModal(false)
+          navigate(`/board/${boardType}/${selectedPostId}`)
+        } catch (error) {
+          if (error?.response?.data?.code === 'BOARD_015') {
+            alert('이미 구매한 게시글입니다.')
+            setShowPayModal(false)
+            navigate(`/board/${boardType}/${selectedPostId}`)
+          } else {
+            console.error('게시글 구매 실패:', error)
+            alert('게시글 구매에 실패했습니다.')
+          }
+        }
       } else {
-        alert('피클이 부족합니다!')
+        alert('피클이 부족합니다.')
+        setShowPayModal(false)
       }
     } catch (error) {
-      console.error('피클 결제 오류:', error)
+      console.error('게시글 정보 조회 실패:', error)
+      alert('게시글 정보를 불러오는데 실패했습니다.')
+      setShowPayModal(false)
     }
   }
 
