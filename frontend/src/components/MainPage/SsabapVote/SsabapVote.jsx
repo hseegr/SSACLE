@@ -63,7 +63,7 @@ const SsabapVote = () => {
           />
           <button
             // 아직 투표하지 않았다면 요청
-            onClick={() => !hasVoted && voteMutate(1)}
+            onClick={() => !hasVoted && voteMutate(menu1.id)}
             className={`flex-1 w-full p-3 rounded-lg text-center font-medium ${
               // 투표율(votePercentage)이 존재하는지 확인 -> 투표율이 있다면 비교 후 더 높은 메뉴를 강조
               menu1.votePercentage !== undefined
@@ -100,7 +100,7 @@ const SsabapVote = () => {
             style={{ objectFit: 'cover' }} // 이미지가 컨테이너에 맞게 잘리면서 비율 유지
           />
           <button
-            onClick={() => !hasVoted && voteMutate(2)}
+            onClick={() => !hasVoted && voteMutate(menu2.id)}
             className={`w-full p-3 rounded-lg text-center font-medium ${
               menu2.votePercentage !== undefined // votePercentage 존재 여부로 판단
                 ? menu2.votePercentage > menu1.votePercentage
