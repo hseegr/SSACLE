@@ -26,7 +26,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center pt-2 space-x-4">
               <a
-                href="https://github.com/ssacle"
+                // href="https://github.com/ssacle"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 transition-colors hover:text-ssacle-blue"
@@ -34,7 +34,7 @@ const Footer = () => {
                 <Github size={20} />
               </a>
               <a
-                href="mailto:contact@ssacle.com"
+                // href="mailto:contact@ssacle.com"
                 className="text-gray-600 transition-colors hover:text-ssacle-blue"
               >
                 <Mail size={20} />
@@ -110,24 +110,24 @@ const Footer = () => {
               Copyright © {currentYear} SSACLE. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm text-gray-600">
-              <Link
-                to="/privacy"
+              <p
+                // to="/privacy"
                 className="transition-colors hover:text-ssacle-blue"
               >
                 개인정보처리방침
-              </Link>
-              <Link
-                to="/terms"
+              </p>
+              <p
+                // to="/terms"
                 className="transition-colors hover:text-ssacle-blue"
               >
                 이용약관
-              </Link>
-              <Link
-                to="/support"
+              </p>
+              <p
+                // to="/support"
                 className="transition-colors hover:text-ssacle-blue"
               >
                 고객지원
-              </Link>
+              </p>
             </div>
           </div>
         </div>
