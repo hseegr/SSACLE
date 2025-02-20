@@ -23,12 +23,12 @@ const SsaprintListPage = () => {
     categoryId: null,
     status: 0,
     page,
-    size:data_size,
+    size: data_size,
   })
 
   const columns = [
     { key: 'id', label: '싸프린트 ID', sortable: true, width: '12%' },
-    { key: 'name', label: '이름', width: '25%'},
+    { key: 'name', label: '이름', width: '25%' },
     {
       key: 'basicDescription',
       label: '설명',
@@ -47,8 +47,8 @@ const SsaprintListPage = () => {
       render: (row) => formatDate(row.endAt),
       width: '10%',
     },
-    { key: 'maxMembers', label: '최대 인원', width: '5%'},
-    { key: 'currentMembers', label: '현재 인원', width: '5%'},
+    { key: 'maxMembers', label: '최대 인원', width: '5%' },
+    { key: 'currentMembers', label: '현재 인원', width: '5%' },
     {
       key: 'status',
       label: '상태',
@@ -65,11 +65,13 @@ const SsaprintListPage = () => {
 
   const getStatusColor = (row) => {
     const status = getStatus(row.startAt, row.endAt)
-    return {
-      '모집 중': 'bg-blue-400',
-      '진행 중': 'bg-green-500',
-      '진행 완료': 'bg-gray-400'
-    }[status] || 'bg-gray-200'
+    return (
+      {
+        '모집 중': 'bg-blue-400',
+        '진행 중': 'bg-green-500',
+        '진행 완료': 'bg-gray-400',
+      }[status] || 'bg-gray-200'
+    )
   }
 
   const handleDelete = (row) => {
@@ -77,7 +79,6 @@ const SsaprintListPage = () => {
       console.log('삭제할 데이터:', rowsToDelete)
       setSelectedRows([]) // 삭제 후 선택 초기화
     }
-    
   }
 
   const handleCreate = () => {
@@ -113,7 +114,7 @@ const SsaprintListPage = () => {
         selectable
         perPage={size}
         onSelect={setSelectedRows}
-        onRowClick={(row) => handleRowClick(row.id)} 
+        onRowClick={(row) => handleRowClick(row.id)}
       />
     </div>
   )

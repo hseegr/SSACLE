@@ -113,14 +113,18 @@ const SignupStep1 = () => {
             className={`w-full max-w-[400px] h-12 rounded-full text-center text-xl font-bold mb-4 transition-colors duration-300 ${
               sendCodeMutaion.isPending
                 ? 'bg-gray-400'
-                : 'bg-ssacle-blue text-white'
+                : showCodeInput
+                  ? 'bg-ssacle-sky text-ssacle-black font-medium text-sm'
+                  : 'bg-ssacle-blue text-white'
             }`}
             onClick={handleSendVerification} // 입력값 검증 후 요청 실행
             disabled={sendCodeMutaion.isPending}
           >
             {sendCodeMutaion.isPending
               ? '전송 중...'
-              : 'Mattermost로 인증 코드 받기'}
+              : showCodeInput
+                ? '인증 코드 재전송'
+                : 'Mattermost로 인증 코드 받기'}
           </button>
 
           {/* 인증 코드 입력 필드 */}
