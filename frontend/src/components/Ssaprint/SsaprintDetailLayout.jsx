@@ -90,7 +90,16 @@ const SsaprintDetailLayout = ({ sprintData }) => {
               내 싸프린트 노트 열기
             </Button>
           ) : (
-            <Button className="w-full" onClick={() => setIsOpen(true)}>
+            <Button
+              className="w-full"
+              onClick={() => {
+                if (sprint.currentMembers >= sprint.maxMembers) {
+                  alert('모집이 마감되었습니다. 다른 싸프린트를 신청해주세요.')
+                  return
+                }
+                setIsOpen(true)
+              }}
+            >
               싸프린트 참여하기
             </Button>
           )}

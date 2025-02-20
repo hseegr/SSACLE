@@ -163,7 +163,8 @@ const ItemCard = ({ item, teamId, domain }) => {
           .map((cat, index) => (
             <span
               key={cat.id || `category-${index}`}
-              className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-[10px] font-medium text-center"
+              className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-[10px] font-medium text-center 
+                   max-w-[5rem] truncate overflow-hidden text-ellipsis whitespace-nowrap"
             >
               {cat.categoryName}
             </span>
