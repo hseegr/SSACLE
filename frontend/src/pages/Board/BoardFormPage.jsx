@@ -101,10 +101,6 @@ const BoardFormPage = () => {
   // 게시글 작성 및 수정
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    const now = new Date()
-    now.setHours(now.getHours() + 9) // UTC -> KST 변환
-
     if (!isValid) return
 
     const postData = {

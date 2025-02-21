@@ -93,7 +93,7 @@ const CommentList = ({
 
   const formatDate = (dateString) => {
     const date = new Date(dateString)
-
+    date.setHours(date.getHours() + 9) // UTC에서 KST로 변환
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
