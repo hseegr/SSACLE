@@ -73,6 +73,34 @@ const DetailsForm = () => {
     })
   }
 
+  // 새로운 할 일 추가 기능
+  const handleAddTask = (dayIndex) => {
+    setDescription((prev) => {
+      const updatedTodos = parseTodos()
+      updatedTodos[dayIndex].tasks.push('') // 새로운 할 일 추가
+
+      const updatedTodosString = updatedTodos
+        .map((todo) => `${todo.date}: ${todo.tasks.join(', ')}`)
+        .join('\n')
+
+      return { ...prev, todos: updatedTodosString }
+    })
+  }
+
+  // 🗑️ 특정 할 일 삭제 기능 추가
+  const handleRemoveTask = (dayIndex, taskIndex) => {
+    setDescription((prev) => {
+      const updatedTodos = parseTodos()
+      updatedTodos[dayIndex].tasks.splice(taskIndex, 1) // 특정 인덱스의 할 일 삭제
+
+      const updatedTodosString = updatedTodos
+        .map((todo) => `${todo.date}: ${todo.tasks.join(', ')}`)
+        .join('\n')
+
+      return { ...prev, todos: updatedTodosString }
+    })
+  }
+
   // GPT 데이터 로딩 중이면 로딩 스피너 표시
   if (isPending) {
     return (
@@ -113,7 +141,11 @@ const DetailsForm = () => {
         <div className="mt-4">
           <label className="text-ssacle-black text-sm font-bold">
             최대 인원 수{' '}
-            <span className="text-ssacle-gray text-xs">(2인 ~ 4인)</span> <span  className="text-ssacle-gray text-xs font-medium"> tip. 방향키를 이용하면 입력이 편해요!</span>
+            <span className="text-ssacle-gray text-xs">(2인 ~ 4인)</span>{' '}
+            <span className="text-ssacle-gray text-xs font-medium">
+              {' '}
+              tip. 방향키를 이용하면 입력이 편해요!
+            </span>
           </label>
           <input
             type="number"
@@ -179,8 +211,22 @@ const DetailsForm = () => {
                     handleTaskChange(dayIndex, taskIndex, e.target.value)
                   }
                 />
+                {/* 🗑️ 삭제 버튼 추가 */}
+                <button
+                  className="ml-2 text-red-500 hover:text-red-700 text-sm font-bold"
+                  onClick={() => handleRemoveTask(dayIndex, taskIndex)}
+                >
+                  X
+                </button>
               </div>
             ))}
+            {/* "+" 버튼 추가 */}
+            <button
+              className="mt-2 text-ssacle-blue text-sm font-bold hover:underline"
+              onClick={() => handleAddTask(dayIndex)}
+            >
+              + 할 일 추가
+            </button>
           </div>
         ))
       )}

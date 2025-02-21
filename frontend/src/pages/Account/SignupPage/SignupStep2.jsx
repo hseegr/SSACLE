@@ -116,8 +116,6 @@ const SignupStep2 = () => {
       return response
     },
     onSuccess: (response) => {
-
-
       const userId = response?.data?.userId
       // const nickname = nickname
 
@@ -217,17 +215,21 @@ const SignupStep2 = () => {
       return
     }
     if (!nickname.trim()) {
-      alert('닉네임을 입력해주세요.')
+      alert('✅ 닉네임을 입력해주세요.')
       return
     }
     if (isNicknameValid !== true) {
-      alert('닉네임 중복 확인을 해주세요.')
+      alert('✅ 닉네임 중복 확인을 해주세요.')
       return
     }
     if (!password.trim() || !confirmpassword.trim()) {
       setPasswordError(true)
       confirmPasswordRef.current.focus()
       return false
+    }
+    if (password.length < 8) {
+      alert('✅ 비밀번호를 8~20자리로 입력하세요!')
+      return
     }
     if (password !== confirmpassword) {
       setPasswordError(true)
@@ -255,7 +257,7 @@ const SignupStep2 = () => {
 
   return (
     <>
-      <div className="w-full h-auto flex justify-center items-center mt-24">
+      <div className="w-full h-auto flex justify-center items-center">
         <div className="grid grid-cols-12 gap-4 shrink-0">
           <div className="col-span-6 col-start-4">
             <h1 className="text-ssacle-blue text-3xl font-bold text-center mb-10">
@@ -274,21 +276,29 @@ const SignupStep2 = () => {
                   type="text"
                   placeholder="학번을 입력하세요."
                   value={studentNumber}
+                  minLength={7}
+                  maxLength={7}
                   onChange={handleStudentNumberChange}
                   className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
                 />
                 <button
                   className={`col-span-1 col-start-6 h-12 rounded-full text-white font-bold text-sm transition-all
-    ${!studentNumber.trim() || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
+    ${studentNumber.trim().length !== 7 || studentNumberMutation.isLoading ? 'bg-ssacle-gray cursor-not-allowed' : 'bg-ssacle-blue'}`}
                   onClick={handleCheckStudentNumber}
                   disabled={
-                    !studentNumber.trim() || studentNumberMutation.isLoading
+                    studentNumber.trim().length !== 7 ||
+                    studentNumberMutation.isLoading
                   }
                 >
                   {studentNumberMutation.isLoading ? '확인 중...' : '중복확인'}
                 </button>
 
                 {/* 학번 인증 결과 메시지 */}
+                {studentNumber.trim().length < 7 && (
+                  <p className="col-span-4 col-start-3 text-ssacle-blue text-sm pl-5">
+                    7자리의 학번을 모두 입력하세요.
+                  </p>
+                )}
                 {isStudentNumberValid === true && (
                   <p className="col-span-4 col-start-3 text-ssacle-blue text-sm pl-5">
                     인증이 완료되었습니다.
@@ -328,6 +338,7 @@ const SignupStep2 = () => {
                 type="text"
                 placeholder="이름을 입력하세요."
                 value={name}
+                maxLength={10}
                 onChange={(e) => setName(e.target.value)}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
@@ -340,8 +351,9 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="text"
-                placeholder="사용할 닉네임을 입력해 주세요."
+                placeholder="10자 이내로 작성해주세요."
                 value={nickname}
+                maxLength={10}
                 onChange={handleNicknameChange}
                 className="col-span-3 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
               />
@@ -379,8 +391,10 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="password"
-                placeholder="비밀번호를 입력해 주세요"
+                placeholder="8~20자 이내로 입력해주세요."
                 value={password}
+                minLength={8}
+                maxlength={20}
                 onChange={(e) => setPassword(e.target.value)}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue mb-4"
               />
@@ -390,8 +404,10 @@ const SignupStep2 = () => {
               </label>
               <input
                 type="password"
-                placeholder="비밀번호를 한번 더 입력해 주세요"
+                placeholder="비밀번호를 한번 더 입력해 주세요."
                 value={confirmpassword}
+                minLength={8}
+                maxlength={20}
                 onChange={handleConfirmPasswordChange} // 실시간 검증 함수 호출
                 ref={confirmPasswordRef}
                 className="col-span-4 col-start-3 h-12 bg-ssacle-gray-sm rounded-full flex items-center px-6 text-base text-ssacle-blue focus:outline-ssacle-blue"
@@ -418,7 +434,9 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowTermsTooltip(true)}
                 onMouseLeave={() => setShowTermsTooltip(false)}
-                onClick={() => setTermsChecked(termsChecked === false? true : false)}
+                onClick={() =>
+                  setTermsChecked(termsChecked === false ? true : false)
+                }
               >
                 서비스 이용 약관
                 {showTermsTooltip && (
@@ -443,7 +461,9 @@ const SignupStep2 = () => {
                 className="text-ssacle-black text-base font-medium cursor-pointer relative"
                 onMouseEnter={() => setShowPrivacyTooltip(true)}
                 onMouseLeave={() => setShowPrivacyTooltip(false)}
-                onClick={() => setPrivacyChecked(privacyChecked === false? true : false)}
+                onClick={() =>
+                  setPrivacyChecked(privacyChecked === false ? true : false)
+                }
               >
                 개인정보 수집 / 이용 동의
                 {showPrivacyTooltip && (
@@ -454,7 +474,7 @@ const SignupStep2 = () => {
                   </div>
                 )}
               </span>
-              </div>
+            </div>
             {/* 필수 약관 미동의 시 경고 메세지 */}
             {termsError && (
               <p className="text-[#f03939] text-sm px-2 mt-2 mb-10 pl-9">
@@ -463,7 +483,7 @@ const SignupStep2 = () => {
             )}
 
             {/* 회원가입 버튼 */}
-            <div className="grid grid-cols-6 gap-4 mb-12">
+            <div className="grid grid-cols-6 gap-4">
               <button
                 className="col-span-2 col-start-3 h-12 bg-ssacle-blue rounded-full px-6 text-white text-center text-xl font-bold mt-6"
                 onClick={handleSignup}
