@@ -1,0 +1,249 @@
+{
+  "user": {
+    "userId": 1234,
+    "name": "김싸피",
+    "profileImage": "https://via.placeholder.com/150",
+    "experience": 2840,
+    "level": 23,
+    "badge": ["스프린트 마스터", "열정 개발자", "팀워크의 달인"],
+    "skills": ["React", "Spring", "Python", "AWS"]
+  },
+
+  "recommendedSprints": [
+    {
+      "sprintId": 1,
+      "title": "실시간 채팅 애플리케이션 개발",
+      "category": "Web",
+      "status": "모집중",
+      "requiredSkills": ["React", "Node.js", "Socket.io"],
+      "currentMembers": 3,
+      "maxMembers": 5,
+      "startDate": "2024-02-15",
+      "endDate": "2024-03-15"
+    },
+    {
+      "sprintId": 2,
+      "title": "AI 기반 이미지 분석 서비스",
+      "category": "AI",
+      "status": "모집중",
+      "requiredSkills": ["Python", "TensorFlow", "OpenCV"],
+      "currentMembers": 2,
+      "maxMembers": 4,
+      "startDate": "2024-02-20",
+      "endDate": "2024-03-20"
+    },
+    {
+      "sprintId": 3,
+      "title": "블록체인 기반 투표 시스템",
+      "category": "Blockchain",
+      "status": "모집중",
+      "requiredSkills": ["Solidity", "React", "Web3.js"],
+      "currentMembers": 4,
+      "maxMembers": 6,
+      "startDate": "2024-02-25",
+      "endDate": "2024-03-25"
+    },
+    {
+      "sprintId": 4,
+      "title": "실시간 채팅 애플리케이션 개발",
+      "category": "Web",
+      "status": "모집중",
+      "requiredSkills": ["React", "Node.js", "Socket.io"],
+      "currentMembers": 3,
+      "maxMembers": 5,
+      "startDate": "2024-02-15",
+      "endDate": "2024-03-15"
+    },
+    {
+      "sprintId": 5,
+      "title": "AI 기반 이미지 분석 서비스",
+      "category": "AI",
+      "status": "모집중",
+      "requiredSkills": ["Python", "TensorFlow", "OpenCV"],
+      "currentMembers": 2,
+      "maxMembers": 4,
+      "startDate": "2024-02-20",
+      "endDate": "2024-03-20"
+    },
+    {
+      "sprintId": 6,
+      "title": "블록체인 기반 투표 시스템",
+      "category": "Blockchain",
+      "status": "모집중",
+      "requiredSkills": ["Solidity", "React", "Web3.js"],
+      "currentMembers": 4,
+      "maxMembers": 6,
+      "startDate": "2024-02-25",
+      "endDate": "2024-03-25"
+    }
+  ],
+
+  "currentSprints": [
+    {
+      "sprintId": 4,
+      "title": "자바스크립트 기본 문법 독학하기",
+      "progress": 65,
+      "role": "프론트엔드 개발",
+      "nextMeeting": "2024-02-10T15:00:00",
+      "endDate": "2024-03-25",
+      "cls": "싸프린트",
+      "progressDate": "7일",
+      "tasks": [
+        {
+          "taskId": 1,
+          "title": "UI 컴포넌트 개발",
+          "status": "진행중",
+          "dueDate": "2024-02-12"
+        },
+        {
+          "taskId": 2,
+          "title": "API 연동",
+          "status": "대기중",
+          "dueDate": "2024-02-15"
+        }
+      ],
+      "teamMembers": [
+        {
+          "userId": 1234,
+          "name": "김싸피",
+          "role": "프론트엔드"
+        },
+        {
+          "userId": 1235,
+          "name": "이싸피",
+          "role": "백엔드"
+        }
+      ]
+    },
+    {
+      "sprintId": 4,
+      "title": "리액트와 타입스크립트로 앱 만들기",
+      "progress": 65,
+      "role": "프론트엔드 개발",
+      "nextMeeting": "2024-02-10T15:00:00",
+      "endDate": "2024-03-25",
+      "cls": "싸드컵",
+      "progressDate": "2개월",
+      "tasks": [
+        {
+          "taskId": 1,
+          "title": "UI 컴포넌트 개발",
+          "status": "진행중",
+          "dueDate": "2024-02-12"
+        },
+        {
+          "taskId": 2,
+          "title": "API 연동",
+          "status": "대기중",
+          "dueDate": "2024-02-15"
+        }
+      ],
+      "teamMembers": [
+        {
+          "userId": 1234,
+          "name": "김싸피",
+          "role": "프론트엔드"
+        },
+        {
+          "userId": 1235,
+          "name": "이싸피",
+          "role": "백엔드"
+        }
+      ]
+    },
+    {
+      "sprintId": 6,
+      "title": "리액트 상태관리",
+      "progress": 35,
+      "role": "프론트엔드 개발",
+      "nextMeeting": "2024-02-12T14:00:00",
+      "endDate": "2025-04-01",
+      "cls": "싸프린트",
+      "progressDate": "6일",
+      "tasks": [
+        {
+          "taskId": 3,
+          "title": "추천 알고리즘 구현",
+          "status": "진행중",
+          "dueDate": "2024-02-20"
+        },
+        {
+          "taskId": 4,
+          "title": "데이터 시각화",
+          "status": "대기중",
+          "dueDate": "2024-02-25"
+        }
+      ],
+      "teamMembers": [
+        {
+          "userId": 1234,
+          "name": "김싸피",
+          "role": "프론트엔드"
+        },
+        {
+          "userId": 1236,
+          "name": "박싸피",
+          "role": "AI 엔지니어"
+        },
+        {
+          "userId": 1237,
+          "name": "최싸피",
+          "role": "백엔드"
+        }
+      ]
+    }
+  ],
+
+  "lunch": {
+    "date": "2024-02-08",
+    "menus": [
+      {
+        "lunchId": 1,
+        "menuName": "제육볶음",
+        "description": "매콤한 제육볶음과 반찬 3가지",
+        "votes": 0.26,
+        "imageUrl": "https://via.placeholder.com/150"
+      },
+      {
+        "lunchId": 2,
+        "menuName": "낙지볶음",
+        "description": "매콤한 낙지볶음과 반찬 3가지",
+        "votes": 0.74,
+        "imageUrl": "https://via.placeholder.com/150"
+      }
+    ],
+    "voteEndTime": "2024-02-08T11:00:00",
+    "isVoted": false
+  },
+
+  "aiNews": [
+    {
+      "newsId": 1,
+      "title": "삼성전자, 차세대 AI 반도체 개발 착수",
+      "url": "https://example.com/news/1",
+      "summary": "삼성전자가 새로운 AI 반도체 개발을 시작했다고 발표...",
+      "publishedAt": "2024-02-08"
+    },
+    {
+      "newsId": 2,
+      "title": "구글, 새로운 AI 모델 공개",
+      "url": "https://example.com/news/2",
+      "summary": "구글이 혁신적인 새 AI 모델을 발표했다...",
+      "publishedAt": "2024-02-08"
+    },
+    {
+      "newsId": 3,
+      "title": "AI 기술이 바꾸는 교육의 미래",
+      "url": "https://example.com/news/3",
+      "summary": "AI 기술의 발전으로 교육 분야가 크게 변화할 전망...",
+      "publishedAt": "2024-02-08"
+    },
+    {
+      "newsId": 4,
+      "title": "구글, 새로운 AI 모델 공개",
+      "url": "https://example.com/news/2",
+      "summary": "구글이 혁신적인 새 AI 모델을 발표했다...",
+      "publishedAt": "2024-02-08"
+    }
+  ]
+}
