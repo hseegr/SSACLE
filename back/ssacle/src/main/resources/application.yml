@@ -1,0 +1,70 @@
+server:
+  forward-headers-strategy: native # 추가가
+  address: 0.0.0.0
+  port: 8080
+  ssl:
+    enabled: false 
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        storage_engine: innodb
+        format_sql: false
+        use_sql_comments: false
+    open-in-view: false
+    show_sql: true
+  jwt:
+    secret: ${JWT_SECRET_KEY}
+    accessExpireMs : ${ACCESS_EXPIRE_MS}
+    refreshExpireMs : ${REFRESH_EXPIRE_MS}
+  web:
+    resources:
+      add-mappings: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 2
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  override-with-generic-response: false
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_S3_ACCESSKEY}
+      secret-key: ${AWS_S3_SECRETKEY}
+    region:
+      static: ${AWS_S3_REGION}
+    stack:
+      auto: false
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+
+mattermost:
+  webhook:
+    url: ${MM_WEBHOOK_URL}
+
+openvidu_url : ${OPENVIDU_URL}
+openvidu_secret : ${OPENVIDU_SECRET}
+
+notion:
+  api-key: ${NOTION_API_KEY}
