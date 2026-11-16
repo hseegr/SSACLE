@@ -34,12 +34,12 @@
 7️⃣ 관리자 기능
 - user, 싸프린트, 싸드컵, 게시글 관리리
 
-# 👨🏻‍💻 함께한 팀원
+<!-- # 👨🏻‍💻 함께한 팀원
 
 |  김태영 | 박창조 | 김희수 | 이아영 | 전성호 | 김수현 |
 |:---:|:---:|:---:|:----:|:---:|:---:|
 | [![](https://github.com/TaeYeong14.png?width=150px)](https://github.com/TaeYeong14) | [![](https://github.com/pcjo1202.png?width=150px)](https://github.com/pcjo1202) | [![](https://github.com/hseegr.png?width=150px)](https://github.com/hseegr) | [![](https://github.com/aaaange.png?width=150px)](https://github.com/aaaange) |[![](https://github.com/HyoJaDan.png?width=150px)](https://github.com/HyoJaDan) |[![](https://github.com/KSH00610.png?width=150px)](https://github.com/KSH00610) |
-| FE | FE, 인프라 | FE | FE | BE | BE |
+| FE | FE, 인프라 | FE | FE | BE | BE | -->
 
 # ✨ 기술 스택
 
